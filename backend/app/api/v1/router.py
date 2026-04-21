@@ -10,6 +10,7 @@ from app.api.v1.endpoints import (
     candidates,
     validations,
     dashboard,
+    padron,
 )
 
 api_router = APIRouter()
@@ -23,3 +24,4 @@ api_router.include_router(lists.router, prefix="/lists", tags=["Lists"])
 api_router.include_router(candidates.router, prefix="/candidates", tags=["Candidates"])
 api_router.include_router(validations.router, prefix="/validations", tags=["Validations"])
 api_router.include_router(dashboard.router, prefix="/dashboard", tags=["Dashboard"])
+api_router.include_router(padron.router, prefix="/padron", tags=["Padron"])

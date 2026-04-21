@@ -13,7 +13,7 @@ from app.models.list_candidate import ListCandidate
 from app.models.candidate_validation import CandidateValidation
 from app.models.list_validation import ListValidation
 from app.models.audit_log import AuditLog
-
+from app.models.affiliate_import_batch import AffiliateImportBatch
 __all__ = [
     "Base",
     "User",
@@ -29,4 +29,5 @@ __all__ = [
     "CandidateValidation",
     "ListValidation",
     "AuditLog",
+    "AffiliateImportBatch",
 ]
