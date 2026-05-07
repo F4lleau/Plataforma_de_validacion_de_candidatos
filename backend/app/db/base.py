@@ -14,6 +14,8 @@ from app.models.candidate_validation import CandidateValidation
 from app.models.list_validation import ListValidation
 from app.models.audit_log import AuditLog
 from app.models.affiliate_import_batch import AffiliateImportBatch
+from app.models.list_role_definition import ListRoleDefinition
+
 __all__ = [
     "Base",
     "User",
@@ -30,4 +32,5 @@ __all__ = [
     "ListValidation",
     "AuditLog",
     "AffiliateImportBatch",
+    "ListRoleDefinition",
 ]
