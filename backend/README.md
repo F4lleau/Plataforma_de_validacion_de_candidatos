@@ -1,87 +1,120 @@
 # Backend - Junta Electoral
 
-## Tecnologías principales
+## Descripción del Sistema
 
-- **Python 3.12**
-- **FastAPI**: Framework web moderno y rápido para construir APIs.
-- **SQLAlchemy**: ORM para manejar la base de datos de forma eficiente.
-- **Alembic**: Herramienta de migraciones para SQLAlchemy.
-- **PostgreSQL**: Base de datos relacional robusta y escalable.
-- **Neon**: Servicio de PostgreSQL en la nube, ideal para desarrollo y producción.
+La aplicación backend de Junta Electoral gestiona la administración de elecciones, listas, candidatos y validaciones asociadas. Provee una API RESTful para la gestión de usuarios, listas electorales, candidatos, validaciones y auditoría.
 
-## ¿Por qué estas tecnologías?
+### Requisitos Funcionales
 
-- **FastAPI** permite desarrollar APIs de alto rendimiento con tipado y documentación automática.
-- **SQLAlchemy** y **Alembic** facilitan la gestión y migración de la base de datos.
-- **PostgreSQL** es confiable, potente y ampliamente soportado.
-- **Neon** permite tener una base de datos PostgreSQL gestionada en la nube, facilitando el despliegue y la colaboración.
+- Gestión de usuarios y autenticación.
+- Administración de listas electorales y candidatos.
+- Validación de afiliaciones y candidaturas.
+- Registro de logs de auditoría.
+- Integración con servicios externos (ej: RENAPER).
 
-## Instalación de dependencias
+### Requisitos No Funcionales
 
-1. Clona el repositorio y entra a la carpeta backend:
-   ```bash
-   git clone <url-del-repo>
-   cd junta_electoral/backend
-   ```
-2. Crea y activa un entorno virtual:
-   ```bash
-   python -m venv .venv
-   # En Windows PowerShell
-   .\.venv\Scripts\Activate.ps1
-   # En Linux/Mac
-   source .venv/bin/activate
-   ```
-3. Instala las dependencias:
-   ```bash
-   pip install -r requirements.txt
-   ```
+- Seguridad basada en JWT y roles.
+- Rendimiento optimizado para grandes volúmenes de datos.
+- Escalabilidad y modularidad.
 
-## Configuración de la base de datos
+## Arquitectura
 
-1. Crea una cuenta y un proyecto en [Neon](https://neon.tech/).
-2. Obtén la cadena de conexión (connection string) de tu base de datos PostgreSQL en Neon.
-3. Crea un archivo `.env` en la carpeta backend con el siguiente contenido:
-   ```env
-   DATABASE_URL=postgresql+psycopg2://<usuario>:<password>@<host>/<db_name>
-   ```
+- **Framework:** FastAPI
+- **ORM:** SQLAlchemy
+- **Base de datos:** (configurable, por defecto SQLite/PostgreSQL)
+- **Migraciones:** Alembic
+- **Autenticación:** JWT
+- **Integraciones:** RENAPER
 
-## Migraciones con Alembic
+### Estructura de Carpetas
 
-- **Inicializar Alembic** (solo la primera vez):
-  ```bash
-  alembic init alembic
-  ```
-- **Crear una nueva migración automática:**
-  ```bash
-  alembic revision --autogenerate -m "mensaje de la migración"
-  ```
-- **Aplicar migraciones a la base de datos:**
-  ```bash
-  alembic upgrade head
-  ```
+- `app/`: Código principal del backend
+- `alembic/`: Migraciones de base de datos
+- `requirements.txt`: Dependencias
 
-> Asegúrate de que la variable `DATABASE_URL` esté correctamente configurada en tu `.env`.
+### Diagrama de Componentes
 
-## Comandos útiles
+> **Consejo:** Agregar un diagrama visual con herramientas como [Mermaid](https://mermaid-js.github.io/mermaid/) o [draw.io].
 
-- **Correr el servidor de desarrollo:**
-  ```bash
-  uvicorn main:app --reload
-  ```
-- **Ver el estado de las migraciones:**
-  ```bash
-  alembic current
-  ```
+```
+flowchart TD
+    UI[Frontend] -->|REST| API[FastAPI]
+    API --> DB[(Base de Datos)]
+    API --> RENAPER[RENAPER]
+```
 
-## Archivos clave
+### Estructura de Base de Datos
 
-- `main.py`: Punto de entrada de la API.
-- `models/`: Definición de modelos de base de datos.
-- `alembic/`: Configuración y scripts de migración.
-- `.env`: Variables de entorno (no subir a GitHub).
+Las migraciones se encuentran en `backend/alembic/versions/`.
 
-## Notas
+## Documentación de APIs
 
-- Usa siempre un entorno virtual para evitar conflictos de dependencias.
-- No subas el archivo `.env` ni la carpeta `.venv` al repositorio.
-- Consulta la documentación oficial de cada tecnología para más detalles.
+- **Swagger UI:** Disponible en `/docs` al ejecutar el backend.
+- **Redoc:** Disponible en `/redoc`.
+
+## Guía de Configuración
+
+### Clonar el Repositorio
+
+```bash
+git clone <url-del-repo>
+cd junta_electoral/backend
+```
+
+### Crear y Activar Entorno Virtual
+
+```bash
+python -m venv .venv
+.venv\Scripts\activate  # Windows
+source .venv/bin/activate  # Linux/Mac
+```
+
+### Instalar Dependencias
+
+```bash
+pip install -r requirements.txt
+```
+
+### Variables de Entorno
+
+Configura las variables en un archivo `.env` en `backend/app/` (ver ejemplo en `config.py`).
+
+### Ejecutar el Backend
+
+```bash
+uvicorn app.main:app --reload
+```
+
+### Migraciones de Base de Datos
+
+```bash
+alembic upgrade head
+```
+
+## Documentación de Usuario
+
+### Guías de Uso
+
+- Accede a la API vía Swagger UI (`/docs`).
+- Consulta los endpoints disponibles y prueba operaciones.
+
+### FAQ
+
+- **¿Por qué falla la conexión a la base de datos?**
+  - Verifica las variables de entorno y la configuración en `config.py`.
+- **¿Cómo crear un usuario admin?**
+  - Usa el endpoint de registro y asigna el rol adecuado.
+
+### Solución de Problemas
+
+- **Error de migraciones:** Revisa el estado de Alembic y sincroniza con `alembic upgrade head`.
+- **Problemas de dependencias:** Ejecuta `pip install -r requirements.txt`.
+
+## Documentación del Proyecto
+
+### Objetivo del Negocio
+
+Facilitar la gestión y validación de procesos electorales, optimizando la transparencia y eficiencia.
+
+---
