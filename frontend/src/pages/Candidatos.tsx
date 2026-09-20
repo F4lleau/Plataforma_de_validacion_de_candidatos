@@ -21,7 +21,7 @@ export default function Candidatos() {
   const [warning, setWarning] = useState("");
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
   ) => {
     setForm((prev) => ({
       ...prev,
@@ -52,13 +52,17 @@ export default function Candidatos() {
       const result = await createCandidate(payload);
       if (result.affiliation.status === "warning") {
         setWarning(
-          "El candidato fue registrado, pero no figura en el padrón de afiliados vigente. Quedará pendiente de revisión por la Junta Electoral."
+          "El candidato fue registrado, pero no figura en el padrón de afiliados vigente. Quedará pendiente de revisión por la Junta Electoral.",
         );
       } else {
-        setSuccess("El candidato fue registrado y su afiliación fue verificada.");
+        setSuccess(
+          "El candidato fue registrado y su afiliación fue verificada.",
+        );
       }
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : "Error al guardar candidato.");
+      setError(
+        err instanceof Error ? err.message : "Error al guardar candidato.",
+      );
     } finally {
       setLoading(false);
     }
@@ -155,9 +159,15 @@ export default function Candidatos() {
           </button>
         </div>
 
-        {success && <p className="md:col-span-2 text-sm text-green-700">{success}</p>}
-        {warning && <p className="md:col-span-2 text-sm text-amber-700">{warning}</p>}
-        {error && <p className="md:col-span-2 text-sm text-destructive">{error}</p>}
+        {success && (
+          <p className="md:col-span-2 text-sm text-green-700">{success}</p>
+        )}
+        {warning && (
+          <p className="md:col-span-2 text-sm text-amber-700">{warning}</p>
+        )}
+        {error && (
+          <p className="md:col-span-2 text-sm text-destructive">{error}</p>
+        )}
       </form>
     </div>
   );

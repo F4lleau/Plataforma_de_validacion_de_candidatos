@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
-from app.core.security import get_current_user, require_admin
+from app.core.security import get_current_user, require_roles, require_admin
 from app.db.session import get_db
 from app.models.user import User
 from app.repositories.candidate_repository import CandidateRepository
@@ -9,6 +9,7 @@ from app.repositories.candidate_validation_repository import CandidateValidation
 from app.repositories.party_member_repository import PartyMemberRepository
 from app.schemas.candidate import CandidateCreate, CandidateCreateResponse, CandidateResponse
 from app.services.candidate_service import CandidateService
+from app.utils.enums import UserRole
 
 router = APIRouter()
 
@@ -26,7 +27,7 @@ def build_candidate_service(db: Session) -> CandidateService:
 def create_candidate(
     payload: CandidateCreate,
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(require_roles(UserRole.ADMIN, UserRole.APODERADO)),
 ):
     service = build_candidate_service(db)
     candidate, affiliation = service.create_candidate_with_validation(payload, current_user.id)

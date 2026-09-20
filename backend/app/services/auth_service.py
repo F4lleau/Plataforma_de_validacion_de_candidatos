@@ -6,8 +6,8 @@ class AuthService:
     def __init__(self, user_repository: UserRepository):
         self.user_repository = user_repository
 
-    def login(self, username: str, password: str) -> dict | None:
-        user = self.user_repository.get_by_username(username)
+    def login(self, email: str, password: str) -> dict | None:
+        user = self.user_repository.get_by_email(email)
         if not user or not user.is_active:
             return None
 
@@ -24,4 +24,5 @@ class AuthService:
             "access_token": access_token,
             "refresh_token": refresh_token,
             "token_type": "bearer",
+            "user": user,
         }

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { importPadron } from "../services/padron.service";
 
-interface PadronImportResult {
+export interface PadronImportResult {
   file_name: string;
   total_rows: number;
   valid_rows: number;
@@ -30,7 +30,9 @@ export default function Padron() {
       const data = await importPadron(file);
       setResult(data);
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : "Error al importar padrón.");
+      setError(
+        err instanceof Error ? err.message : "Error al importar padrón.",
+      );
     } finally {
       setLoading(false);
     }

@@ -13,7 +13,7 @@ class UserRepository:
         return self.db.scalar(stmt)
 
     def get_by_email(self, email: str) -> User | None:
-        stmt = select(User).where(User.email == email)
+        stmt = select(User).where(User.email == email.lower().strip())
         return self.db.scalar(stmt)
 
     def list_all(self) -> list[User]:

@@ -61,6 +61,8 @@ npm install
 npm run dev
 ```
 
+La aplicación inicia en `/login`, restaura la sesión mediante `/api/v1/auth/me` y protege las rutas por rol. ADMIN accede al padrón y a la revisión administrativa; APODERADO accede a sus listas y a la carga de candidatos.
+
 ### Variables de Entorno
 
 Configura el archivo `.env` en `frontend/` según corresponda (ejemplo: URL del backend).

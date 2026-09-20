@@ -73,6 +73,18 @@ Configura las variables en un archivo `.env` en `backend/app/` (ver ejemplo en `
 uvicorn app.main:app --reload
 ```
 
+### Bootstrap de administrador de desarrollo
+
+Definí `INITIAL_ADMIN_EMAIL` y `INITIAL_ADMIN_PASSWORD` en el entorno y ejecutá:
+
+```bash
+python scripts/bootstrap_admin.py
+```
+
+El script crea un usuario ADMIN solo si no existe. Nunca guarda la contraseña en el código ni la imprime.
+
+La autenticación expone `POST /api/v1/auth/login` y `GET /api/v1/auth/me`. El refresh token se emite para compatibilidad, pero su rotación/revocación queda pendiente de una tarea posterior; el logout actual elimina la sesión del cliente.
+
 ### Migraciones de Base de Datos
 
 ```bash
