@@ -83,6 +83,7 @@ Resultados posibles:
 
 - `ok`
 - `error`
+- `warning`
 - `pendiente`
 
 ## 8. Alertas y observaciones

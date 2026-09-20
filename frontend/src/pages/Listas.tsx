@@ -1,15 +1,22 @@
 import { useEffect, useState } from "react";
 import { getListTemplate } from "../services/lists.service";
 
+interface ListTemplate {
+  id: number;
+  name: string;
+  group_name: string;
+  position_order: number;
+}
+
 export default function Listas() {
-  const [template, setTemplate] = useState<any[]>([]);
+  const [template, setTemplate] = useState<ListTemplate[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const loadTemplate = async () => {
       try {
         const data = await getListTemplate("consejo_local");
-        setTemplate(data as any[]);
+        setTemplate(data as ListTemplate[]);
       } catch (error) {
         console.error(error);
       } finally {

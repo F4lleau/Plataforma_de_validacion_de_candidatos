@@ -16,6 +16,7 @@ class AffiliateImportBatch(Base):
     total_rows: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
     valid_rows: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
     invalid_rows: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
+    is_current: Mapped[bool] = mapped_column(default=False, nullable=False)
 
     status: Mapped[str] = mapped_column(String(50), default="processing", nullable=False)
     notes: Mapped[str | None] = mapped_column(Text, nullable=True)

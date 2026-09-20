@@ -33,19 +33,6 @@ La aplicación backend de Junta Electoral gestiona la administración de eleccio
 - `alembic/`: Migraciones de base de datos
 - `requirements.txt`: Dependencias
 
-### Diagrama de Componentes
-
-> **Consejo:** Agregar un diagrama visual con herramientas como [Mermaid](https://mermaid-js.github.io/mermaid/) o [draw.io].
-
-```
-flowchart TD
-    UI[Frontend] -->|REST| API[FastAPI]
-    API --> DB[(Base de Datos)]
-    API --> RENAPER[RENAPER]
-```
-
-### Estructura de Base de Datos
-
 Las migraciones se encuentran en `backend/alembic/versions/`.
 
 ## Documentación de APIs

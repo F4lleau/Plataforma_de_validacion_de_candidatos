@@ -40,4 +40,5 @@ class ValidationType(str, Enum):
 class ValidationResult(str, Enum):
     OK = "ok"
     ERROR = "error"
+    WARNING = "warning"
     PENDIENTE = "pendiente"

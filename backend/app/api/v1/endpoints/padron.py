@@ -5,6 +5,8 @@ from fastapi import APIRouter, Depends, File, HTTPException, UploadFile
 from sqlalchemy.orm import Session
 
 from app.db.session import get_db
+from app.core.security import require_admin
+from app.models.user import User
 from app.schemas.padron import AffiliateImportResponse
 from app.services.affiliate_import_service import AffiliateImportService
 
@@ -15,6 +17,7 @@ router = APIRouter()
 def import_padron(
     file: UploadFile = File(...),
     db: Session = Depends(get_db),
+    current_user: User = Depends(require_admin),
 ):
     if not file.filename.lower().endswith((".xlsx", ".xls")):
         raise HTTPException(status_code=400, detail="Solo se permiten archivos Excel.")
@@ -28,7 +31,7 @@ def import_padron(
         batch = service.import_excel(
             file_path=temp_path,
             file_name=file.filename,
-            imported_by=1,  # temporal: luego reemplazamos por current_user.id
+            imported_by=current_user.id,
         )
 
         return AffiliateImportResponse(

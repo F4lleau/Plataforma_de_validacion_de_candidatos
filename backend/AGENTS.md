@@ -108,6 +108,10 @@ El flujo implementado incluye:
 - `AffiliateImportBatch` para registrar el lote de importación.
 - `PartyMemberRepository` para consultar miembros por DNI y limpiar importaciones por batch.
 - endpoint `POST /api/v1/padron/import` para subir archivos Excel.
+- endpoint `POST /api/v1/candidates` para registrar candidatos y persistir la validación de afiliación.
+- endpoint `GET /api/v1/candidates/review` para consultar observaciones de afiliación.
+
+La dependencia JWT `get_current_user` ya resuelve usuarios activos desde el token y la base de datos. El login HTTP y el RBAC completo permanecen como integración de Task 03; los endpoints no aceptan IDs de usuario enviados por el frontend.
 
 ### Regla crítica
 

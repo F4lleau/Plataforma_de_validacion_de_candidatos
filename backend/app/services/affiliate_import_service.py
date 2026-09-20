@@ -43,7 +43,12 @@ class AffiliateImportService:
         )
         batch = self.batch_repository.create(batch)
 
-        df = pd.read_excel(file_path)
+        try:
+            df = pd.read_excel(file_path)
+        except Exception as exc:
+            batch.status = "failed"
+            batch.notes = f"No se pudo leer el archivo de padrón: {exc}"
+            return self.batch_repository.update(batch)
 
         # Ajustar estos nombres cuando confirmemos columnas reales del padrón
         expected_columns = {
@@ -120,5 +125,6 @@ class AffiliateImportService:
         batch.status = "completed"
         batch.notes = f"Importación finalizada. Registros válidos: {valid_rows}. Inválidos: {invalid_rows}."
         batch = self.batch_repository.update(batch)
+        self.batch_repository.activate_batch(batch.id)
 
         return batch

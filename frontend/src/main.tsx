@@ -2,7 +2,7 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import "./index.css";
 
-function App() {
+export function App() {
   return (
     <div className="min-h-screen bg-background text-foreground font-body">
       <main className="mx-auto flex min-h-screen max-w-7xl items-center justify-center p-6">
