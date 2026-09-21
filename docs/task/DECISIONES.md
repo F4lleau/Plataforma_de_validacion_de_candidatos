@@ -88,3 +88,34 @@ implementación actual hasta ejecutar y verificar la sustitución.
 Ver [plan, contratos y referencias](LOGIN_SEGURIDAD.md). No se requiere aprobación
 adicional para redactar el backlog; durante ejecución resolver la configuración
 externa cuando sea necesaria y avanzar con lo independiente.
+
+## D17 — Ejecución local Tasks 16–19 (21/09/2026)
+
+Se adoptan los defaults de D12–D16: access 15 min, sesión 7 días/24 h, bloqueo 5/15/15,
+reset 30 min, clave 15–128 y reauth 5 min. HS256 con inventario kid local; refresh
+sin replay grace. Mailpit v1.27.4 y outbox Fernet en PostgreSQL, sin Redis. Cuotas
+por 15 min: 100/IP/operación, 20/identificador/login, 5/identificador/forgot/reauth/cambio;
+cooldown 60 s. Web Locks/BroadcastChannel, sin tokens persistidos. Bcrypt nativo
+legado y Argon2id nuevo (64 MiB/t3/p4).
+
+Alta manual APODERADO se conserva con política nueva hasta Task 20; edición no fija
+contraseñas, usa enlace. Estado «invitación pendiente» se implementará con 20. SMTP
+externo y MFA/SSO siguen fuera de la aceptación local. Auditoría electoral conservada;
+retención de auth/mail configurable 30 días. Ver informe 16–19 y operación.
+
+## D18 — Invitaciones y aceptación local (21/09/2026)
+
+- Invitación separada de User, rol fijo APODERADO, vigencia 48 h, 20 operaciones ADMIN/hora
+  y cooldown 60 s configurables. Reautenticación reciente para crear/reenviar/cancelar.
+- Una fila por correo normalizado; generación y auditoría registran reenvíos. Enlace
+  anterior y outbox pendiente quedan invalidados. Expirada/cancelada puede reemplazarse
+  con nueva invitación; aceptada deriva a gestión de cuenta, sin sobrescribir datos.
+- Email verificado solo al aceptar. Legacy mantiene NULL y su acceso. Cambio de email
+  y creación de ADMIN fuera de alcance. POST /users devuelve 410; edición no fija claves.
+- Índice único normalizado con preflight: se aborta ante colisiones sin fusionar cuentas.
+- Se serializan invitador→invitación→catálogos; revalidación de permisos/estado en aceptación.
+  Módulos vigentes, sin asignación automática de listas; perfil mínimo y sin login automático.
+- Las cuotas y SMTP están compartidos por BD. Retención de invitaciones de 30 días desde
+  vencimiento; usuarios/asignaciones se conservan. SMTP aceptado no prueba entrega.
+- Evidencia local y producción se separan; MFA para ADMIN debe evaluarse antes de un
+  despliegue sensible. No se afirma certificación NIST/ASVS ni integración RENAPER real.

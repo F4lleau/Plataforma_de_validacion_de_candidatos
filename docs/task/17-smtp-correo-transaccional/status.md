@@ -1,26 +1,17 @@
 # Task 17 — Estado
 
-- Estado: **Planificada — pendiente de implementación**.
-- Fecha de planificación: 20/09/2026.
-- Rama prevista: `develop`.
-- Dependencias: 16, 14.
-- [Consigna y checklist](task.md) · [Plan común](../LOGIN_SEGURIDAD.md).
+- Estado: **Completada en alcance local; habilitación SMTP externa pendiente**.
+- Fecha: 21/09/2026. Rama: `develop`. Sin commit/push.
+- SMTP TLS configurable, Mailpit Docker, outbox cifrada transaccional y worker con lease/retry/purga. Aceptación de proveedor externo pendiente.
+- [Checklist](task.md) · [Informe](report.md) · [Evidencia común](../INFORME_16_19.md).
 
-## Estado auditado
+## Verificación
 
-No hay integración SMTP ni cola de correo. SUPPORT_CONTACT es solo informativo. local-deps.yml contiene PostgreSQL.
+- [x] Auditar login existente y preservar usuarios/asignaciones/datos electorales.
+- [x] Implementar API, UI, migración y controles del alcance local.
+- [x] Probar permisos, concurrencia y circuito real navegador/API/Mailpit.
+- [x] Ejecutar suites backend/frontend, build, lint y migraciones Alembic.
+- [x] Documentar variables, operación y límites; sin secretos ni seed versionados.
 
-## Seguimiento
-
-- [ ] Auditar dependencias al iniciar ejecución y fijar contrato técnico.
-- [ ] Implementar mini tasks y migraciones aplicables.
-- [ ] Verificar seguridad, concurrencia, permisos y experiencia por rol.
-- [ ] Documentar evidencia local y habilitación externa por separado.
-- [ ] Crear report.md al ejecutar y actualizar índice/matriz.
-
-## Evidencia y dependencias
-
-Esta planificación no incorpora código, migraciones, envíos ni tests nuevos.
-No hay evidencia de implementación de esta task. SMTP externo requiere proveedor,
-remitente/dominio y URL HTTPS configurados; el capturador permite desarrollo local.
-Las decisiones propuestas están en LOGIN_SEGURIDAD.md y DECISIONES.md, D12–D16.
+La conexión SMTP externa requiere proveedor/dominio/remitente/HTTPS y destinatario
+autorizado. Invitaciones corresponden a Task 20 y aceptación integral adicional a 21.

@@ -1,3 +1,4 @@
+from tests.auth_helpers import session_token
 from datetime import date
 
 import pandas as pd
@@ -28,7 +29,9 @@ def db_session():
         poolclass=StaticPool,
     )
     Base.metadata.create_all(bind=engine)
-    session_factory = sessionmaker(bind=engine, autoflush=False, autocommit=False, future=True)
+    session_factory = sessionmaker(
+        bind=engine, autoflush=False, autocommit=False, future=True
+    )
     with session_factory() as session:
         yield session
 
@@ -40,6 +43,10 @@ def client(db_session: Session):
 
     app.dependency_overrides[get_db] = override_get_db
     with TestClient(app) as test_client:
+        csrf = test_client.get("/api/v1/auth/csrf").json()["csrf_token"]
+        test_client.headers.update(
+            {"Origin": "http://localhost:5173", "X-CSRF-Token": csrf}
+        )
         yield test_client
     app.dependency_overrides.clear()
 
@@ -81,7 +88,7 @@ def admin_user(db_session: Session) -> User:
 
 
 def auth_headers(user: User) -> dict[str, str]:
-    token = create_access_token(str(user.id), {"role": user.role.value})
+    token = session_token(user)
     return {"Authorization": f"Bearer {token}"}
 
 
@@ -124,7 +131,9 @@ def add_current_member(db_session: Session, dni: str) -> None:
     db_session.commit()
 
 
-def test_post_candidates_with_affiliation_returns_verified(client, db_session, admin_user):
+def test_post_candidates_with_affiliation_returns_verified(
+    client, db_session, admin_user
+):
     add_current_member(db_session, "12345678")
 
     response = client.post(
@@ -138,7 +147,9 @@ def test_post_candidates_with_affiliation_returns_verified(client, db_session, a
     assert response.json()["candidate"]["id"] is not None
 
 
-def test_post_candidates_without_affiliation_returns_warning_and_review(client, db_session, admin_user):
+def test_post_candidates_without_affiliation_returns_warning_and_review(
+    client, db_session, admin_user
+):
     response = client.post(
         "/api/v1/candidates",
         json=candidate_payload("87654321"),
@@ -173,16 +184,28 @@ def test_successful_import_activates_batch_and_failed_import_preserves_current(
     db_session.add(old_batch)
     db_session.commit()
 
-    monkeypatch.setattr(pd, "read_excel", lambda *args, **kwargs: pd.DataFrame({"dni": ["12345678"], "nombre": ["Ana"], "apellido": ["Pérez"]}))
+    monkeypatch.setattr(
+        pd,
+        "read_excel",
+        lambda *args, **kwargs: pd.DataFrame(
+            {"dni": ["12345678"], "nombre": ["Ana"], "apellido": ["Pérez"]}
+        ),
+    )
     service = AffiliateImportService(db_session)
-    successful = service.import_excel(str(tmp_path / "ok.xlsx"), "ok.xlsx", admin_user.id)
+    successful = service.import_excel(
+        str(tmp_path / "ok.xlsx"), "ok.xlsx", admin_user.id
+    )
 
     assert successful.status == "completed"
     assert successful.is_current is True
     assert db_session.get(AffiliateImportBatch, old_batch.id).is_current is False
 
-    monkeypatch.setattr(pd, "read_excel", lambda *args, **kwargs: pd.DataFrame({"incorrecta": ["x"]}))
-    failed = service.import_excel(str(tmp_path / "failed.xlsx"), "failed.xlsx", admin_user.id)
+    monkeypatch.setattr(
+        pd, "read_excel", lambda *args, **kwargs: pd.DataFrame({"incorrecta": ["x"]})
+    )
+    failed = service.import_excel(
+        str(tmp_path / "failed.xlsx"), "failed.xlsx", admin_user.id
+    )
 
     assert failed.status == "failed"
     assert db_session.get(AffiliateImportBatch, successful.id).is_current is True

@@ -27,3 +27,30 @@ def root():
         "message": "Junta Electoral API",
         "environment": settings.app_env,
     }
+
+
+@app.middleware("http")
+async def security_headers(request, call_next):
+    response = await call_next(request)
+    response.headers["Cache-Control"] = "no-store"
+    response.headers["Referrer-Policy"] = "no-referrer"
+    response.headers["X-Content-Type-Options"] = "nosniff"
+    return response
+
+
+# Pydantic errors normally echo rejected inputs; credentials must never be reflected.
+from fastapi.exceptions import RequestValidationError
+from fastapi.responses import JSONResponse
+
+
+@app.exception_handler(RequestValidationError)
+async def sanitized_validation_error(request, exc):
+    return JSONResponse(
+        status_code=422,
+        content={
+            "detail": [
+                {"loc": list(e["loc"]), "msg": e["msg"], "type": e["type"]}
+                for e in exc.errors()
+            ]
+        },
+    )

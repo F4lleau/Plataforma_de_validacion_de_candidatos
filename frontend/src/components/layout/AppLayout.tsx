@@ -59,6 +59,7 @@ const adminGroups = [
     items: [
       { to: "/reportes", label: "Reportes", icon: ChartNoAxesCombined },
       { to: "/auditoria", label: "Auditoría", icon: History },
+      { to: "/seguridad", label: "Seguridad de cuenta", icon: UserRound },
       help,
     ],
   },
@@ -70,6 +71,7 @@ const proxyGroups = [
       overview,
       { to: "/listas", label: "Mis listas", icon: Files },
       { to: "/candidatos", label: "Candidatos", icon: UserRound },
+      { to: "/seguridad", label: "Seguridad de cuenta", icon: UserRound },
       help,
     ],
   },
@@ -198,7 +200,13 @@ export default function AppLayout() {
               </div>
               <button
                 type="button"
-                onClick={logout}
+                onClick={() => {
+                  void logout().catch(() =>
+                    alert(
+                      "Se cerró la sesión en este navegador, pero no se pudo confirmar el cierre en el servidor. Intentá nuevamente cuando vuelva la conexión.",
+                    ),
+                  );
+                }}
                 className="secondary !min-h-10 !p-2.5"
                 aria-label="Cerrar sesión"
                 title="Cerrar sesión"

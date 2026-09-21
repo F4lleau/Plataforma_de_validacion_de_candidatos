@@ -18,13 +18,21 @@ import Reportes from "./pages/Reportes";
 import Auditoria from "./pages/Auditoria";
 import Ayuda from "./pages/Ayuda";
 
+import PasswordRecovery from "./pages/PasswordRecovery";
+import InvitationAccept from "./pages/InvitationAccept";
+import AccountSecurity from "./pages/AccountSecurity";
+
 export default function App() {
   return (
     <Routes>
+      <Route path="/invitacion" element={<InvitationAccept />} />
+      <Route path="/recuperar-clave" element={<PasswordRecovery />} />
+      <Route path="/restablecer-clave" element={<PasswordRecovery reset />} />
       <Route path="/login" element={<Login />} />
       <Route element={<ProtectedRoute />}>
         <Route element={<AppLayout />}>
           <Route path="/403" element={<Forbidden />} />
+          <Route path="/seguridad" element={<AccountSecurity />} />
           <Route path="/ayuda" element={<Ayuda />} />
           <Route element={<ProtectedRoute roles={["admin"]} />}>
             <Route path="/validaciones" element={<Validaciones />} />

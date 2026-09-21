@@ -1,97 +1,177 @@
-# Autenticación, roles y sesión
+# Autenticación y seguridad de cuentas
 
-## API y autorización
+Tasks 16–19 implementadas sobre el login/RBAC previo. Las invitaciones y primer
+acceso corresponden a Task 20 y continúan pendientes. No se afirma certificación
+OWASP/NIST ni integración de correo productiva por superar pruebas locales.
 
-| Endpoint | Acceso y comportamiento |
+## Sesiones y corte de versión
+
+JWT access HS256, 15 minutos por defecto; claims obligatorios `sub`, `iss`, `aud`,
+`iat`, `exp`, `jti`, `sid`, `type=access`. Algoritmo fijo, clave aleatoria >=32 bytes,
+`kid` limitado al inventario del entorno; tolerancia de reloj de 5 segundos. HS256
+se conserva porque una sola API emite y verifica. Usuario activo/rol/módulos/listas
+se consultan en BD; un claim de rol no autoriza.
+
+Access solo en memoria; la cookie `je_refresh` contiene un secreto aleatorio de
+32 bytes, `HttpOnly`, `SameSite=Strict`, `Path=/api/v1/auth`, `Secure` en producción.
+La BD guarda digest SHA-256, nunca el refresh original. Cada uso rota y conserva el
+digest consumido hasta la limpieza. Reutilizarlo revoca la familia completa sin
+ventana de gracia. Una respuesta de refresh perdida requiere volver a ingresar;
+no reintentar el mismo secreto desde un cliente propio.
+
+La sesión vence a los 7 días absolutos o 24 horas sin renovación. Cada request
+comprueba su vigencia; logout, cambio/reset y desactivación revocan inmediatamente
+los access asociados. Las sesiones ya abiertas no se expulsan por intentos fallidos
+provocados por terceros. La actividad se actualiza en la renovación (máximo cada
+15 minutos durante uso continuado).
+
+**Corte coordinado API/frontend:** los JWT anteriores sin `sid` dejan de funcionar;
+el frontend elimina las claves legacy de localStorage. Los usuarios, hashes bcrypt,
+asignaciones y datos electorales se conservan. El siguiente ingreso pide credenciales.
+
+`JWT_KEY_ID`/`SECRET_KEY` eligen la clave nueva; `JWT_PREVIOUS_KEYS` es un objeto JSON
+kid → clave anterior. Mantener claves anteriores durante 15 minutos + 5 segundos,
+y retirarlas al terminar la transición. Ante compromiso revocar también sesiones.
+Cambiar la clave de JWT reinicia de hecho el espacio HMAC de cuotas; coordinarlo.
+
+## Navegador y CSRF
+
+`GET /auth/csrf` entrega un nonce y una cookie HttpOnly `je_csrf` con Path de la API.
+Login, refresh, logout, recuperación y acciones sensibles requieren el nonce en
+`X-CSRF-Token` **y** un `Origin` exacto autorizado. CORS permite credenciales solo
+para orígenes explícitos. Un cliente no navegador debe obtener cookie/nonce y enviar
+Origin configurado; no hay excepción de seguridad para Swagger o scripts.
+
+Frontend/API deben compartir sitio: usar ambos `localhost` o ambos `127.0.0.1`,
+HTTPS en producción. `VITE_API_URL` permite configurar la API; por defecto conserva
+el hostname del navegador y usa puerto 8000. Despliegues entre sitios distintos
+requieren un diseño adicional de cookies; no basta ampliar CORS.
+
+El cliente coordina refresh concurrentes dentro de una pestaña; Web Locks serializa
+login/refresh/logout entre pestañas y BroadcastChannel comunica cambios de cuenta
+sin persistir tokens. Usar navegadores actuales con Web Locks y contexto seguro
+(HTTPS o localhost). Si no está disponible, dos renovaciones simultáneas pueden
+forzar nuevo login por detección de replay, nunca aceptar dos usos del mismo secreto.
+
+Un 401 puede renovar y repetir una vez: la autenticación se evalúa antes del handler
+de dominio. Un 403, error de red o respuesta exitosa no se reintenta. Upload y descarga
+usan el mismo cliente. Respuestas de una sesión anterior no restauran datos tras logout.
+Si el logout no llega al servidor, se informa que la revocación remota no fue confirmada.
+
+## Endpoints implementados
+
+Prefijo `/api/v1`. Todas las respuestas llevan `Cache-Control: no-store`,
+`Referrer-Policy: no-referrer` y `X-Content-Type-Options: nosniff`.
+
+| Endpoint | Requisito / efecto |
 | --- | --- |
-| `POST /api/v1/auth/login` | JSON `email`/`password`; valida hash y usuario activo; error genérico 401. |
-| `GET /api/v1/auth/me` | Bearer válido; devuelve usuario y rol actuales de BD, sin hash. |
-| `POST /api/v1/padron/import` | ADMIN; `imported_by` se toma de `current_user.id`. |
-| `GET /api/v1/candidates/review` | ADMIN; consulta advertencias de afiliación. |
-| `POST /api/v1/candidates` | Compatibilidad solo ADMIN; para APODERADO usar la ruta contextual por lista; `created_by` se toma de `current_user.id`. |
-| `GET /api/v1/candidates` | ADMIN ve todos; APODERADO solo candidatos vinculados a listas asignadas y módulos habilitados. |
-| `GET /api/v1/lists/` | Consulta real; ADMIN ve todas, APODERADO solo las asignadas con módulo habilitado. |
-| `GET /api/v1/validations/list/{list_id}` | Usuario autenticado y acceso a la lista; conserva `office_type` como parámetro de plantilla. |
-| `GET /api/v1/list-templates/{office_type}` | Usuario autenticado; catálogo de plantillas compartido. |
+| GET /auth/csrf | Cookie/nonce CSRF; no autentica |
+| POST /auth/login | Email/clave + CSRF; access y usuario en JSON, refresh solo cookie |
+| POST /auth/refresh | Cookie + CSRF; rotación atómica |
+| POST /auth/logout | Cookie + CSRF; idempotente |
+| GET /auth/me, /auth/modules | Bearer válido y usuario activo |
+| GET /auth/sessions | Solo sesiones vigentes del propietario, sin secretos |
+| DELETE /auth/sessions/{sid} | Propietario + CSRF; cierre individual |
+| POST /auth/reauthenticate | Bearer + clave actual + CSRF, hasta 5 intentos/15 min |
+| POST /auth/logout-all | Bearer + reautenticación de últimos 5 minutos + CSRF |
+| GET /admin/users/locks | ADMIN, `locked_only`, `offset`, `limit` (máximo 100) |
+| POST /admin/users/{id}/unlock | ADMIN + reautenticación + motivo, no reactiva cuenta |
+| POST /admin/users/{id}/password-recovery | ADMIN + reautenticación; envía enlace, no fija clave |
+| POST /auth/password/forgot | Email + CSRF; respuesta genérica |
+| POST /auth/password/reset | Token + nueva clave + CSRF; consume y cierra sesiones |
+| POST /auth/password/change | Bearer + clave actual/nueva + CSRF; cierra sesiones |
 
-Configuración y usuarios ya exponen gestión real. Consultas de catálogos están
-filtradas por módulos; sus mutaciones requieren ADMIN. Listas y candidatos requieren
-módulo más asignación por lista. El POST antiguo de candidatos queda solo para ADMIN;
-APODERADO usa `/lists/{id}/candidates`. Ver [contratos actuales](ELECTORAL_WORKFLOWS.md).
+## Bloqueo y recuperación
 
-El dashboard consume métricas reales desde Task 12. Ausencia de token: 401; usuario
-sin permiso: 403; recurso inexistente: 404. Ausencia de afiliación permite guardar.
+Cinco fallos en 15 minutos bloquean nuevos login por 15 minutos; no se extiende
+el bloqueo por seguir intentando durante ese plazo. Login válido o expiración
+reinicia contadores. Hay cuotas compartidas por BD e identificador/IP: 100 por IP
+por operación/15 min, 20 por identificador en login y 5 en recuperación, cambio y
+reauth. IP se toma de `request.client`; ejecutar Uvicorn con `--no-proxy-headers`
+en local. Tras proxy, restringir proxy headers a IPs realmente confiables y asegurar
+que el proxy reemplace cabeceras del cliente; nunca usar `--forwarded-allow-ips='*'`.
 
-## JWT y contraseñas
+Los errores de credenciales no revelan cuenta inexistente/inactiva/bloqueada.
+Se verifica hash ficticio para cuentas ausentes; login/forgot compensan caminos
+rápidos hasta al menos 350–379 ms. No es garantía de tiempo constante bajo carga;
+medir nuevamente en el servidor de producción. Las cuotas retornan 429 uniforme.
+Las colisiones de email normalizado legado fallan cerradas y requieren resolución
+administrativa; no se elige una identidad arbitraria.
 
-Se conserva passlib/bcrypt y el JWT firmado con la clave de entorno. El algoritmo
-predeterminado es HS256; el access token vence a los 30 minutos por defecto.
-Se exigen `exp`, `sub` y `type=access`, se valida la firma y se consulta el usuario
-activo en BD en cada request. El claim de rol no concede permisos por sí mismo.
+Forgot no cambia contraseña, bloqueo ni sesiones. Cooldown de 60 segundos y cuota
+de 5/15 minutos por identificador, sin invalidar enlaces previos. Tokens independientes opacos de 32 bytes,
+digest en tabla exclusiva, 30 minutos de vigencia y versión de credenciales.
+GET no consume. Un POST válido serializado por usuario cambia hash, consume todos
+los resets, limpia bloqueo temporal y revoca sesiones. Nunca reactiva una cuenta.
+Una notificación queda en outbox; un fallo SMTP posterior no revierte el cambio.
 
-La API conserva el campo `refresh_token` por compatibilidad, pero no tiene endpoint
-de renovación, rotación ni revocación. El frontend no lo persiste ni lo usa.
-Logout elimina la sesión local; un access token copiado previamente sigue válido
-hasta vencer o desactivar al usuario. Refresh y revocación quedan para otra tarea.
+El enlace lleva token en fragmento, se captura en memoria y se retira de historial
+al abrir. La pantalla no carga fuentes/analítica externas. En el hosting servir SPA
+con `Cache-Control: no-store` para `/restablecer-clave`; Vite local ya entrega HTML
+con `Cache-Control: no-store`. No registrar cuerpos ni URLs completas en proxies/analítica.
 
-## Sesión y navegación frontend
+## Contraseñas
 
-Zustand mantiene usuario, access token, autenticación y carga. Al iniciar o cambiar
-el token en otra pestaña se consulta `/auth/me` antes de habilitar las rutas.
-`api.ts` agrega Bearer a JSON y uploads y, ante 401, limpia localStorage y Zustand.
-Un 403 conserva la sesión. Las respuestas anteriores a logout/nuevo login no pueden
-restaurar ni cerrar una sesión posterior. No se almacena la contraseña.
+Nuevas claves: 15–128 caracteres Unicode, espacios y pegado permitidos; sin reglas
+arbitrarias de mezcla ni caducidad periódica. Lista local de 10.015 claves comunes,
+fuente/licencia y actualización en `backend/app/core/COMMON_PASSWORDS.md`. Rechaza
+además secuencias de un único carácter repetido; no es un catálogo
+completo de filtraciones. Nunca envía claves a servicios externos.
 
-| Ruta | Acceso |
-| --- | --- |
-| `/login` | Público; una sesión validada redirige a dashboard. |
-| `/dashboard` | ADMIN y APODERADO. |
-| `/padron` | ADMIN. |
-| `/listas` | Ambos roles; listas asignadas, creación y detalle con plantilla versionada. |
-| `/candidatos` | Ambos roles; acceso al flujo de carga contextual desde listas. |
-| `/candidatos/revision` | ADMIN. |
-| `/403` | Sesión válida, layout y enlace para regresar. |
+Argon2id (64 MiB, 3 iteraciones, 4 vías) para nuevos hashes; bcrypt legado verificable
+y rehash al ingreso válido. Una clave heredada corta sigue pudiendo iniciar sesión;
+las nuevas reglas se aplican en alta/cambio/reset. Bcrypt histórico solo distingue
+los primeros 72 bytes; tras rehash Argon2id se conserva el texto exacto ingresado.
+No se altera un hash sin conocer la clave correcta.
 
-La navegación ADMIN incluye Configuración y Apoderados. Ambos roles tienen detalle
-de listas, carga contextual y validaciones. Mostrar/ocultar contraseña y recuperación
-asistida están disponibles en login; `SUPPORT_CONTACT` configura un contacto opcional.
+La edición ADMIN rechaza `password` por API/UI; recuperación desde **Seguridad de
+cuenta**. El alta manual devuelve 410: las cuentas nuevas de APODERADO se crean solo al
+aceptar invitaciones. No existe alta pública sin enlace ni creación de ADMIN.
 
-## Usuarios y prueba manual
+## Correo, operación y pruebas
 
-El bootstrap usa `INITIAL_ADMIN_EMAIL`/`INITIAL_ADMIN_PASSWORD` desde el entorno local.
-Las claves del seed solo están en `backend/.env`. La gestión de apoderados permite alta,
-edición, módulos, activación y restablecimiento sin mostrar hashes ni claves guardadas.
+Ver [operación de autenticación y SMTP](AUTH_OPERATIONS.md), ejemplos de entorno
+en raíz/backend/frontend, y [informe 16–19](task/INFORME_16_19.md).
 
-Para probar: ADMIN configura elección/cargo/reglas, crea un apoderado con módulos;
-APODERADO crea una lista, guarda un candidato y consulta sus tres controles. Probar
-revocación de asignaciones y acceso directo a `/configuracion` con rol APODERADO.
-El [recorrido detallado](ELECTORAL_WORKFLOWS.md) explica datos de prueba y limitaciones.
+## Invitaciones y primer acceso (Tasks 20–21)
 
-## Verificación automatizada
+ADMIN usa `GET/POST /admin/invitations` (listado paginado de 25, máximo 100) y
+`POST /admin/invitations/{id}/resend|cancel`. Las mutaciones requieren CSRF,
+sesión ADMIN y reautenticación reciente. Solo APODERADO; el cuerpo de alta contiene
+email y módulos, nunca contraseña, rol elegido por el cliente ni enlace de retorno.
 
-Backend (desde `backend/` con entorno activado):
+La invitación existe separada de User, con email normalizado único, digest SHA-256,
+invitador, módulos, generación y estado. La vigencia predeterminada es 48 horas;
+cuota por ADMIN de 20 operaciones/hora y cooldown de envío de 60 segundos. Reenvío
+rota el secreto de 32 bytes, cancela los correos pendientes anteriores y conserva
+historial mediante generación/auditoría. Cancelar invalida aceptación y correos
+pendientes. `expired` se deriva del vencimiento; SMTP y aceptación son estados
+independientes. Un correo ya aceptado por SMTP no puede retirarse del buzón,
+pero su enlace invalidado deja de servir.
 
-```bash
-python -m pytest -q
-alembic current
-alembic heads
-```
+`POST /auth/invitations/inspect` recibe el token en body y devuelve solamente email,
+rol y vencimiento. No consume ni crea cuenta/sesión. `POST /auth/invitations/accept`
+recibe token, full_name, username y password; rechaza campos extra como email,
+rol, módulos o activación. Ambos requieren CSRF y cuotas por IP; aceptación también
+limita por digest del identificador. Token de reset, refresh o JWT no sirve como invitación.
 
-Frontend (desde `frontend/`):
+La aceptación bloquea invitador e invitación, revalida ADMIN activo, catálogos y reglas
+habilitados. En una transacción crea User con Argon2id y `email_verified_at`, módulos,
+auditoría y consumo del enlace. No asigna listas ni crea sesión automáticamente.
+El destinatario inicia sesión normalmente. Si otro ADMIN reemplazó la invitación,
+el enlace previo se rechaza aun tras una carrera. Una cuenta existente —activa o
+inactiva— no se sobrescribe ni reactiva por invitación.
 
-```bash
-npm ci
-npm run test
-npm run build
-npm run lint
-```
+La página `/invitacion` captura solo su fragmento, lo elimina del historial y lo
+conserva en memoria; recargar requiere reabrir el correo. No envía token por query,
+no carga analítica externa ni cambia silenciosamente otra sesión abierta. Solicita
+nombre, usuario (3–50 letras ASCII/números/punto/guion/guion bajo), contraseña y
+confirmación, con email fijo. `/seguridad` muestra perfil, verificación y sesiones.
 
-Vitest cubre restauración, logout, 401 de JSON/uploads, 403, respuestas obsoletas y
-errores de login. Los tests backend mantienen Task 02B y agregan usuario inactivo,
-JWT incompleto/firma inválida, rol de BD, autoría e aislamiento por módulos.
+Usuarios legacy conservan datos, roles, módulos y listas; `email_verified_at=NULL`
+indica ausencia de verificación histórica y no bloquea acceso. Cambio de email y
+alta de ADMIN están fuera de alcance: PUT de apoderado rechaza cambiar el correo.
+El índice único de `lower(btrim(email))` evita nuevas colisiones. La migración aborta
+si detecta duplicados normalizados; nunca fusiona ni elimina cuentas automáticamente.
 
-## Evolución planificada del login
-
-Tasks 16–21 documentan sesiones revocables, refresh rotativo, SMTP, recuperación,
-bloqueo/desbloqueo e invitaciones con primer acceso. Están pendientes: no cambian
-las limitaciones actuales descritas arriba. Ver [plan y contratos futuros](task/LOGIN_SEGURIDAD.md).
+Ver [operación](AUTH_OPERATIONS.md) y [aceptación consolidada](task/INFORME_16_21.md).

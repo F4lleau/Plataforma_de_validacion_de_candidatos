@@ -1,3 +1,5 @@
+import InvitationsAdmin from "./InvitationsAdmin";
+import { Link } from "react-router-dom";
 import { PageHeading } from "../components/forms/FormUI";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -46,14 +48,26 @@ function Editor({ user, changed }: { user?: Apoderado; changed: () => void }) {
       className="space-y-4"
       onSubmit={f.handleSubmit(async (v) => {
         try {
+          if (!user)
+            await save("/auth/reauthenticate", { password: v.password });
           await save(
-            `/users/${user?.id ?? ""}`,
-            { ...v, password: v.password || null, modules },
+            user ? `/users/${user.id}` : "/admin/invitations",
+            user
+              ? {
+                  username: v.username,
+                  email: v.email,
+                  full_name: v.full_name,
+                  is_active: v.is_active,
+                  modules,
+                }
+              : { email: v.email, modules },
             user ? "PUT" : "POST",
           );
           setError("");
           setMessage(
-            "Apoderado guardado. Los cambios de acceso son inmediatos.",
+            user
+              ? "Apoderado guardado. Los cambios de acceso son inmediatos."
+              : "Invitación en cola. El destinatario completará sus datos y contraseña.",
           );
           f.setValue("password", "");
           changed();
@@ -63,46 +77,45 @@ function Editor({ user, changed }: { user?: Apoderado; changed: () => void }) {
       })}
     >
       <div className="grid gap-3 sm:grid-cols-2">
-        {(["full_name", "username", "email", "password"] as const).map(
-          (k, i) => (
-            <Field
-              key={k}
-              label={
-                [
-                  "Nombre completo",
-                  "Usuario",
-                  "Correo electrónico",
-                  user ? "Nueva contraseña (opcional)" : "Contraseña inicial",
-                ][i]
+        {(user
+          ? (["full_name", "username", "email"] as const)
+          : (["email", "password"] as const)
+        ).map((k) => (
+          <Field
+            key={k}
+            label={
+              {
+                full_name: "Nombre completo",
+                username: "Usuario",
+                email: "Correo electrónico",
+                password: "Tu contraseña de administrador",
+              }[k]
+            }
+          >
+            <input
+              className="field"
+              type={
+                k === "password" ? "password" : k === "email" ? "email" : "text"
               }
-            >
-              <input
-                className="field"
-                type={
-                  k === "password"
-                    ? "password"
-                    : k === "email"
-                      ? "email"
-                      : "text"
-                }
-                autoComplete={k === "password" ? "new-password" : "off"}
-                required={k !== "password" || !user}
-                minLength={k === "password" ? 10 : 1}
-                maxLength={k === "password" ? 72 : 255}
-                {...f.register(k)}
-              />
-            </Field>
-          ),
-        )}
+              readOnly={!!user && k === "email"}
+              autoComplete={k === "password" ? "current-password" : "off"}
+              required
+              maxLength={k === "password" ? 1024 : k === "username" ? 50 : 255}
+              {...f.register(k)}
+            />
+          </Field>
+        ))}
       </div>
-      <label className="flex gap-2">
-        <input type="checkbox" {...f.register("is_active")} />
-        Cuenta activa
-      </label>
+      {user && (
+        <label className="flex gap-2">
+          <input type="checkbox" {...f.register("is_active")} />
+          Cuenta activa
+        </label>
+      )}
       <p className="text-sm text-muted-foreground">
-        Desactivar retira el acceso en la próxima solicitud y conserva las
-        listas. Una contraseña nueva reemplaza la anterior. Entregala por el
-        canal acordado con el apoderado.
+        {user
+          ? "Desactivar retira el acceso y conserva las listas. Para recuperar acceso, enviá un enlace desde Seguridad de cuenta. El correo no se modifica desde esta pantalla."
+          : "El destinatario recibirá un enlace de un solo uso. Elegirá su nombre y contraseña al aceptarlo. Asignar módulos no asigna listas automáticamente."}
       </p>
       <fieldset className="space-y-3 rounded-md border p-3">
         <legend>Módulos habilitados</legend>
@@ -215,7 +228,7 @@ function Editor({ user, changed }: { user?: Apoderado; changed: () => void }) {
         message={message}
       />
       <button className="action" disabled={f.formState.isSubmitting}>
-        Guardar apoderado
+        {user ? "Guardar apoderado" : "Enviar invitación"}
       </button>
     </form>
   );
@@ -224,6 +237,7 @@ export default function Usuarios() {
   const [revision, refresh] = useState(0);
   const data = useRemote<Apoderado[]>("/users/", revision);
   const [selected, setSelected] = useState<Apoderado>();
+  const [tab, setTab] = useState<"accounts" | "invitations">("accounts");
   return (
     <div className="space-y-6">
       <PageHeading
@@ -231,37 +245,77 @@ export default function Usuarios() {
         title="Gestión de apoderados"
         description="Administrá las cuentas, los módulos habilitados y sus asignaciones."
       />
+      <Link className="secondary inline-flex" to="/seguridad">
+        Bloqueos y recuperación de cuentas
+      </Link>
       <Feedback error={data.error} />
-      <Panel title="Cuentas">
-        <button className="secondary" onClick={() => setSelected(undefined)}>
-          Nuevo apoderado
+      <div className="flex gap-2" aria-label="Vistas de apoderados">
+        <button
+          className={tab === "accounts" ? "action" : "secondary"}
+          aria-pressed={tab === "accounts"}
+          onClick={() => setTab("accounts")}
+        >
+          Cuentas
         </button>
-        {data.loading && <p role="status">Cargando...</p>}
-        {data.data?.map((u) => (
-          <div
-            key={u.id}
-            className="flex flex-wrap items-center justify-between gap-3 border-b py-3"
+        <button
+          className={tab === "invitations" ? "action" : "secondary"}
+          aria-pressed={tab === "invitations"}
+          onClick={() => {
+            setTab("invitations");
+            setSelected(undefined);
+          }}
+        >
+          Invitaciones
+        </button>
+      </div>
+      {tab === "accounts" ? (
+        <Panel title="Cuentas">
+          <button
+            className="secondary"
+            onClick={() => {
+              setSelected(undefined);
+              setTab("invitations");
+            }}
           >
-            <div>
-              <p className="font-semibold">{u.full_name}</p>
-              <p className="text-sm">
-                {u.email} · {u.is_active ? "Activo" : "Inactivo"} ·{" "}
-                {u.modules.filter((m) => m.enabled).length} módulos
-              </p>
+            Invitar apoderado
+          </button>
+          {data.loading && <p role="status">Cargando...</p>}
+          {data.data?.map((u) => (
+            <div
+              key={u.id}
+              className="flex flex-wrap items-center justify-between gap-3 border-b py-3"
+            >
+              <div>
+                <p className="font-semibold">{u.full_name}</p>
+                <p className="text-sm">
+                  {u.email} · {u.is_active ? "Activo" : "Inactivo"} ·{" "}
+                  {u.email_verified_at
+                    ? "Correo verificado"
+                    : "Correo sin verificación histórica"}{" "}
+                  · {u.modules.filter((m) => m.enabled).length} módulos
+                </p>
+              </div>
+              <button className="secondary" onClick={() => setSelected(u)}>
+                Editar {u.full_name}
+              </button>
             </div>
-            <button className="secondary" onClick={() => setSelected(u)}>
-              Editar {u.full_name}
-            </button>
-          </div>
-        ))}
-      </Panel>
-      <Panel title={selected ? "Editar apoderado" : "Crear apoderado"}>
-        <Editor
-          key={selected?.id ?? "new"}
-          user={selected}
+          ))}
+        </Panel>
+      ) : (
+        <InvitationsAdmin
+          revision={revision}
           changed={() => refresh((v) => v + 1)}
         />
-      </Panel>
+      )}
+      {(selected || tab === "invitations") && (
+        <Panel title={selected ? "Editar apoderado" : "Invitar apoderado"}>
+          <Editor
+            key={selected?.id ?? "new"}
+            user={selected}
+            changed={() => refresh((v) => v + 1)}
+          />
+        </Panel>
+      )}
     </div>
   );
 }

@@ -1,6 +1,7 @@
 # Plan de login, seguridad de cuentas e invitaciones
 
-Fecha: 20/09/2026. **Planificación documental; Tasks 16–21 aún no implementadas.**
+Fecha: 20/09/2026. **Plan original del 20/09; Tasks 16–19 implementadas localmente el 21/09/2026.**
+Ver [evidencia consolidada](INFORME_16_21.md); Tasks 20–21 implementadas y verificadas localmente.
 Fuente: pedido del usuario de JWT/estándares, SMTP, recuperación, bloqueo por
 reintentos, desbloqueo ADMIN e invitación con enlace único para completar datos y
 contraseña. Amplía Tasks 03/05/15; no procede del PDF electoral.
@@ -22,22 +23,22 @@ Evidencia: `backend/app/core/security.py`, `core/config.py`, `services/auth_serv
 `api/v1/endpoints/auth.py`; `frontend/src/stores/auth.store.ts`,
 `services/api.ts`, `pages/Login.tsx`, `pages/Usuarios.tsx`. Rutas backend bajo `backend/app/`.
 
-No se presenta el login actual como carente de JWT ni el refresh emitido como
-renovación implementada. Se preservan usuarios, datos electorales y permisos.
+La tabla anterior es la auditoría histórica al planificar; el contrato vigente está en
+[autenticación](../AUTHENTICATION.md). Se preservan usuarios, datos electorales y permisos.
 
 ## Orden y cobertura
 
 | Capacidad | Requisito | Task | Estado |
 | --- | --- | --- | --- |
-| AUTH-01 | JWT reforzado, refresh rotativo, sesiones revocables, cookies/CSRF | [16](16-jwt-sesiones-seguras/task.md) | Pendiente |
-| AUTH-02 | SMTP, plantillas, outbox/worker y capturador local | [17](17-smtp-correo-transaccional/task.md) | Pendiente |
-| AUTH-03 | Límites de login y bloqueo temporal por reintentos | [18](18-bloqueo-desbloqueo-cuentas/task.md) | Pendiente |
-| AUTH-04 | ADMIN consulta/desbloquea cuentas con auditoría | [18](18-bloqueo-desbloqueo-cuentas/task.md) | Pendiente |
-| AUTH-05 | Recuperación por correo con token de un uso | [19](19-recuperacion-cambio-clave/task.md) | Pendiente |
-| AUTH-06 | Cambio de clave, política común, migración de hash y cierre de sesiones | [19](19-recuperacion-cambio-clave/task.md) | Pendiente |
-| AUTH-07 | Invitaciones ADMIN, reenvío, expiración y cancelación | [20](20-invitaciones-onboarding/task.md) | Pendiente |
-| AUTH-08 | Primer acceso, datos propios, email verificado y contraseña inicial | [20](20-invitaciones-onboarding/task.md) | Pendiente |
-| AUTH-09 | E2E, regresión electoral, migración y operación segura | [21](21-aceptacion-seguridad-login/task.md) | Pendiente |
+| AUTH-01 | JWT reforzado, refresh rotativo, sesiones revocables, cookies/CSRF | [16](16-jwt-sesiones-seguras/task.md) | Implementada localmente |
+| AUTH-02 | SMTP, plantillas, outbox/worker y capturador local | [17](17-smtp-correo-transaccional/task.md) | Implementada localmente |
+| AUTH-03 | Límites de login y bloqueo temporal por reintentos | [18](18-bloqueo-desbloqueo-cuentas/task.md) | Implementada localmente |
+| AUTH-04 | ADMIN consulta/desbloquea cuentas con auditoría | [18](18-bloqueo-desbloqueo-cuentas/task.md) | Implementada localmente |
+| AUTH-05 | Recuperación por correo con token de un uso | [19](19-recuperacion-cambio-clave/task.md) | Implementada localmente |
+| AUTH-06 | Cambio de clave, política común, migración de hash y cierre de sesiones | [19](19-recuperacion-cambio-clave/task.md) | Implementada localmente |
+| AUTH-07 | Invitaciones ADMIN, reenvío, expiración y cancelación | [20](20-invitaciones-onboarding/task.md) | Implementada localmente |
+| AUTH-08 | Primer acceso, datos propios, email verificado y contraseña inicial | [20](20-invitaciones-onboarding/task.md) | Implementada localmente |
+| AUTH-09 | E2E, regresión electoral, migración y operación segura | [21](21-aceptacion-seguridad-login/task.md) | Implementada localmente |
 
 Ejecutar 16 → 17 → 18 → 19 → 20 → 21. El esquema de tokens, normalización de emails,
 eventos y política de cuenta se define en 16 para evitar implementaciones divergentes.
@@ -120,7 +121,7 @@ Un SMTP que acepta un mensaje no confirma entrega al buzón. El flujo mantiene
 estado de dominio y estado de entrega separados. Logs y auditoría registran IDs,
 actor, resultado y razón sanitizada; nunca contraseña, cookie, token o enlace.
 
-## Contratos previstos, no existentes todavía
+## Contratos implementados localmente (16–21)
 
 Prefijo API `/api/v1`. Los nombres se consolidarán antes de implementar; métodos
 con efectos usan POST/DELETE y todas las operaciones tienen límites y validación.

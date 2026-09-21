@@ -1,4 +1,4 @@
-from datetime import date
+from datetime import date, datetime
 from typing import Literal
 from pydantic import (
     BaseModel,
@@ -92,24 +92,18 @@ class ModuleInput(Input):
 
 
 class ApoderadoInput(Input):
+    model_config = ConfigDict(extra="forbid", str_strip_whitespace=False)
     username: str = Field(min_length=3, max_length=50)
     email: EmailStr
     full_name: str = Field(min_length=1, max_length=255)
-    password: str | None = Field(default=None, min_length=10, max_length=72)
+    password: str | None = Field(default=None, min_length=15, max_length=128)
     is_active: bool = True
     modules: list[ModuleInput] = Field(default_factory=list, max_length=100)
 
     @field_validator("username", "email")
     @classmethod
     def normalize(cls, value):
-        return value.lower()
-
-    @field_validator("password")
-    @classmethod
-    def password_bytes(cls, value):
-        if value and len(value.encode()) > 72:
-            raise ValueError("Contraseña demasiado larga.")
-        return value
+        return value.strip().lower()
 
 
 class ListInput(Input):
@@ -179,6 +173,7 @@ class ModuleOutput(ModuleInput):
 
 
 class ApoderadoOutput(BaseModel):
+    email_verified_at: datetime | None = None
     id: int
     username: str
     email: str

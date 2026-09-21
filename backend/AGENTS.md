@@ -192,3 +192,21 @@ están implementados y verificados localmente. El contenido enviado queda en lec
 Las reglas demo y RENAPER pendiente impiden afirmar aprobación institucional.
 Ver `docs/SUBMISSION_REPORTING_AUDIT.md`, `docs/MANUAL_ADMIN.md`,
 `docs/MANUAL_APODERADO.md` y `docs/task/INFORME_10_15.md` desde la raíz.
+
+## Actualización Tasks 16–19 (21/09/2026)
+
+El contrato vigente incorpora access JWT con sid, refresh opaco rotativo HttpOnly,
+sesiones revocables, CSRF, Argon2id (bcrypt legacy), bloqueo temporal, desbloqueo ADMIN,
+recuperación/cambio de clave y SMTP mediante outbox cifrada/worker. Ver
+`docs/AUTHENTICATION.md` y `docs/AUTH_OPERATIONS.md` desde raíz: reemplazan las
+limitaciones históricas de login/clave descritas en secciones previas. Invitaciones (Task 20) ya implementadas: reemplazan el alta manual. ADMIN no fija
+contraseñas ajenas ni modifica correos sin verificación.
+
+## Tasks 20–21: invitaciones y aceptación local
+
+Alta por invitación de un uso (48 h), reenvío/cancelación ADMIN, primer acceso con
+perfil/contraseña, email verificado y permisos mínimos. Las cuentas existentes se
+conservan sin afirmar verificación histórica. Migración `a72e903d418f`; Mailpit para
+pruebas, SMTP externo aún pendiente. Variables en `backend/.env.example` desde raíz.
+Ver [contratos](../docs/AUTHENTICATION.md), [operación](../docs/AUTH_OPERATIONS.md)
+y [informe consolidado](../docs/task/INFORME_16_21.md).

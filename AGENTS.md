@@ -81,6 +81,20 @@ Se mantiene la separación de responsabilidades: endpoint -> service -> reposito
 - Validar permisos y roles en backend.
 - Documentar cambios relevantes en README y docs cuando modifiquen setup, endpoints, dependencias o flujos de negocio.
 
+## Dependencias locales
+
+Con Docker iniciado, ejecutar desde la raíz del proyecto:
+
+```bash
+docker compose -f local-deps.yml up -d --wait
+```
+
+Levanta PostgreSQL y Mailpit (SMTP en `localhost:1025`, bandeja en
+<http://localhost:8025>, puertos predeterminados). En una instalación nueva sin
+`.env` ni `backend/.env`, ejecutar primero `python3 scripts/init_local_env.py`;
+conservar la configuración existente. La API, el frontend y el worker de correo
+se inician por separado; ver [operación local](docs/AUTH_OPERATIONS.md).
+
 ## Workflow de Git
 
 - Trabajar sobre la rama `develop` del repositorio.

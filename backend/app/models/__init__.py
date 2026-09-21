@@ -15,22 +15,31 @@ from app.models.user import User
 from app.models.user_module import UserModule
 
 __all__ = [
-	"AffiliateImportBatch",
-	"AuditLog",
-	"Candidate",
-	"CandidateValidation",
-	"Election",
-	"ElectoralList",
-	"ListCandidate",
-	"ListRoleDefinition",
-	"ListValidation",
-	"Municipality",
-	"Office",
-	"PartyMember",
-	"Person",
-	"User",
-	"UserModule",
+    "AffiliateImportBatch",
+    "AuditLog",
+    "Candidate",
+    "CandidateValidation",
+    "Election",
+    "ElectoralList",
+    "ListCandidate",
+    "ListRoleDefinition",
+    "ListValidation",
+    "Municipality",
+    "Office",
+    "PartyMember",
+    "Person",
+    "User",
+    "UserModule",
 ]
 
 from app.models.election_rule import ElectionRule
 from app.models.list_assignment import ListAssignment
+from app.models.auth_session import (
+    AuthSession,
+    RefreshCredential,
+    PasswordReset,
+    AuthRateLimit,
+    MailOutbox,
+)
+
+from app.models.invitation import Invitation

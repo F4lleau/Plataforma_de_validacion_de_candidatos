@@ -1,4 +1,7 @@
-export const API_BASE_URL = "http://localhost:8000/api/v1";
+import type { LoginResponse } from "./auth.service";
+export const API_BASE_URL =
+  import.meta.env.VITE_API_URL ||
+  `http://${typeof window !== "undefined" ? window.location.hostname : "localhost"}:8000/api/v1`;
 
 export class ApiError extends Error {
   readonly status: number;
@@ -11,9 +14,102 @@ export class ApiError extends Error {
 }
 
 let onUnauthorized: (() => void) | undefined;
+let onSession: ((session: LoginResponse) => void) | undefined;
+let accessToken: string | null = null;
+let generation = 0;
+let renewal: Promise<LoginResponse> | null = null;
+const channel =
+  typeof window !== "undefined" && typeof BroadcastChannel !== "undefined"
+    ? new BroadcastChannel("je-session")
+    : null;
 
 export function setUnauthorizedHandler(handler: () => void) {
   onUnauthorized = handler;
+}
+export function setSessionHandler(handler: (session: LoginResponse) => void) {
+  onSession = handler;
+}
+export function getAccessToken() {
+  return accessToken;
+}
+export function setAccessToken(token: string | null) {
+  accessToken = token;
+  generation++;
+}
+export function clearSession(broadcast = true) {
+  setAccessToken(null);
+  onUnauthorized?.();
+  if (broadcast) channel?.postMessage({ type: "logout" });
+}
+channel?.addEventListener("message", (event) => {
+  if (event.data?.type === "logout") clearSession(false);
+  // A different tab logged in: discard the previous identity, restore on reload.
+  if (event.data?.type === "login") clearSession(false);
+});
+
+export async function sessionLock<T>(work: () => Promise<T>): Promise<T> {
+  if (typeof navigator !== "undefined" && navigator.locks)
+    return navigator.locks.request("je-auth-cookie", work);
+  return work();
+}
+
+async function csrfToken(): Promise<string> {
+  const response = await fetch(`${API_BASE_URL}/auth/csrf`, {
+    credentials: "include",
+  });
+  if (!response.ok)
+    throw new ApiError(
+      "No se pudo iniciar la operación segura.",
+      response.status,
+    );
+  return (await response.json()).csrf_token;
+}
+
+export function refreshSession(): Promise<LoginResponse> {
+  if (renewal) return renewal;
+  const version = generation;
+  renewal = sessionLock(async () => {
+    if (version !== generation) throw new ApiError("La sesión cambió.", 401);
+    const result = await request<LoginResponse>(
+      "/auth/refresh",
+      { method: "POST" },
+      false,
+    );
+    if (version !== generation) throw new ApiError("La sesión cambió.", 401);
+    accessToken = result.access_token;
+    onSession?.(result);
+    return result;
+  }).finally(() => {
+    renewal = null;
+  });
+  return renewal;
+}
+
+export async function loginSession(
+  email: string,
+  password: string,
+): Promise<LoginResponse> {
+  const version = ++generation;
+  return sessionLock(async () => {
+    const result = await request<LoginResponse>(
+      "/auth/login",
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      },
+      false,
+    );
+    if (version !== generation) throw new ApiError("La sesión cambió.", 401);
+    accessToken = result.access_token;
+    channel?.postMessage({ type: "login" });
+    return result;
+  });
+}
+
+export async function logoutSession(): Promise<void> {
+  clearSession();
+  await sessionLock(() => request("/auth/logout", { method: "POST" }, false));
 }
 
 async function request<T>(
@@ -21,15 +117,20 @@ async function request<T>(
   options: RequestInit,
   authenticated: boolean,
   binary = false,
+  retried = false,
 ): Promise<T> {
-  const token = authenticated ? localStorage.getItem("access_token") : null;
+  const token = authenticated ? accessToken : null;
+  const version = generation;
   const headers = new Headers(options.headers);
   if (token) headers.set("Authorization", `Bearer ${token}`);
 
+  const unsafe = !["GET", "HEAD"].includes(options.method ?? "GET");
   let response: Response;
   try {
+    if (unsafe) headers.set("X-CSRF-Token", await csrfToken());
     response = await fetch(`${API_BASE_URL}${endpoint}`, {
       ...options,
+      credentials: "include",
       headers,
     });
   } catch (error) {
@@ -41,16 +142,28 @@ async function request<T>(
     );
   }
 
-  // Una respuesta antigua no debe cerrar una sesión iniciada después.
-  if (
-    response.status === 401 &&
-    authenticated &&
-    token === localStorage.getItem("access_token")
-  ) {
-    localStorage.removeItem("access_token");
-    localStorage.removeItem("refresh_token");
-    onUnauthorized?.();
+  // Authentication fails before domain handlers run: retry only a 401, once.
+  if (response.status === 401 && authenticated && version === generation) {
+    if (!retried) {
+      try {
+        if (token === accessToken) await refreshSession();
+        if (version !== generation)
+          throw new ApiError("La sesión cambió.", 401);
+        return await request<T>(endpoint, options, authenticated, binary, true);
+      } catch (error) {
+        if (
+          error instanceof ApiError &&
+          error.status === 401 &&
+          version === generation
+        )
+          clearSession();
+        throw error;
+      }
+    }
+    clearSession();
   }
+  if (authenticated && version !== generation)
+    throw new ApiError("La sesión cambió.", 401);
   if (!response.ok) {
     const body: unknown = await response.json().catch(() => null);
     const detail =

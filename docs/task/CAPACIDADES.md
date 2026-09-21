@@ -11,7 +11,7 @@ obligación textual adicional. Cada ID aparece en al menos una consigna.
 | CAP-02 | Catálogos reales de elecciones, Diputados/Consejos y municipios, con habilitación. | pp. 2, 8, 11 | API y UI reales; catálogos activos por alcance. | 04 |
 | CAP-03 | Elección activa, nombre de proceso, apertura/cierre de carga y guardado de configuración. | pp. 7–8 | Configuración y ventana inclusiva Argentina implementadas. | 04 |
 | CAP-04 | Reglas parametrizadas por cargo: edades, afiliación, RENAPER, paridad, alternancia y cantidad. | pp. 8, 11 | Reglas versionadas configurables; criterios institucionales pendientes. | 04; ejecución 08–10 |
-| CAP-05 | Alta/edición/activación/desactivación de apoderados; nombre/email/contraseña inicial segura. | pp. 5–6 | Gestión real de cuentas y recuperación asistida. | 05 |
+| CAP-05 | Alta/edición/activación/desactivación de apoderados; nombre/email/contraseña inicial segura. | pp. 5–6 | Gestión de cuentas, invitación/primer acceso y recuperación SMTP. | 05 |
 | CAP-06 | Asignar uno/ambos módulos y municipio por elección; hacer efectiva revocación y aislamiento. | pp. 2, 6, 8–9 | Módulo + asignación explícita; aislamiento y revocación verificados. | 05, 07 |
 | CAP-07 | Importar Excel oficial de 18 columnas, controlar lotes/vigencia y errores sin perder padrón previo. | p. 7 | XLSX de 18 campos, lote atómico y concurrencia; muestra oficial pendiente. | 06 |
 | CAP-08 | Consulta de padrón con nombre/apellido/matrícula, filtros y tabla; total afiliados, secciones, última actualización. | p. 7 | Consulta/paginación/filtros/indicadores reales. | 06 |
@@ -62,10 +62,11 @@ la integración autorizada de identidad. La ausencia en padrón siempre conserva
 
 La solicitud del usuario del 20/09/2026 agrega AUTH-01–AUTH-09: JWT/sesiones,
 SMTP, bloqueo/desbloqueo, recuperación/cambio de clave e invitación/primer acceso.
-Son capacidades **planificadas**, trazadas en [LOGIN_SEGURIDAD.md](LOGIN_SEGURIDAD.md)
-y asignadas a Tasks 16–21. No se atribuyen al PDF ni modifican retrospectivamente
+AUTH-01–06 están implementadas localmente (Tasks 16–19); AUTH-07–09 siguen
+implementados y verificados localmente (20–21); habilitación SMTP externa pendiente. Ver [LOGIN_SEGURIDAD.md](LOGIN_SEGURIDAD.md) y
+[evidencia 16–19](INFORME_16_19.md). No se atribuyen al PDF ni modifican retrospectivamente
 el cierre del alcance anterior.
 
 En CAP-01, «revocación» de la evidencia previa se refiere a cambios de acceso por
 usuario/rol/asignación y limpieza del cliente; no equivale a revocación individual
-de JWT/sesiones en servidor. Esa capacidad sigue pendiente en Task 16.
+de JWT/sesiones en servidor. Task 16 incorpora ahora la revocación individual en servidor, ver informe 16–19.

@@ -1,26 +1,25 @@
 # Task 20 — Estado
 
-- Estado: **Planificada — pendiente de implementación**.
-- Fecha de planificación: 20/09/2026.
-- Rama prevista: `develop`.
-- Dependencias: 16, 17, 18, 19, 05.
-- [Consigna y checklist](task.md) · [Plan común](../LOGIN_SEGURIDAD.md).
+- Estado: **Completada en alcance local; producción pendiente de habilitación externa**.
+- Fecha: 21/09/2026. Rama: `develop`. Sin commit/push.
+- [Checklist](task.md) · [Informe](report.md) · [Matriz y evidencia](../INFORME_16_21.md).
 
-## Estado auditado
+## Auditoría y ejecución
 
-El alta actual crea APODERADO activo con contraseña definida por ADMIN. Username/full_name/password_hash son obligatorios. La nueva invitación requiere diseñar migración y no crear usuarios ficticios para satisfacer esos campos.
+Se preservaron los cambios no commiteados de Tasks 16–19 y los datos locales.
+Las dependencias ya aportaban JWT/sesiones, CSRF, SMTP/outbox, bloqueo y reset.
+El alta manual y falta de invitaciones eran las brechas: se sustituyeron con
+invitación separada de User, perfil verificado, módulos vigentes y permiso mínimo.
 
-## Seguimiento
+- [x] Revisión de arquitectura, ramas, dependencias y amenazas.
+- [x] API/UI, migración aditiva y documentación coherentes.
+- [x] Permisos, estados, errores, concurrencia y correo local verificados.
+- [x] Backend 167 tests; frontend 17, build/lint; Alembic y backup/restore.
+- [x] Recorrido navegador/API/Mailpit con cuenta sintética y móviles.
+- [x] Informe y matriz actualizados; entornos reales ignorados.
 
-- [ ] Auditar dependencias al iniciar ejecución y fijar contrato técnico.
-- [ ] Implementar mini tasks y migraciones aplicables.
-- [ ] Verificar seguridad, concurrencia, permisos y experiencia por rol.
-- [ ] Documentar evidencia local y habilitación externa por separado.
-- [ ] Crear report.md al ejecutar y actualizar índice/matriz.
+## Pendientes externos
 
-## Evidencia y dependencias
-
-Esta planificación no incorpora código, migraciones, envíos ni tests nuevos.
-No hay evidencia de implementación de esta task. SMTP externo requiere proveedor,
-remitente/dominio y URL HTTPS configurados; el capturador permite desarrollo local.
-Las decisiones propuestas están en LOGIN_SEGURIDAD.md y DECISIONES.md, D12–D16.
+SMTP autorizado, remitente/dominio, HTTPS real y recepción externa. Mailpit no
+acredita entregabilidad productiva. MFA/passkeys/SSO y cambio de email están fuera
+de este alcance; RENAPER y validación institucional electoral siguen pendientes.

@@ -21,3 +21,5 @@ Se mantienen los contratos API, los permisos y las reglas de validación. Una ob
 ## Verificación
 
 Ejecutar `npm run test`, `npm run build` y `npm run lint` desde `frontend/`. Revisar con datos locales ambos roles, navegación, filtros, controles de acceso, detalle de listas y estados. Comprobar escritorio y móvil, incluido el desplazamiento de tablas y la ausencia de desborde horizontal de la página.
+
+Tasks 16–19: las fuentes usan fallback local; se retiró la carga externa de Google Fonts para que recuperación no solicite recursos a terceros.

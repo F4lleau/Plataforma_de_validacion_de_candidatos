@@ -59,3 +59,7 @@ El índice y D12–D16 vinculan la nueva planificación. No se implementó códi
 no se alteró DB, no se enviaron correos y no se hicieron commit/push en este cambio.
 El «Siguiente paso» de la sección anterior es histórico; para este bloque el inicio
 previsto es Task 16 cuando se solicite su ejecución.
+
+## Ejecución 21/09/2026
+
+Tasks 16–19 implementadas localmente; ver [informe](INFORME_16_19.md). Tasks 20–21 completadas localmente; ver [informe consolidado](INFORME_16_21.md). SMTP externo requiere configuración y aceptación; las invitaciones pendientes se gestionan desde Apoderados.

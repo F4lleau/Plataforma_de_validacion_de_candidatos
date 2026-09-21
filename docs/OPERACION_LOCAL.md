@@ -1,8 +1,8 @@
 # Operación y recuperación local
 
 El [README raíz](../README.md) documenta Docker, entorno Python, instalación frontend,
-migraciones y bootstrap. PostgreSQL 17 es el único servicio Docker necesario. API y Vite
-corren en el host. `reportlab>=4,<5` genera PDF sin navegador/LibreOffice en el servidor.
+migraciones y bootstrap. PostgreSQL 17 y Mailpit corren en Docker. API, worker de correo y Vite
+corren en el host. Ver [operación SMTP y seguridad](AUTH_OPERATIONS.md). `reportlab>=4,<5` genera PDF sin navegador/LibreOffice en el servidor.
 
 ## Verificar
 
@@ -18,8 +18,7 @@ npm run build
 npm run lint
 ```
 
-Migraciones actuales: `e271bb89a403`. Tasks 10–15 reutilizan modelos existentes; no agregan
-una revisión de esquema. Un entorno nuevo debe aplicar la cadena completa con Alembic.
+Migración actual: `6cb192ebc9fe`, sesiones, bloqueos, recuperación y outbox de Tasks 16–19. Un entorno nuevo debe aplicar la cadena completa con Alembic.
 `create_all` se usa solo en fixtures SQLite de tests, no para inicializar la aplicación.
 
 ## Copia de seguridad y prueba de restauración
@@ -52,12 +51,16 @@ se ensayó envío concurrente allí y se eliminó únicamente esa copia.
 - Un lote de padrón inválido no reemplaza el vigente. Corregir/reimportar; no borrar tablas.
 - Un envío repetido retorna el estado ya registrado. No editar estados directamente por SQL.
 - Un error de red puede ocurrir después del commit: recargar antes de repetir altas.
-- 401 invalida sesión; 403 requiere revisar permisos; 409 indica conflicto de estado/plazo.
+- 401 intenta una renovación y luego pide login; 403 requiere revisar permisos; 409 indica conflicto de estado/plazo.
 - Exportación 413: acotar filtros; máximo 50.000 registros, PDF 5.000 listas.
-- `SUPPORT_CONTACT` en `backend/.env` permite mostrar el canal real en login/Ayuda; reiniciar
+- `SUPPORT_CONTACT` en `backend/.env` permite mostrar el canal real en correos/Ayuda; reiniciar
   la API tras cambiarlo. Sin valor, se remite al administrador sin inventar email/teléfono.
 - RENAPER no está configurado. No reemplazar un pendiente por OK ni usar mocks para aprobar.
 - Las fechas de auditoría se filtran por días Argentina y se almacenan UTC. PDF indica UTC.
 
 Ver [guía ADMIN](MANUAL_ADMIN.md), [guía APODERADO](MANUAL_APODERADO.md) y
 [contratos/estados](SUBMISSION_REPORTING_AUDIT.md).
+
+Invitaciones y aceptación Tasks 20–21 usan la misma API/worker/Mailpit. Aplicar
+`alembic upgrade head` (`a72e903d418f`) antes de reiniciar todos los procesos. Ver
+[backup, rollback y colisiones de correo](AUTH_OPERATIONS.md#invitaciones-migración-y-despliegue-coordinado).

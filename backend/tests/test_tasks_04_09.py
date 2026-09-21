@@ -1,4 +1,5 @@
 from datetime import date, timedelta
+from tests.auth_helpers import invite_account
 from io import BytesIO
 import pandas as pd
 import pytest
@@ -199,19 +200,11 @@ def test_account_hash_reset_and_immediate_revoke(client, scenario, db_session):
     old = headers(s["apod"])
     body = {**s["user_body"], "password": "new-password-test-only"}
     r = client.put(f"/api/v1/users/{s['apod'].id}", json=body, headers=h)
-    assert r.status_code == 200 and "password" not in r.text and "hash" not in r.text
-    assert db_session.get(User, s["apod"].id).password_hash != body["password"]
+    assert r.status_code == 422  # Legacy admin password override is closed (Task 19).
     assert (
         client.post(
             "/api/v1/auth/login",
             json={"email": s["apod"].email, "password": "apoderado-password"},
-        ).status_code
-        == 401
-    )
-    assert (
-        client.post(
-            "/api/v1/auth/login",
-            json={"email": s["apod"].email, "password": body["password"]},
         ).status_code
         == 200
     )
@@ -240,11 +233,18 @@ def test_duplicate_user_and_modules_are_atomic(client, scenario, db_session):
     h = headers(s["admin"])
     before = db_session.scalar(select(func.count()).select_from(User))
     body = {**s["user_body"], "password": "test-password-123", "username": "other"}
-    assert client.post("/api/v1/users/", json=body, headers=h).status_code == 409
+    assert client.post("/api/v1/users/", json=body, headers=h).status_code == 410
     assert db_session.scalar(select(func.count()).select_from(User)) == before
     body["email"] = "other@example.com"
     body["modules"] = [body["modules"][0], body["modules"][0]]
-    assert client.post("/api/v1/users/", json=body, headers=h).status_code == 422
+    assert (
+        client.put(
+            f"/api/v1/users/{s['apod'].id}",
+            json={**body, "email": s["apod"].email, "password": None},
+            headers=h,
+        ).status_code
+        == 422
+    )
     assert (
         client.post(
             "/api/v1/users/", json={**body, "role": "admin"}, headers=headers(s["apod"])
@@ -592,7 +592,9 @@ def test_list_pagination_and_forbidden_payload_fields(client, scenario):
     )
 
 
-def test_second_apoderado_same_scope_cannot_open_foreign_list(client, scenario):
+def test_second_apoderado_same_scope_cannot_open_foreign_list(
+    client, scenario, db_session
+):
     s = scenario
     h = headers(s["admin"])
     body = {
@@ -602,8 +604,7 @@ def test_second_apoderado_same_scope_cannot_open_foreign_list(client, scenario):
         "full_name": "Segundo sintético",
         "password": "test-password-only",
     }
-    created = client.post("/api/v1/users/", json=body, headers=h)
-    assert created.status_code == 201
+    created_user = invite_account(client, db_session, s["admin"], body)
     token = client.post(
         "/api/v1/auth/login",
         json={"email": body["email"], "password": body["password"]},
@@ -618,7 +619,7 @@ def test_second_apoderado_same_scope_cannot_open_foreign_list(client, scenario):
     assert (
         client.put(
             p + "/assignments",
-            json={"user_ids": [s["apod"].id, created.json()["id"]]},
+            json={"user_ids": [s["apod"].id, created_user.id]},
             headers=h,
         ).status_code
         == 200
@@ -656,7 +657,7 @@ def test_composition_uses_pinned_rule_not_user_supplied_type(client, scenario):
 
 @pytest.mark.parametrize("module_indexes", [[0], [1], [0, 1]])
 def test_provincial_local_and_combined_account_modules(
-    client, scenario, module_indexes
+    client, scenario, module_indexes, db_session
 ):
     s = scenario
     body = {
@@ -667,8 +668,7 @@ def test_provincial_local_and_combined_account_modules(
         "password": "scope-test-password",
         "modules": [s["user_body"]["modules"][i] for i in module_indexes],
     }
-    r = client.post("/api/v1/users/", json=body, headers=headers(s["admin"]))
-    assert r.status_code == 201
+    invite_account(client, db_session, s["admin"], body)
     token = client.post(
         "/api/v1/auth/login",
         json={"email": body["email"], "password": body["password"]},

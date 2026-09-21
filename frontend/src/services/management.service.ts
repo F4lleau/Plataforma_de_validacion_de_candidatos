@@ -31,6 +31,7 @@ export interface Module {
   enabled: boolean;
 }
 export interface Apoderado {
+  email_verified_at: string | null;
   id: number;
   username: string;
   email: string;

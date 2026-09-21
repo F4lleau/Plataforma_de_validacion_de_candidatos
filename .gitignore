@@ -22,3 +22,7 @@ Thumbs.db
 .env
 backend/.env
 frontend/.env
+
+# Variantes de entorno también son privadas; ejemplos sí se versionan.
+**/.env*
+!**/.env.example

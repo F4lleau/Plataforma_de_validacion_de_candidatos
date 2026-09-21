@@ -125,3 +125,15 @@ La interfaz comparte tipografía, colores, formularios, paneles y etiquetas de e
 La navegación agrupa los módulos por rol y se despliega con un menú en móvil.
 El dashboard presenta métricas y distribución de estados de la API, junto con accesos rápidos.
 Ver [criterios y componentes visuales](../docs/INTERFAZ_VISUAL.md).
+
+## Seguridad de acceso (Tasks 16–19)
+
+Access solo en memoria; refresh HttpOnly con rotación, restore tras recarga y coordinación
+entre pestañas. Rutas `/recuperar-clave`, `/restablecer-clave`, `/seguridad`.
+ADMIN consulta/desbloquea cuentas y envía recuperación tras reautenticación.
+Task 20 agrega `/invitacion` y administración de invitaciones en `/usuarios`. Configurar `VITE_API_URL` desde `.env.example`
+si se requiere; API/frontend deben compartir sitio. Ver `docs/AUTHENTICATION.md`
+y `docs/AUTH_OPERATIONS.md` desde raíz. Fuentes con fallback local, sin requests a
+Google Fonts en páginas que manejan enlaces de recuperación.
+
+Ver [aceptación 16–21](../docs/task/INFORME_16_21.md) y [contrato de invitaciones](../docs/AUTHENTICATION.md).

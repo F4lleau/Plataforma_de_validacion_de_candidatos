@@ -1,20 +1,16 @@
 import Brand from "../components/layout/Brand";
 import { Layers3, ClipboardCheck, ShieldCheck } from "lucide-react";
 import { useState } from "react";
-import { Navigate, useLocation, useNavigate } from "react-router-dom";
+import { Link, Navigate, useLocation, useNavigate } from "react-router-dom";
 import { useAuthStore } from "../stores/auth.store";
 import { ApiError } from "../services/api";
 
-import { useRemote } from "../hooks/useRemote";
-
 export default function Login() {
-  const support = useRemote<{ contact: string }>("/auth/support");
   const navigate = useNavigate();
   const location = useLocation();
   const { login, isAuthenticated, isLoading } = useAuthStore();
   const [email, setEmail] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [help, setHelp] = useState(false);
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -127,22 +123,12 @@ export default function Login() {
             >
               {showPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
             </button>
-            <button
-              type="button"
+            <Link
+              to="/recuperar-clave"
               className="block text-sm text-primary underline"
-              onClick={() => setHelp(!help)}
             >
               Olvidé mi contraseña
-            </button>
-            {help && (
-              <p role="status" className="rounded-md bg-muted p-3 text-sm">
-                Solicitá el restablecimiento al administrador de la Junta por tu
-                canal habitual. El administrador puede asignarte una nueva
-                contraseña desde Gestión de apoderados, luego de verificar tu
-                identidad. No se envían correos automáticos.{" "}
-                {support.data?.contact && `Contacto: ${support.data.contact}`}
-              </p>
-            )}
+            </Link>
             {error && (
               <p
                 role="alert"

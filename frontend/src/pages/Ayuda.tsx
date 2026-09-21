@@ -74,10 +74,10 @@ export default function Ayuda() {
             "Contactá al administrador de la Junta por tu canal habitual. El contacto institucional todavía no fue configurado."}
         </p>
         <p>
-          El administrador puede restablecer tu contraseña tras verificar
-          identidad. No se envían correos automáticos. Para informar un error,
-          indicá pantalla, operación, fecha y número de lista; no compartas tu
-          contraseña.
+          Usá «Olvidé mi contraseña» en el ingreso para recibir un enlace por
+          correo. El administrador también puede enviarte la recuperación o
+          retirar un bloqueo temporal. Para informar un error, indicá pantalla,
+          operación, fecha y número de lista; no compartas tu contraseña.
         </p>
       </Panel>
     </div>

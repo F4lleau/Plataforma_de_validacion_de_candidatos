@@ -1,90 +1,131 @@
 from datetime import datetime, timedelta, timezone
+from uuid import uuid4
 from typing import Any
-
-from fastapi import Depends, HTTPException, status
+from fastapi import Depends, HTTPException, Request
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from jose import jwt, JWTError
-from passlib.context import CryptContext
 from sqlalchemy.orm import Session
-
 from app.core.config import settings
+from app.core.passwords import (
+    hash_password as hash_password,
+    verify_password as verify_password,
+)
 from app.db.session import get_db
 from app.models.user import User
-from app.repositories.user_repository import UserRepository
+from app.repositories.auth_repository import AuthRepository, now
 from app.utils.enums import UserRole
 
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 bearer_scheme = HTTPBearer(auto_error=False)
 
 
-def hash_password(password: str) -> str:
-    return pwd_context.hash(password)
-
-
-def verify_password(plain_password: str, hashed_password: str) -> bool:
-    return pwd_context.verify(plain_password, hashed_password)
-
-
 def create_access_token(subject: str, extra_data: dict[str, Any] | None = None) -> str:
-    expires_delta = timedelta(minutes=settings.access_token_expire_minutes)
-    expire = datetime.now(timezone.utc) + expires_delta
+    issued = datetime.now(timezone.utc)
+    payload = dict(extra_data or {})
+    payload.update(
+        sub=subject,
+        iss=settings.jwt_issuer,
+        aud=settings.jwt_audience,
+        iat=int(issued.timestamp()),
+        exp=int(
+            (
+                issued + timedelta(minutes=settings.access_token_expire_minutes)
+            ).timestamp()
+        ),
+        jti=str(uuid4()),
+        type="access",
+    )
+    return jwt.encode(
+        payload,
+        settings.secret_key,
+        algorithm="HS256",
+        headers={"kid": settings.jwt_key_id, "typ": "JWT"},
+    )
 
-    to_encode: dict[str, Any] = {"sub": subject, "exp": expire, "type": "access"}
-    if extra_data:
-        to_encode.update(extra_data)
 
-    return jwt.encode(to_encode, settings.secret_key, algorithm=settings.algorithm)
-
-
-def create_refresh_token(subject: str) -> str:
-    expires_delta = timedelta(days=settings.refresh_token_expire_days)
-    expire = datetime.now(timezone.utc) + expires_delta
-
-    to_encode = {"sub": subject, "exp": expire, "type": "refresh"}
-    return jwt.encode(to_encode, settings.secret_key, algorithm=settings.algorithm)
-
-
-def decode_token(token: str) -> dict[str, Any] | None:
+def decode_token(token: str) -> dict | None:
     try:
+        header = jwt.get_unverified_header(token)
+        if header.get("alg") != "HS256" or header.get("typ") != "JWT":
+            return None
+        keys = {**settings.jwt_previous_keys, settings.jwt_key_id: settings.secret_key}
+        key = keys.get(header.get("kid"))
+        if not key:
+            return None
         payload = jwt.decode(
-            token, settings.secret_key, algorithms=[settings.algorithm],
-            options={"require_exp": True, "require_sub": True},
+            token,
+            key,
+            algorithms=["HS256"],
+            audience=settings.jwt_audience,
+            issuer=settings.jwt_issuer,
+            options={
+                "require_exp": True,
+                "require_iat": True,
+                "require_sub": True,
+                "require_aud": True,
+                "require_iss": True,
+                "leeway": 5,
+            },
         )
+        if any(
+            not isinstance(payload.get(k), str) or not payload[k]
+            for k in ("sub", "sid", "jti")
+        ):
+            return None
+        if "nbf" in payload and type(payload["nbf"]) is not int:
+            return None
+        if payload.get("aud") != settings.jwt_audience:
+            return None
+        if (
+            any(type(payload.get(k)) is not int for k in ("iat", "exp"))
+            or payload["iat"] > datetime.now(timezone.utc).timestamp() + 5
+            or payload["exp"] <= payload["iat"]
+            or payload.get("type") != "access"
+        ):
+            return None
         return payload
     except (JWTError, ValueError, TypeError, OverflowError):
         return None
 
 
+def valid_session(session):
+    return (
+        session
+        and not session.revoked_at
+        and session.expires_at > now()
+        and session.last_used_at > now() - timedelta(hours=settings.session_idle_hours)
+    )
+
+
 def get_current_user(
+    request: Request,
     credentials: HTTPAuthorizationCredentials | None = Depends(bearer_scheme),
     db: Session = Depends(get_db),
 ) -> User:
-    if credentials is None:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Autenticación requerida.")
-
-    payload = decode_token(credentials.credentials)
-    subject = payload.get("sub") if payload else None
-    if not subject or payload.get("type") != "access":
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Token inválido.")
-
+    payload = decode_token(credentials.credentials) if credentials else None
     try:
-        user_id = int(subject)
-    except (TypeError, ValueError) as exc:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Token inválido.") from exc
-
-    if not 0 < user_id <= 2147483647:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Token inválido.")
-
-    user = UserRepository(db).get_by_id(user_id)
-    if user is None or not user.is_active:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Usuario inválido.")
+        uid = int(payload["sub"]) if payload else 0
+        if not 0 < uid <= 2147483647:
+            raise ValueError()
+    except (ValueError, TypeError):
+        raise HTTPException(401, "Autenticación requerida.")
+    repo = AuthRepository(db)
+    session = repo.session(payload["sid"])
+    user = db.get(User, uid)
+    if (
+        not valid_session(session)
+        or session.user_id != uid
+        or not user
+        or not user.is_active
+    ):
+        raise HTTPException(401, "Sesión inválida o vencida.")
+    request.state.session_id = session.id
     return user
 
 
 def require_roles(*allowed_roles: UserRole):
     def dependency(current_user: User = Depends(get_current_user)) -> User:
         if current_user.role not in allowed_roles:
-            raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="No tiene permisos para esta operación.")
+            raise HTTPException(403, "No tiene permisos para esta operación.")
         return current_user
 
     return dependency

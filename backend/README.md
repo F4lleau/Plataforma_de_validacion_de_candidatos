@@ -90,7 +90,11 @@ python -m scripts.bootstrap_admin
 
 El script crea un usuario ADMIN solo si no existe. Nunca guarda la contraseña en el código ni la imprime.
 
-La autenticación expone `POST /api/v1/auth/login` y `GET /api/v1/auth/me`. El refresh token se emite para compatibilidad, pero su rotación/revocación queda pendiente de una tarea posterior; el logout actual elimina la sesión del cliente.
+Autenticación con JWT access de 15 minutos, refresh opaco rotativo en cookie HttpOnly,
+sesiones revocables en BD, protección CSRF, bloqueo temporal, recuperación/cambio de clave
+y correo SMTP por outbox/worker. Ver [contratos](../docs/AUTHENTICATION.md) y
+[operación, variables y Mailpit](../docs/AUTH_OPERATIONS.md).
+Aplicar Alembic hasta `6cb192ebc9fe` y configurar `MAIL_OUTBOX_KEY` antes de iniciar.
 
 ### Migraciones de Base de Datos
 
@@ -141,3 +145,12 @@ están implementados y verificados localmente. El contenido enviado queda en lec
 Las reglas demo y RENAPER pendiente impiden afirmar aprobación institucional.
 Ver `docs/SUBMISSION_REPORTING_AUDIT.md`, `docs/MANUAL_ADMIN.md`,
 `docs/MANUAL_APODERADO.md` y `docs/task/INFORME_10_15.md` desde la raíz.
+
+## Tasks 20–21: invitaciones y aceptación local
+
+Alta por invitación de un uso (48 h), reenvío/cancelación ADMIN, primer acceso con
+perfil/contraseña, email verificado y permisos mínimos. Las cuentas existentes se
+conservan sin afirmar verificación histórica. Migración `a72e903d418f`; Mailpit para
+pruebas, SMTP externo aún pendiente. Variables en `backend/.env.example` desde raíz.
+Ver [contratos](../docs/AUTHENTICATION.md), [operación](../docs/AUTH_OPERATIONS.md)
+y [informe consolidado](../docs/task/INFORME_16_21.md).

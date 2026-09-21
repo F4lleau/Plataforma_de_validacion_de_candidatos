@@ -9,8 +9,8 @@ preparar RENAPER sin una API disponible. Las plantillas de prueba no son normati
 2. Selecciona elección y cargo, configura reglas y posiciones. **Generar plantilla de prueba**
    propone 24 posiciones (16 titulares + 8 suplentes) para Diputados o 22 posiciones
    genéricas para Consejos. Es editable y queda marcada como prueba.
-3. ADMIN crea un apoderado en **Apoderados**, con contraseña inicial y módulos por
-   elección/cargo/distrito. Puede editarlo, desactivarlo o restablecer la contraseña.
+3. ADMIN invita un apoderado por correo en **Apoderados → Invitaciones**, con módulos por
+   elección/cargo/distrito. Puede editarlo, desactivarlo o enviar recuperación por correo desde Seguridad de cuenta.
 4. APODERADO crea una lista dentro de la ventana de carga. Se asigna explícitamente al
    creador. ADMIN puede crear listas y asignarlas a uno o varios apoderados con módulo compatible.
 5. **Continuar carga** abre el detalle y la plantilla de esa lista. Permite agregar,
@@ -130,10 +130,9 @@ el flujo. El script de carga fue ejecutado y eliminado; no forma parte del repos
 
 ## Recuperación y operación
 
-Login incluye mostrar/ocultar contraseña y ayuda de recuperación asistida. ADMIN asigna
-una nueva contraseña desde la edición del apoderado tras verificar identidad por su canal
-habitual. La contraseña anterior deja de autenticar; no hay correo automático. Las sesiones
-ya emitidas conservan su vencimiento normal; desactivar el usuario las invalida de inmediato.
+Login incluye mostrar/ocultar contraseña y recuperación por correo. Desde Tasks 16–19,
+ADMIN envía enlaces tras reautenticación; no asigna claves a cuentas existentes. Cambio/reset
+y desactivación revocan sesiones inmediatamente. Ver [contrato vigente](AUTHENTICATION.md).
 `SUPPORT_CONTACT` opcional en `backend/.env` permite mostrar el canal real de soporte,
 sin inventar dirección. Nunca se devuelve hash ni contraseña en los contratos de usuarios.
 

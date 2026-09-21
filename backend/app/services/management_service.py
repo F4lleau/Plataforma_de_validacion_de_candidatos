@@ -5,7 +5,6 @@ from sqlalchemy.exc import IntegrityError
 from app.models import Election, Office, Municipality, ElectionRule, User, UserModule
 from app.repositories.management_repository import ManagementRepository
 from app.services.audit_service import AuditService
-from app.core.security import hash_password
 from app.utils.enums import UserRole, UserModuleType
 
 
@@ -145,20 +144,27 @@ class ManagementService:
             "full_name": user.full_name,
             "is_active": user.is_active,
             "role": user.role,
+            "email_verified_at": user.email_verified_at,
             "modules": self.repo.modules(user.id),
         }
 
     def save_user(self, payload, actor, identity=None):
-        user = (
-            self.require(User, identity, True)
-            if identity
-            else User(role=UserRole.APODERADO)
-        )
+        if not identity:
+            raise HTTPException(
+                410, "El alta manual fue reemplazada por invitaciones por correo."
+            )
+        user = self.require(User, identity, True)
         if user.role != UserRole.APODERADO:
             raise HTTPException(403, "Este flujo solo administra apoderados.")
-        if not identity and not payload.password:
+        if payload.password:
             raise HTTPException(
-                422, "Indique contraseña inicial de al menos 10 caracteres."
+                422,
+                "Usá recuperación; no se permite asignar contraseñas a otra cuenta.",
+            )
+        if user.email.strip().lower() != payload.email:
+            raise HTTPException(
+                422,
+                "El cambio de correo requiere un flujo de verificación aún no habilitado.",
             )
         seen = set()
         for module in payload.modules:
@@ -182,10 +188,12 @@ class ManagementService:
             if identity
             else None
         )
-        for key in ("username", "email", "full_name", "is_active"):
+        for key in ("username", "full_name", "is_active"):
             setattr(user, key, getattr(payload, key))
-        if payload.password:
-            user.password_hash = hash_password(payload.password)
+        if not user.is_active:
+            from app.repositories.auth_repository import AuthRepository
+
+            AuthRepository(self.db).revoke_all(user.id)
         try:
             self.repo.add(user)
             for old in self.repo.modules(user.id):

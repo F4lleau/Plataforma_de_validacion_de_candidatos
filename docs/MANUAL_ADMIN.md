@@ -9,7 +9,7 @@ Abrí <http://localhost:5173> e ingresá con tu cuenta. Las credenciales locales
    de carga son inclusivos según Argentina.
 2. Guardá una versión de reglas para cada cargo. Marcá las plantillas demo como prueba.
    Una nueva versión no cambia listas existentes; una lista vacía puede adoptar la actual.
-3. En **Apoderados**, creá la cuenta y asigná módulos por elección/cargo/localidad.
+3. En **Apoderados → Invitaciones**, invitá por correo y asigná módulos por elección/cargo/localidad.
    La asignación explícita de cada lista se gestiona en su detalle. Revocar un módulo
    retira el acceso aunque quede una asignación de lista.
 4. En **Padrón**, importá XLSX (hasta 20 MB). La tabla de 18 campos y el historial muestran
@@ -53,9 +53,14 @@ No hay reapertura ni eliminación de auditoría. Un fallo no deja un evento de �
 ## Soporte y recuperación
 
 **Ayuda** explica flujos y muestra `SUPPORT_CONTACT` si fue configurado. Para restablecer
-acceso, verificá la identidad por el canal institucional y guardá una contraseña nueva
-desde Apoderados. No se envían correos automáticos. Al desactivar una cuenta se bloquean
-sus siguientes solicitudes, incluso con un token anterior.
+acceso, entrá a **Seguridad de cuenta**, desmarcá «Solo bloqueadas», buscá la cuenta
+y elegí **Enviar recuperación**. Confirmá tu contraseña de administrador. La persona
+recibirá un enlace de un uso; ADMIN no asigna claves a cuentas existentes.
+
+En la misma pantalla podés retirar bloqueos por reintentos, con motivo y contraseña
+de confirmación. Un desbloqueo no reactiva una cuenta deshabilitada ni cambia su rol.
+Al desactivar se revocan sesiones y enlaces pendientes. El alta manual fue reemplazada por invitaciones. ADMIN nunca elige la contraseña
+inicial de otra cuenta.
 
 Errores habituales: 401 → ingresar nuevamente; 403 → revisar rol, módulo y lista;
 409 → comprobar plazo/estado/duplicados; importación fallida → revisar filas del historial;
@@ -64,3 +69,22 @@ repetir una operación: puede haberse completado en el servidor.
 
 Ver [setup y respaldo](OPERACION_LOCAL.md), [contratos](SUBMISSION_REPORTING_AUDIT.md)
 y [aceptación y pendientes](task/INFORME_10_15.md).
+
+## Invitar apoderados
+
+En **Apoderados → Invitaciones**, ingresá el correo, agregá los módulos habilitados
+y confirmá con tu contraseña de administrador. **Enviar invitación** deja el correo
+en cola; **Actualizar estado del correo** permite ver si SMTP lo aceptó o falló.
+La aceptación de SMTP no garantiza entrega al buzón. En local revisá Mailpit.
+
+La persona completa nombre, usuario y contraseña al abrir su enlace, válido por
+48 horas. Hasta entonces aparece como invitación pendiente, sin cuenta activa.
+**Reenviar** crea otro enlace e invalida el anterior (espera mínima: 60 segundos).
+**Cancelar invitación** impide su aceptación. Las invitaciones vencidas pueden
+reenviarse; las canceladas requieren una nueva invitación. Las aceptadas ya son cuentas.
+
+Si el correo ya tiene cuenta, usá gestión/recuperación, no otra invitación. Si el
+invitador perdió su autorización o un catálogo dejó de estar activo, cancelá y emití
+una invitación con módulos vigentes. Después de aceptar, asigná cada lista de forma
+explícita: tener módulo o municipio no concede acceso a listas de otras personas.
+Las cuentas anteriores se muestran sin verificación histórica; eso no les quita acceso.
