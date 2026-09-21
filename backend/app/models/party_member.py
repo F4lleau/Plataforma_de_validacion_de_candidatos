@@ -34,3 +34,22 @@ class PartyMember(Base):
 
     is_active: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
     created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow, nullable=False)
+    section_code: Mapped[str | None] = mapped_column(String(50), nullable=True)
+
+    circuit_code: Mapped[str | None] = mapped_column(String(50), nullable=True)
+
+    document_type: Mapped[str | None] = mapped_column(String(50), nullable=True)
+
+    birth_date: Mapped[date | None] = mapped_column(Date, nullable=True)
+
+    birth_class: Mapped[str | None] = mapped_column(String(20), nullable=True)
+
+    elector_status: Mapped[str | None] = mapped_column(String(100), nullable=True)
+
+    illiterate: Mapped[str | None] = mapped_column(String(30), nullable=True)
+
+    profession: Mapped[str | None] = mapped_column(String(150), nullable=True)
+
+    address_date: Mapped[date | None] = mapped_column(Date, nullable=True)
+
+    address: Mapped[str | None] = mapped_column(String(255), nullable=True)

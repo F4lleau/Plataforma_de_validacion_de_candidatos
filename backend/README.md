@@ -22,10 +22,10 @@ La aplicación backend de Junta Electoral gestiona la administración de eleccio
 
 - **Framework:** FastAPI
 - **ORM:** SQLAlchemy
-- **Base de datos:** (configurable, por defecto SQLite/PostgreSQL)
+- **Base de datos:** PostgreSQL (Docker local o Neon, configurado por entorno)
 - **Migraciones:** Alembic
 - **Autenticación:** JWT
-- **Integraciones:** RENAPER
+- **Integraciones:** padrón importado desde Excel; RENAPER pendiente de integración productiva
 
 ### Estructura de Carpetas
 
@@ -37,10 +37,16 @@ Las migraciones se encuentran en `backend/alembic/versions/`.
 
 ## Documentación de APIs
 
+Ver [autenticación, permisos y prueba manual](../docs/AUTHENTICATION.md) para el
+estado real de los endpoints y los módulos pendientes.
+
 - **Swagger UI:** Disponible en `/docs` al ejecutar el backend.
 - **Redoc:** Disponible en `/redoc`.
 
 ## Guía de Configuración
+
+Para levantar PostgreSQL en Docker junto con el backend y el frontend locales,
+seguir la [guía de desarrollo local](../README.md).
 
 ### Clonar el Repositorio
 
@@ -65,7 +71,8 @@ pip install -r requirements.txt
 
 ### Variables de Entorno
 
-Configura las variables en un archivo `.env` en `backend/app/` (ver ejemplo en `config.py`).
+Configura `DATABASE_URL` y `SECRET_KEY` en `backend/.env`. El archivo se resuelve
+desde el directorio de ejecución; ejecutar los comandos desde `backend/`.
 
 ### Ejecutar el Backend
 
@@ -78,7 +85,7 @@ uvicorn app.main:app --reload
 Definí `INITIAL_ADMIN_EMAIL` y `INITIAL_ADMIN_PASSWORD` en el entorno y ejecutá:
 
 ```bash
-python scripts/bootstrap_admin.py
+python -m scripts.bootstrap_admin
 ```
 
 El script crea un usuario ADMIN solo si no existe. Nunca guarda la contraseña en el código ni la imprime.
@@ -103,7 +110,7 @@ alembic upgrade head
 - **¿Por qué falla la conexión a la base de datos?**
   - Verifica las variables de entorno y la configuración en `config.py`.
 - **¿Cómo crear un usuario admin?**
-  - Usa el endpoint de registro y asigna el rol adecuado.
+  - Usa el bootstrap de administrador documentado arriba.
 
 ### Solución de Problemas
 
@@ -117,3 +124,20 @@ alembic upgrade head
 Facilitar la gestión y validación de procesos electorales, optimizando la transparencia y eficiencia.
 
 ---
+
+## Actualización Tasks 04–09 (20/09/2026)
+
+Configuración, catálogos, usuarios/módulos, padrón de 18 campos, listas con asignación
+explícita y edición de candidatos tienen API y UI reales. RENAPER permanece pendiente
+sin proveedor; no devuelve OK ficticio. Ver [contratos y recorrido](../docs/ELECTORAL_WORKFLOWS.md).
+Las menciones anteriores a estos CRUD como pendientes quedan reemplazadas por este estado.
+Tasks 10–14 y aceptación local de 15 están implementadas. RENAPER real y aceptación
+institucional siguen pendientes. Ver docs/task/INFORME_10_15.md desde la raíz.
+
+## Actualización Tasks 10–15 (20/09/2026)
+
+Envío transaccional, bandeja ADMIN, dashboards, reportes/exportaciones y auditoría
+están implementados y verificados localmente. El contenido enviado queda en lectura.
+Las reglas demo y RENAPER pendiente impiden afirmar aprobación institucional.
+Ver `docs/SUBMISSION_REPORTING_AUDIT.md`, `docs/MANUAL_ADMIN.md`,
+`docs/MANUAL_APODERADO.md` y `docs/task/INFORME_10_15.md` desde la raíz.

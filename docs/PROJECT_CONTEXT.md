@@ -40,89 +40,23 @@ La solución debe facilitar:
 
 ## 4. Estado actual del repositorio
 
-### Backend
+Autenticación/RBAC, configuración electoral, reglas versionadas, administración de
+apoderados/asignaciones, padrón XLSX de 18 campos, listas y carga/edición contextual
+de candidatos tienen backend y frontend reales. PostgreSQL local usa Alembic.
 
-El backend tiene una base funcional y estructural clara:
+Las rutas incluyen `/configuracion`, `/usuarios`, `/padron`, `/listas`, `/listas/:id`,
+`/candidatos` y revisión administrativa. Las operaciones se autorizan en backend.
 
-- modelos principales definidos;
-- Alembic con migraciones reales;
-- endpoints para auth, usuarios, listas, candidatos, validaciones, dashboard y padrón;
-- servicios para importación de padrón y validación de lista/afiliación;
-- configuración de JWT, usuarios y seguridad básica.
+Las plantillas/datos locales son de prueba por pedido del usuario. RENAPER permanece
+no configurado y devuelve pendiente. Reglas institucionales ambiguas conservan su
+estado pendiente; no hay aprobación productiva por simulación.
 
-### Frontend
+Envío/aprobación condicionada, bandeja administrativa, métricas, exportaciones e historial
+visual están implementados en Tasks 10–14. La revisión consulta advertencias vigentes;
+no se incorporaron facultades de resolución administrativa manual.
 
-El frontend cuenta con scaffold de React + Vite + Tailwind y estructura de módulos, pero todavía no está completamente integrado funcionalmente. Hay una base visual y algunas carpetas preparadas, pero aún debe completarse:
-
-- autenticación funcional;
-- routing real por roles;
-- integración con endpoints del backend;
-- gestión completa de formularios;
-- permisos por módulo y acceso real a funcionalidades.
-
-## 5. Módulos existentes
-
-### Backend
-
-Los módulos y entidades visibles en el código reflejan estas áreas:
-
-- usuarios
-- elecciones
-- municipios
-- oficinas
-- listas electorales
-- candidatos
-- validaciones
-- dashboard
-- padrón
-- plantillas de cargos/listas
-
-### Frontend
-
-La estructura de `src/modules` sugiere intención de separar:
-
-- admin
-- auth
-- candidatos
-- listas
-- reportes
-- shared
-
-Sin embargo, estos módulos no aparecen implementados en la estructura actual de forma funcional completa.
-
-## 6. Módulos o funciones aún incompletas o pendientes
-
-El repositorio deja claro que existen varios puntos aún no productivos o en desarrollo:
-
-- integración RENAPER real: no hay funcionamiento productivo real.
-- frontend funcional completo: no está integrado con la lógica de negocio del backend.
-- permisos/routing de usuario y módulos por asignación: requieren consolidación funcional.
-- importación de padrón: funciona como flujo interno con Excel, pero se debe confirmar la estructura real de datos del archivo del padrón.
-- validaciones administrativas y alertas: existen bases y servicios, pero la experiencia completa aún requiere integración y refinamiento.
-
-## 7. Integraciones
-
-### Padrón PJ
-
-- Integración interna mediante Excel.
-- Persistencia en base de datos.
-- Se registra lote de importación y miembros del padrón.
-- No existe API externa de padrón.
-
-### RENAPER
-
-- Existe una estructura base/mock.
-- No debe considerarse una integración real productiva.
-
-## 8. Roadmap inmediato sugerido
-
-1. consolidar la validación de afiliación y la advertencia por ausencia en padrón;
-2. completar integración frontend con backend real;
-3. cerrar la definición de campos y flujo de importación del padrón;
-4. completar permisos y asignación de listas por apoderado;
-5. definir y documentar la revisión administrativa final;
-6. cerrar la lógica de validación de listas con plantillas y cargos;
-7. consolidar migraciones y pruebas del backend.
+Ver [flujos y contratos actuales](ELECTORAL_WORKFLOWS.md),
+[autenticación](AUTHENTICATION.md) y [seguimiento](task/README.md).
 
 ## 9. Consideraciones clave para agentes
 
@@ -138,3 +72,11 @@ El repositorio deja claro que existen varios puntos aún no productivos o en des
 - [frontend/AGENTS.md](../frontend/AGENTS.md)
 - [backend/README.md](../backend/README.md)
 - [frontend/README.md](../frontend/README.md)
+
+## Actualización Tasks 10–15 (20/09/2026)
+
+Envío transaccional, bandeja ADMIN, dashboards, reportes/exportaciones y auditoría
+están implementados y verificados localmente. El contenido enviado queda en lectura.
+Las reglas demo y RENAPER pendiente impiden afirmar aprobación institucional.
+Ver `docs/SUBMISSION_REPORTING_AUDIT.md`, `docs/MANUAL_ADMIN.md`,
+`docs/MANUAL_APODERADO.md` y `docs/task/INFORME_10_15.md` desde la raíz.

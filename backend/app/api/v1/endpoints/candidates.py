@@ -1,14 +1,21 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Query
 from sqlalchemy.orm import Session
 
 from app.core.security import get_current_user, require_roles, require_admin
 from app.db.session import get_db
 from app.models.user import User
 from app.repositories.candidate_repository import CandidateRepository
-from app.repositories.candidate_validation_repository import CandidateValidationRepository
+from app.repositories.candidate_validation_repository import (
+    CandidateValidationRepository,
+)
 from app.repositories.party_member_repository import PartyMemberRepository
-from app.schemas.candidate import CandidateCreate, CandidateCreateResponse, CandidateResponse
+from app.schemas.candidate import (
+    CandidateCreate,
+    CandidateCreateResponse,
+    CandidateResponse,
+)
 from app.services.candidate_service import CandidateService
+from app.services.access_service import AccessService
 from app.utils.enums import UserRole
 
 router = APIRouter()
@@ -27,24 +34,36 @@ def build_candidate_service(db: Session) -> CandidateService:
 def create_candidate(
     payload: CandidateCreate,
     db: Session = Depends(get_db),
-    current_user: User = Depends(require_roles(UserRole.ADMIN, UserRole.APODERADO)),
+    current_user: User = Depends(require_admin),
 ):
+    AccessService(db).require_module(
+        current_user,
+        payload.election_id,
+        payload.office_id,
+        payload.person.municipality_id,
+    )
     service = build_candidate_service(db)
-    candidate, affiliation = service.create_candidate_with_validation(payload, current_user.id)
+    candidate, affiliation = service.create_candidate_with_validation(
+        payload, current_user.id
+    )
     return {"candidate": candidate, "affiliation": affiliation}
 
 
-@router.get("/review", response_model=list[CandidateResponse])
+@router.get("/review")
 def list_candidates_for_admin_review(
+    page: int = Query(1, ge=1),
+    page_size: int = Query(100, ge=1, le=100),
     db: Session = Depends(get_db),
     _: User = Depends(require_admin),
 ):
-    return CandidateRepository(db).list_requires_admin_review()
+    from app.services.reporting_service import ReportingService
+
+    return ReportingService(db).review(page, page_size)["items"]
 
 
 @router.get("", response_model=list[CandidateResponse])
 def list_candidates(
     db: Session = Depends(get_db),
-    _: User = Depends(get_current_user),
+    current_user: User = Depends(get_current_user),
 ):
-    return CandidateRepository(db).list_all()
+    return build_candidate_service(db).list_candidates(current_user)

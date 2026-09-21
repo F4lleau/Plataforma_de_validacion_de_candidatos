@@ -1,4 +1,4 @@
-from sqlalchemy import String, Boolean, Integer
+from sqlalchemy import String, Boolean, Integer, CheckConstraint
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.db.session import Base
@@ -6,6 +6,7 @@ from app.db.session import Base
 
 class Office(Base):
     __tablename__ = "offices"
+    __table_args__ = (CheckConstraint("required_positions > 0", name="ck_office_positions"),)
 
     id: Mapped[int] = mapped_column(primary_key=True)
     code: Mapped[str] = mapped_column(String(100), unique=True, nullable=False)

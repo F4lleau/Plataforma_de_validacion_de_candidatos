@@ -173,7 +173,7 @@ def test_successful_import_activates_batch_and_failed_import_preserves_current(
     db_session.add(old_batch)
     db_session.commit()
 
-    monkeypatch.setattr(pd, "read_excel", lambda _: pd.DataFrame({"dni": ["123"], "nombre": ["Ana"], "apellido": ["Pérez"]}))
+    monkeypatch.setattr(pd, "read_excel", lambda *args, **kwargs: pd.DataFrame({"dni": ["12345678"], "nombre": ["Ana"], "apellido": ["Pérez"]}))
     service = AffiliateImportService(db_session)
     successful = service.import_excel(str(tmp_path / "ok.xlsx"), "ok.xlsx", admin_user.id)
 
@@ -181,7 +181,7 @@ def test_successful_import_activates_batch_and_failed_import_preserves_current(
     assert successful.is_current is True
     assert db_session.get(AffiliateImportBatch, old_batch.id).is_current is False
 
-    monkeypatch.setattr(pd, "read_excel", lambda _: pd.DataFrame({"incorrecta": ["x"]}))
+    monkeypatch.setattr(pd, "read_excel", lambda *args, **kwargs: pd.DataFrame({"incorrecta": ["x"]}))
     failed = service.import_excel(str(tmp_path / "failed.xlsx"), "failed.xlsx", admin_user.id)
 
     assert failed.status == "failed"

@@ -3,6 +3,7 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
+    support_contact: str = ""
     app_name: str = "junta_electoral"
     app_env: str = "development"
     debug: bool = True

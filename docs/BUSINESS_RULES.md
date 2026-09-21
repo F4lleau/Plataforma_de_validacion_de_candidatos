@@ -19,9 +19,13 @@
 
 ## 2. Asignaciones
 
-La asignación de módulos/listas a apoderados es un requisito funcional central, pero la implementación real del repositorio debe tratarse como una base parcial o pendiente de consolidación en capas de UI y permisos.
+El apoderado requiere módulo habilitado y asignación explícita por lista. El distrito
+proviene de la lista; no del domicilio de Person. La asignación puede ser compartida;
+revocar módulo/asignación retira el acceso sin borrar autoría histórica.
 
-No inventar reglas de asignación que no estén en el proyecto ni documentadas por el código actual.
+Número único por elección/cargo/distrito. Las fechas de carga son inclusivas en hora
+argentina. Las listas conservan una versión de reglas y solo se editan en borrador o
+incompletas. Ver [decisiones técnicas y datos de prueba](ELECTORAL_WORKFLOWS.md).
 
 ## 3. Padrón de afiliados PJ
 
@@ -101,20 +105,24 @@ La revisión administrativa es la etapa final de control. El administrador debe 
 - composición de listas;
 - casos pendientes o no conformes.
 
-## 10. Paridad y alternancia
+## 10. Paridad, requisitos y pendientes
 
-La lógica existente aborda la paridad 50/50 y la alternancia simple por género en la validación de listas. Esto aparece implementado en `ListValidationService` como regla de validación estructural.
+Paridad/alternancia se leen de la versión vinculada a cada lista. Las plantillas de
+prueba usan 24 posiciones (16+8) para Diputados sin alternancia obligatoria y 22
+posiciones genéricas para Consejos con alternancia. No son plantillas oficiales.
+La política no definida para otros géneros queda pendiente, sin impedir carga.
 
-Sin embargo, el repositorio no demuestra un nivel completo de integración de los flujos de UX y permisos para estas reglas; por eso debe documentarse como parte de la lógica actual y no como un requisito externo no verificado.
+Edad se calcula con referencia configurable; el entorno de prueba usa día electoral.
+Otros requisitos no confirmados y RENAPER sin proveedor permanecen pendientes.
+Ausencia/inactividad en padrón produce warning, nunca rechazo automático del registro.
+Editar genera nueva revisión; los resultados históricos no validan los datos nuevos.
 
-## 11. Reglas pendientes de confirmación
+## 11. Pendientes institucionales
 
-Se recomienda tratar como pendientes o a confirmar las siguientes cuestiones si no hay evidencia fuerte en el código:
-
-- detalles completos de asignación de apoderados por lista/municipio;
-- especificación fina de campos del padrón Excel de origen;
-- flujo exacto de revisión administrativa y estados finales de lista/candidato;
-- definición completa del proceso de validación RENAPER y su activación real.
+Confirmar plantilla de Consejos, reglas oficiales, fecha de cómputo, ciudadanía,
+antigüedad y estados del padrón antes de operar con datos reales. El envío con
+composición correcta y pendientes a revisión fue confirmado para pruebas; resolución
+manual/reapertura requieren definición institucional. RENAPER real queda diferido por instrucción del usuario.
 
 ## 12. Principio general
 
@@ -126,3 +134,11 @@ No inventar requisitos electorales no presentes en el repositorio. Toda regla fu
 - [backend/AGENTS.md](../backend/AGENTS.md)
 - [frontend/AGENTS.md](../frontend/AGENTS.md)
 - [docs/PROJECT_CONTEXT.md](PROJECT_CONTEXT.md)
+
+## Actualización Tasks 10–15 (20/09/2026)
+
+Envío transaccional, bandeja ADMIN, dashboards, reportes/exportaciones y auditoría
+están implementados y verificados localmente. El contenido enviado queda en lectura.
+Las reglas demo y RENAPER pendiente impiden afirmar aprobación institucional.
+Ver `docs/SUBMISSION_REPORTING_AUDIT.md`, `docs/MANUAL_ADMIN.md`,
+`docs/MANUAL_APODERADO.md` y `docs/task/INFORME_10_15.md` desde la raíz.

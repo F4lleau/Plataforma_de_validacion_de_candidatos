@@ -31,3 +31,6 @@ __all__ = [
 	"User",
 	"UserModule",
 ]
+
+from app.models.election_rule import ElectionRule
+from app.models.list_assignment import ListAssignment

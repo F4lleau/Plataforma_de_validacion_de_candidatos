@@ -10,6 +10,7 @@ from sqlalchemy.orm import Session
 from app.core.config import settings
 from app.db.session import get_db
 from app.models.user import User
+from app.repositories.user_repository import UserRepository
 from app.utils.enums import UserRole
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
@@ -45,9 +46,12 @@ def create_refresh_token(subject: str) -> str:
 
 def decode_token(token: str) -> dict[str, Any] | None:
     try:
-        payload = jwt.decode(token, settings.secret_key, algorithms=[settings.algorithm])
+        payload = jwt.decode(
+            token, settings.secret_key, algorithms=[settings.algorithm],
+            options={"require_exp": True, "require_sub": True},
+        )
         return payload
-    except JWTError:
+    except (JWTError, ValueError, TypeError, OverflowError):
         return None
 
 
@@ -68,7 +72,10 @@ def get_current_user(
     except (TypeError, ValueError) as exc:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Token inválido.") from exc
 
-    user = db.get(User, user_id)
+    if not 0 < user_id <= 2147483647:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Token inválido.")
+
+    user = UserRepository(db).get_by_id(user_id)
     if user is None or not user.is_active:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Usuario inválido.")
     return user

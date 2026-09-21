@@ -7,6 +7,11 @@ export default function Root() {
 
   useEffect(() => {
     void restoreSession();
+    const syncSession = (event: StorageEvent) => {
+      if (event.key === "access_token" || event.key === null) void restoreSession();
+    };
+    window.addEventListener("storage", syncSession);
+    return () => window.removeEventListener("storage", syncSession);
   }, [restoreSession]);
 
   return <App />;

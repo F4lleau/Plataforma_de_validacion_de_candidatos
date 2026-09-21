@@ -1,0 +1,644 @@
+TASK 03 — Authentication, RBAC and Role-Based Frontend
+
+Trabajar sobre develop partiendo del checkpoint de Task 02B.
+
+NO hacer commit ni push al finalizar.
+
+Leer obligatoriamente antes de modificar código:
+
+/AGENTS.md
+/backend/AGENTS.md
+/frontend/AGENTS.md
+/docs/PROJECT_CONTEXT.md
+/docs/BUSINESS_RULES.md
+
+Revisar primero la implementación actual. No reemplazar componentes,
+servicios o infraestructura existente si pueden reutilizarse.
+
+==================================================
+OBJETIVO
+==================================================
+
+Implementar autenticación funcional end-to-end para los roles:
+
+- ADMIN
+- APODERADO
+
+y reemplazar el frontend placeholder actual por la aplicación real
+con login, sesión, rutas protegidas, layout y navegación según rol.
+
+Debe quedar funcional:
+
+/login
+   ↓
+POST /api/v1/auth/login
+   ↓
+JWT
+   ↓
+current_user
+   ↓
+rutas protegidas
+   ↓
+layout/sidebar según rol
+
+==================================================
+1. AUDITORÍA PREVIA
+==================================================
+
+Checklist de cierre (evidencia histórica de Task 03 en report.md):
+
+- [x] Auditoría de modelos, repositorios, servicios, seguridad, endpoints y frontend completada antes de modificar código.
+
+Antes de escribir código revisar:
+
+BACKEND
+
+- User
+- UserRole / Role si existen
+- UserRepository
+- AuthService
+- security.py
+- auth.py
+- users.py
+- config.py
+- schemas/auth.py
+- schemas/user.py
+- JWT existente
+- hashing de password
+- get_current_user actual
+- require_role actual
+- padron.py
+- candidates.py
+- electoral lists / asignaciones existentes
+
+FRONTEND
+
+- main.tsx
+- App.tsx
+- pages existentes
+- services/api.ts
+- Candidatos.tsx
+- Listas.tsx
+- Padron.tsx
+- package.json
+- React Router
+- Zustand
+- React Query
+- estilos Tailwind existentes
+
+No asumir que algo está implementado solamente porque existe el archivo.
+
+==================================================
+2. BACKEND — LOGIN
+==================================================
+
+Checklist de cierre (evidencia histórica de Task 03 en report.md):
+
+- [x] Login tipado existente reutilizado; usuario activo y hash verificados; error genérico de credenciales.
+
+Implementar endpoint real:
+
+POST /api/v1/auth/login
+
+Aceptar credenciales mediante schema tipado.
+
+Preferencia:
+
+{
+  "email": "...",
+  "password": "..."
+}
+
+Validar:
+
+- usuario existente;
+- password mediante hash;
+- usuario activo.
+
+No revelar innecesariamente si falló usuario o contraseña.
+
+Respuesta esperada conceptualmente:
+
+{
+  "access_token": "...",
+  "token_type": "bearer",
+  "user": {
+    "id": 1,
+    "email": "...",
+    "full_name": "...",
+    "role": "admin"
+  }
+}
+
+Reutilizar AuthService/security.py si ya existen.
+
+NO guardar password plano.
+
+==================================================
+3. JWT / CURRENT USER
+==================================================
+
+Checklist de cierre (evidencia histórica de Task 03 en report.md):
+
+- [x] JWT exige firma, expiración, subject y tipo access; current_user proviene de BD.
+
+Completar/revisar:
+
+get_current_user
+
+Debe:
+
+- extraer Bearer token;
+- validar firma;
+- validar expiración;
+- obtener subject/user id;
+- recuperar usuario de BD;
+- comprobar usuario activo;
+- devolver User real.
+
+Errores de autenticación:
+401.
+
+No confiar en:
+- user_id enviado por frontend;
+- role enviado por frontend.
+
+==================================================
+4. RBAC
+==================================================
+
+Checklist de cierre (evidencia histórica de Task 03 en report.md):
+
+- [x] RBAC y alcance por módulos habilitados aplicados en backend; aislamiento de recursos probado.
+
+Implementar una dependencia reutilizable.
+
+Ejemplo conceptual:
+
+require_roles(UserRole.ADMIN)
+
+o equivalente compatible con la arquitectura existente.
+
+Debe existir una única fuente clara para autorización.
+
+ADMIN:
+
+- acceso a padrón;
+- candidatos en revisión;
+- gestión administrativa.
+
+APODERADO:
+
+- acceso a carga de candidatos;
+- listas que le correspondan;
+- validaciones asociadas.
+
+No implementar permisos únicamente ocultando botones del frontend.
+
+Backend debe ser autoridad final.
+
+==================================================
+5. ENDPOINT /ME
+==================================================
+
+Checklist de cierre (evidencia histórica de Task 03 en report.md):
+
+- [x] GET /auth/me devuelve usuario y rol actuales y se utiliza al restaurar sesión.
+
+Implementar:
+
+GET /api/v1/auth/me
+
+Debe devolver usuario autenticado y rol.
+
+El frontend lo utilizará para restaurar/verificar sesión.
+
+==================================================
+6. REFRESH / LOGOUT
+==================================================
+
+Checklist de cierre (evidencia histórica de Task 03 en report.md):
+
+- [x] Infraestructura de refresh auditada y diferida explícitamente; logout cliente funcional y probado. No implica refresh implementado.
+
+Revisar primero infraestructura actual.
+
+Si existe soporte coherente de refresh token:
+completarlo.
+
+Si NO existe:
+no construir una solución compleja innecesaria.
+
+Como mínimo debe existir logout funcional del lado cliente eliminando
+la sesión/token.
+
+Documentar claramente si refresh token queda para una task posterior.
+
+==================================================
+7. PADRÓN
+==================================================
+
+Checklist de cierre (evidencia histórica de Task 03 en report.md):
+
+- [x] Importación de padrón ADMIN only y imported_by desde current_user; 401/403/200 probados.
+
+Confirmar:
+
+POST /api/v1/padron/import
+
+- requiere autenticación;
+- requiere ADMIN;
+- imported_by = current_user.id.
+
+Agregar tests de autorización:
+
+sin token -> 401
+APODERADO -> 403
+ADMIN -> permitido
+
+==================================================
+8. CANDIDATOS EN REVISIÓN
+==================================================
+
+Checklist de cierre (evidencia histórica de Task 03 en report.md):
+
+- [x] Revisión de candidatos ADMIN only, protegida en API y frontend.
+
+Confirmar:
+
+GET /api/v1/candidates/review
+
+ADMIN only.
+
+Tests:
+
+sin token -> 401
+APODERADO -> 403
+ADMIN -> permitido
+
+==================================================
+9. CREACIÓN DE CANDIDATOS
+==================================================
+
+Checklist de cierre (evidencia histórica de Task 03 en report.md):
+
+- [x] Creación autenticada usa current_user.id y valida módulo; ausencia de afiliación sigue sin bloquear guardado.
+
+POST /api/v1/candidates
+
+Debe requerir usuario autenticado.
+
+created_by debe salir exclusivamente de:
+
+current_user.id
+
+No aceptar created_by controlable por frontend.
+
+ADMIN/APODERADO:
+revisar reglas actuales y BUSINESS_RULES.md antes de decidir qué roles
+pueden crear candidatos.
+
+==================================================
+10. FRONTEND — ROUTER
+==================================================
+
+Checklist de cierre (evidencia histórica de Task 03 en report.md):
+
+- [x] Rutas mínimas y ProtectedRoute funcionales; validación /me antes de habilitar sesión.
+
+Eliminar la pantalla placeholder actual.
+
+Configurar React Router.
+
+Rutas mínimas:
+
+/login
+/dashboard
+/padron
+/listas
+/candidatos
+
+Crear:
+
+ProtectedRoute
+
+y mecanismo de autorización por rol.
+
+Comportamiento:
+
+usuario sin sesión intentando /dashboard
+    -> /login
+
+usuario autenticado intentando /login
+    -> /dashboard
+
+APODERADO intentando /padron
+    -> página 403 o redirección segura
+
+No depender únicamente de localStorage para considerar válida una sesión:
+usar /auth/me para verificarla al iniciar la aplicación.
+
+==================================================
+11. AUTH STORE
+==================================================
+
+Checklist de cierre (evidencia histórica de Task 03 en report.md):
+
+- [x] Store Zustand con login, logout y restoreSession, sin passwords; respuestas obsoletas no restauran sesión.
+
+Usar Zustand, ya instalado, para estado de autenticación.
+
+Crear estructura equivalente a:
+
+src/stores/auth.store.ts
+
+Estado:
+
+user
+accessToken
+isAuthenticated
+isLoading
+
+Acciones:
+
+login
+logout
+restoreSession
+
+No guardar password.
+
+==================================================
+12. API CLIENT
+==================================================
+
+Checklist de cierre (evidencia histórica de Task 03 en report.md):
+
+- [x] Cliente central JSON/uploads con Bearer y 401 sincronizado con Zustand; 403 conserva sesión.
+
+Centralizar token en:
+
+src/services/api.ts
+
+Todas las requests autenticadas deben incorporar:
+
+Authorization: Bearer <token>
+
+Manejar 401 de forma consistente.
+
+Evitar repetir lógica de token en cada service.
+
+Refactorizar padron.service.ts si actualmente implementa su propio
+manejo manual del token.
+
+==================================================
+13. LOGIN PAGE
+==================================================
+
+Checklist de cierre (evidencia histórica de Task 03 en report.md):
+
+- [x] Login real con lenguaje visual existente, estados de carga y errores diferenciados.
+
+Crear Login.tsx o adaptar la estructura existente.
+
+Debe seguir el lenguaje visual del proyecto/Lovable:
+
+- Plus Jakarta Sans para headings;
+- Inter para body;
+- paleta institucional existente;
+- diseño sobrio;
+- responsive.
+
+Formulario:
+
+Correo electrónico
+Contraseña
+Ingresar
+
+Estados:
+
+loading
+credenciales inválidas
+error servidor
+
+No exponer información técnica al usuario.
+
+La pantalla actual:
+
+"Plataforma PJ Candidatos / Frontend inicial configurado..."
+
+debe desaparecer completamente.
+
+==================================================
+14. APP LAYOUT
+==================================================
+
+Checklist de cierre (evidencia histórica de Task 03 en report.md):
+
+- [x] Layout reutilizado con navegación ADMIN/APODERADO y acceso móvil funcional.
+
+Crear layout autenticado reutilizable.
+
+Preferencia:
+
+src/components/layout/AppLayout.tsx
+src/components/layout/Sidebar.tsx
+src/components/layout/Header.tsx
+
+Header:
+- nombre del sistema;
+- usuario;
+- rol;
+- cerrar sesión.
+
+Sidebar según rol.
+
+ADMIN:
+
+- Dashboard
+- Padrón
+- Listas
+- Candidatos en revisión
+
+APODERADO:
+
+- Dashboard
+- Mis listas
+- Candidatos
+
+No crear funcionalidades ficticias detrás de links.
+
+Si una pantalla todavía no existe, marcarla como próxima funcionalidad
+o no mostrarla.
+
+==================================================
+15. PADRON.TSX
+==================================================
+
+Checklist de cierre (evidencia histórica de Task 03 en report.md):
+
+- [x] Padron.tsx conserva importación y acceso ADMIN.
+
+Solo accesible por ADMIN.
+
+Mantener funcionalidad de importación existente.
+
+No duplicar autorización:
+frontend mejora UX,
+backend sigue siendo autoridad.
+
+==================================================
+16. CANDIDATOS.TSX
+==================================================
+
+Checklist de cierre (evidencia histórica de Task 03 en report.md):
+
+- [x] Candidatos.tsx conserva creación y warning no bloqueante para el apoderado autorizado.
+
+Debe quedar accesible para APODERADO según las reglas del proyecto.
+
+Mantener funcionalidad implementada en Task 02B:
+
+- creación real;
+- afiliación verified;
+- warning no bloqueante;
+- manejo de errores.
+
+No romper candidates.service.ts.
+
+==================================================
+17. LISTAS.TSX
+==================================================
+
+Checklist de cierre (evidencia histórica de Task 03 en report.md):
+
+- [x] Listas integrado al layout, consulta filtrada y plantilla existente; edición/envío documentados como pendientes.
+
+Integrarla al layout APODERADO.
+
+No inventar CRUD completo si backend todavía no lo soporta.
+
+Mantener la funcionalidad existente y documentar qué falta.
+
+==================================================
+18. USUARIO ADMIN INICIAL
+==================================================
+
+Checklist de cierre (evidencia histórica de Task 03 en report.md):
+
+- [x] Bootstrap existente por variables de entorno conservado y documentado; credenciales excluidas de Git.
+
+Revisar si existe seed o usuario ADMIN.
+
+Si no existe, crear un mecanismo seguro de bootstrap/seed para desarrollo.
+
+NO:
+- hardcodear password productiva;
+- incluir password real en Git;
+- crear credenciales secretas en código.
+
+Puede utilizar variables de entorno de desarrollo, por ejemplo:
+
+INITIAL_ADMIN_EMAIL
+INITIAL_ADMIN_PASSWORD
+
+o un script explícito de creación.
+
+Documentarlo.
+
+==================================================
+19. TESTS BACKEND
+==================================================
+
+Checklist de cierre (evidencia histórica de Task 03 en report.md):
+
+- [x] Suite de autorización ampliada, conservando pruebas Task 02B: 40 tests backend aprobados al cierre.
+
+Agregar tests como mínimo para:
+
+1. login correcto;
+2. password incorrecto -> 401;
+3. usuario inexistente -> 401;
+4. /auth/me autenticado;
+5. /auth/me sin token -> 401;
+6. ADMIN accede /padron/import;
+7. APODERADO -> 403 en padrón;
+8. ADMIN accede /candidates/review;
+9. APODERADO -> 403 en review;
+10. POST candidate usa current_user.id;
+11. token inválido -> 401;
+12. token expirado -> 401.
+
+Mantener tests de Task 02B.
+
+==================================================
+20. VERIFICACIÓN
+==================================================
+
+Checklist de cierre (evidencia histórica de Task 03 en report.md):
+
+- [x] Pytest, Alembic current/heads, 10 tests frontend, build y lint verificados al cierre.
+
+Backend:
+
+python -m pytest -q
+
+alembic current
+alembic heads
+
+Frontend:
+
+npm run build
+npm run lint
+
+==================================================
+21. PRUEBA MANUAL ESPERADA
+==================================================
+
+Checklist de cierre (evidencia histórica de Task 03 en report.md):
+
+- [x] Recorrido de navegador ADMIN/APODERADO, logout, restauración, 403/401 y móvil comprobado.
+
+Documentar cómo probar:
+
+1. iniciar backend;
+2. iniciar frontend;
+3. abrir http://localhost:5173;
+4. redirección a /login;
+5. login ADMIN;
+6. visualizar sidebar ADMIN;
+7. entrar a Padrón;
+8. cerrar sesión;
+9. login APODERADO;
+10. visualizar sidebar APODERADO;
+11. entrar a Candidatos;
+12. intentar /padron manualmente y comprobar bloqueo.
+
+==================================================
+22. INFORME FINAL
+==================================================
+
+Checklist de cierre (evidencia histórica de Task 03 en report.md):
+
+- [x] Informe final con archivos, endpoints, estrategias, pendientes, git status y diff disponible en report.md; sin commit ni push.
+
+Entregar:
+
+- archivos creados;
+- archivos modificados;
+- endpoints implementados;
+- estrategia JWT;
+- estrategia RBAC;
+- funcionamiento de sesión frontend;
+- rutas frontend;
+- usuario bootstrap/desarrollo;
+- resultado pytest;
+- resultado build;
+- resultado lint;
+- pendientes reales;
+- git status --short;
+- git diff --stat.
+
+NO hacer commit.
+NO hacer push.
+
+Consigna recibida preservada sin modificaciones en [task-original.txt](task-original.txt).

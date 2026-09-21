@@ -1,0 +1,57 @@
+# Tareas del proyecto
+
+Esta carpeta se incluye en Git por pedido del usuario. Contiene las consignas,
+checklists y seguimiento; no debe contener secretos, padrones reales ni datos personales
+de las capturas del manual. No se hace commit ni push sin indicación.
+
+## Índice y orden de ejecución
+
+Tasks 03–08 implementadas; 04/06/07/08 usan reglas y datos de prueba autorizados.
+Task 09 completó la preparación solicitada; la conexión real está diferida hasta disponer
+de API. Tasks 10–14 están implementadas en el alcance local; Task 15 completó aceptación
+local y mantiene pendiente la institucional. Ver [informe 04–09](INFORME_04_09.md) y
+[informe 10–15](INFORME_10_15.md).
+
+| Orden | Task | Estado | Dependencias | Documentos |
+| --- | --- | --- | --- | --- |
+| 03 | Authentication, RBAC and Role-Based Frontend | Completada | Base Task 02B | [Consigna con checklist](03-authentication-rbac/task.md) · [Original](03-authentication-rbac/task-original.txt) · [Estado](03-authentication-rbac/status.md) · [Informe](03-authentication-rbac/report.md) |
+| 04 | Election Configuration, Catalogs and Validation Rules | Completada (alcance de prueba) | 03 | [Task](04-configuracion-electoral/task.md) · [Estado](04-configuracion-electoral/status.md) |
+| 05 | Apoderado Management, Assignments and Account Access | Completada | 03, 04 | [Task](05-apoderados-asignaciones/task.md) · [Estado](05-apoderados-asignaciones/status.md) |
+| 06 | Official Membership Register Import, Search and History | Completada (alcance de prueba) | 03, 04 | [Task](06-padron-oficial/task.md) · [Estado](06-padron-oficial/status.md) |
+| 07 | Electoral Lists, Templates and Assigned Ownership | Completada (alcance de prueba) | 04, 05 | [Task](07-listas-plantillas/task.md) · [Estado](07-listas-plantillas/status.md) |
+| 08 | Candidate Drafts, Editing and Office Requirements | Completada (alcance de prueba) | 06, 07 | [Task](08-candidatos-requisitos/task.md) · [Estado](08-candidatos-requisitos/status.md) |
+| 09 | RENAPER Integration and Candidate Validation Results | Preparada; API diferida | 08 | [Task](09-renaper-validacion-identidad/task.md) · [Estado](09-renaper-validacion-identidad/status.md) |
+| 10 | List Composition, Submission and Automatic Approval | Completada en entorno de prueba; habilitación institucional pendiente | 07, 08, 09 | [Task](10-composicion-envio-aprobacion/task.md) · [Estado](10-composicion-envio-aprobacion/status.md) |
+| 11 | Administrative List Inbox and Granular Validation Review | Completada | 07, 08, 10 | [Task](11-bandeja-administrativa-validaciones/task.md) · [Estado](11-bandeja-administrativa-validaciones/status.md) |
+| 12 | Role-Based Dashboards and Live Electoral Metrics | Completada | 05, 07, 10, 11 | [Task](12-dashboards-por-rol/task.md) · [Estado](12-dashboards-por-rol/status.md) |
+| 13 | Reports, Statistics and Excel CSV PDF Exports | Completada | 06, 11, 12 | [Task](13-reportes-exportaciones/task.md) · [Estado](13-reportes-exportaciones/status.md) |
+| 14 | Audit Trail and Electoral Action History | Completada | 04, 05, 06, 07, 08, 10, 11, 13 | [Task](14-auditoria-historial/task.md) · [Estado](14-auditoria-historial/status.md) |
+| 15 | End-to-End Acceptance, Role Manuals and Support | Aceptación local completada; aceptación institucional pendiente | 03, 04, 05, 06, 07, 08, 09, 10, 11, 12, 13, 14 | [Task](15-aceptacion-manual-soporte/task.md) · [Estado](15-aceptacion-manual-soporte/status.md) |
+
+## Fuente, cobertura y decisiones
+
+- [Fuente del manual](FUENTE_MANUAL.md): documento, hash, páginas revisadas y límites de interpretación.
+- [Matriz de capacidades](CAPACIDADES.md): 26 capacidades trazadas al manual y al estado actual del repo.
+- [Decisiones pendientes](DECISIONES.md): contradicciones, reglas no definidas y acceso externo.
+- [Resumen de planificación](PLANIFICACION.md): alcance documental y verificación de los archivos.
+
+## Forma de trabajo
+
+1. Leer la consigna y requisitos de las dependencias; auditar código antes de modificarlo.
+2. Mantener `task.md` con checklist por mini task y `status.md` con estado y bloqueos concretos.
+3. Marcar `[x]` solo con implementación/evidencia verificadas. Una decisión, mock o placeholder no completa una función real.
+4. Si una mini task depende de datos/definiciones externas, mantenerla pendiente y avanzar con las partes independientes.
+5. Registrar decisiones en `DECISIONES.md` y cambios de alcance en el seguimiento; conservar originales recibidos cuando se normalice su formato.
+6. Cerrar cada task con `report.md`: archivos, endpoints/modelos, permisos, tests, prueba manual, pendientes, git status y diff.
+7. Actualizar este índice y la matriz de capacidades al cerrar; no ejecutar el trabajo siguiente solo por haber redactado su consigna.
+8. Mantener las tasks y documentación versionadas; secretos/.env, datos reales y scripts de seed temporales quedan fuera.
+9. No hacer commit ni push sin indicación del usuario.
+
+## Notas de dependencias
+
+- Tasks 10–15 ejecutadas localmente. Siguiente hito externo: reglas oficiales, contrato RENAPER y aceptación institucional.
+- Task 09 ya tiene contratos/estados; requiere acceso/documentación RENAPER para la conexión real, diferida por el usuario.
+- Task 10 puede desarrollarse con contratos de validación de 09; no habilitar aprobación real con un proveedor simulado.
+- Las Tasks 11–14 pueden avanzar sobre contratos y datos reales disponibles aunque falte un proveedor externo; la aceptación integral de 15 lo registra.
+- Auditoría se instrumenta desde Task 04 y en cada operación de dominio; Task 14 completa consulta/historial, no reconstruye acciones nunca registradas.
+- Las declaraciones históricas de Task 03 sobre carpeta ignorada describen el cierre anterior. Este índice refleja la decisión actual de versionarla.

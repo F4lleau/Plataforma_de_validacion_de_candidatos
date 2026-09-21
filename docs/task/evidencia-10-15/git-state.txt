@@ -1,0 +1,307 @@
+Snapshot de cierre local 20/09/2026. Diff acumulado, incluye trabajo previo de Tasks 03–09. Sin commit/push.
+
+$ git branch --show-current
+develop
+
+
+$ git status --short
+ M backend/AGENTS.md
+ M backend/README.md
+ M backend/app/api/v1/endpoints/auth.py
+ M backend/app/api/v1/endpoints/candidates.py
+ M backend/app/api/v1/endpoints/dashboard.py
+ M backend/app/api/v1/endpoints/elections.py
+ M backend/app/api/v1/endpoints/lists.py
+ M backend/app/api/v1/endpoints/municipalities.py
+ M backend/app/api/v1/endpoints/offices.py
+ M backend/app/api/v1/endpoints/padron.py
+ M backend/app/api/v1/endpoints/users.py
+ M backend/app/api/v1/endpoints/validations.py
+ M backend/app/api/v1/router.py
+ M backend/app/core/config.py
+ M backend/app/core/security.py
+ M backend/app/integrations/renaper_client.py
+ M backend/app/main.py
+ M backend/app/models/__init__.py
+ M backend/app/models/affiliate_import_batch.py
+ M backend/app/models/candidate.py
+ M backend/app/models/candidate_validation.py
+ M backend/app/models/election.py
+ M backend/app/models/electoral_list.py
+ M backend/app/models/office.py
+ M backend/app/models/party_member.py
+ M backend/app/repositories/candidate_repository.py
+ M backend/app/repositories/list_repository.py
+ M backend/app/repositories/party_member_repository.py
+ M backend/app/repositories/user_repository.py
+ M backend/app/services/affiliate_import_service.py
+ M backend/app/services/candidate_service.py
+ M backend/app/services/list_service.py
+ M backend/app/services/list_validation_service.py
+ M backend/app/services/office_validation_service.py
+ M backend/app/services/renaper_validation_service.py
+ M backend/requirements.txt
+ M backend/tests/test_auth_rbac.py
+ M backend/tests/test_candidate_api.py
+ M docs/BUSINESS_RULES.md
+A  docs/MANUAL_ADMIN.md
+A  docs/MANUAL_APODERADO.md
+A  docs/OPERACION_LOCAL.md
+ M docs/PROJECT_CONTEXT.md
+A  docs/SUBMISSION_REPORTING_AUDIT.md
+A  docs/task/03-authentication-rbac/apoderado-mobile.png
+A  docs/task/03-authentication-rbac/report.md
+A  docs/task/03-authentication-rbac/status.md
+A  docs/task/03-authentication-rbac/task-original.txt
+A  docs/task/03-authentication-rbac/task.md
+A  docs/task/04-configuracion-electoral/report.md
+A  docs/task/04-configuracion-electoral/status.md
+A  docs/task/04-configuracion-electoral/task.md
+A  docs/task/05-apoderados-asignaciones/report.md
+A  docs/task/05-apoderados-asignaciones/status.md
+A  docs/task/05-apoderados-asignaciones/task.md
+A  docs/task/06-padron-oficial/report.md
+A  docs/task/06-padron-oficial/status.md
+A  docs/task/06-padron-oficial/task.md
+A  docs/task/07-listas-plantillas/report.md
+A  docs/task/07-listas-plantillas/status.md
+A  docs/task/07-listas-plantillas/task.md
+A  docs/task/08-candidatos-requisitos/report.md
+A  docs/task/08-candidatos-requisitos/status.md
+A  docs/task/08-candidatos-requisitos/task.md
+A  docs/task/09-renaper-validacion-identidad/report.md
+A  docs/task/09-renaper-validacion-identidad/status.md
+A  docs/task/09-renaper-validacion-identidad/task.md
+A  docs/task/10-composicion-envio-aprobacion/report.md
+A  docs/task/10-composicion-envio-aprobacion/status.md
+A  docs/task/10-composicion-envio-aprobacion/task.md
+A  docs/task/11-bandeja-administrativa-validaciones/report.md
+A  docs/task/11-bandeja-administrativa-validaciones/status.md
+A  docs/task/11-bandeja-administrativa-validaciones/task.md
+A  docs/task/12-dashboards-por-rol/report.md
+A  docs/task/12-dashboards-por-rol/status.md
+A  docs/task/12-dashboards-por-rol/task.md
+A  docs/task/13-reportes-exportaciones/report.md
+A  docs/task/13-reportes-exportaciones/status.md
+A  docs/task/13-reportes-exportaciones/task.md
+A  docs/task/14-auditoria-historial/report.md
+A  docs/task/14-auditoria-historial/status.md
+A  docs/task/14-auditoria-historial/task.md
+A  docs/task/15-aceptacion-manual-soporte/report.md
+A  docs/task/15-aceptacion-manual-soporte/status.md
+A  docs/task/15-aceptacion-manual-soporte/task.md
+A  docs/task/CAPACIDADES.md
+A  docs/task/DECISIONES.md
+A  docs/task/FUENTE_MANUAL.md
+A  docs/task/INFORME_04_09.md
+A  docs/task/INFORME_10_15.md
+A  docs/task/PLANIFICACION.md
+A  docs/task/README.md
+A  docs/task/evidencia-04-09/lista-mobile.png
+A  docs/task/evidencia-04-09/validaciones-mobile.png
+A  docs/task/evidencia-10-15/apoderado-envio.png
+A  docs/task/evidencia-10-15/apoderado-mobile.png
+A  docs/task/evidencia-10-15/auditoria-admin.png
+A  docs/task/evidencia-10-15/bandeja-admin.png
+A  docs/task/evidencia-10-15/dashboard-apoderado-mobile.png
+A  docs/task/evidencia-10-15/pdf-pagina-1.png
+A  docs/task/evidencia-10-15/pdf-pagina-7.png
+A  docs/task/evidencia-10-15/reportes-admin.png
+A  docs/task/evidencia-10-15/reportes-mobile.png
+ M frontend/AGENTS.md
+ M frontend/README.md
+ M frontend/package-lock.json
+ M frontend/package.json
+ M frontend/src/App.tsx
+ M frontend/src/Root.tsx
+ M frontend/src/components/layout/AppLayout.tsx
+ M frontend/src/index.css
+ M frontend/src/pages/Candidatos.tsx
+ M frontend/src/pages/CandidatosRevision.tsx
+ M frontend/src/pages/Configuracion.tsx
+ M frontend/src/pages/Dashboard.tsx
+ M frontend/src/pages/Forbidden.tsx
+ M frontend/src/pages/Listas.tsx
+ M frontend/src/pages/Login.tsx
+ M frontend/src/pages/Padron.tsx
+ M frontend/src/pages/Reportes.tsx
+ M frontend/src/pages/Usuarios.tsx
+ M frontend/src/pages/Validaciones.tsx
+ M frontend/src/services/api.ts
+ M frontend/src/services/auth.service.ts
+ M frontend/src/services/lists.service.ts
+ M frontend/src/services/padron.service.ts
+ M frontend/src/stores/auth.store.ts
+?? README.md
+?? backend/alembic/versions/dc5da19db749_electoral_configuration_assignments_and_.py
+?? backend/alembic/versions/e271bb89a403_electoral_range_constraints.py
+?? backend/app/api/v1/endpoints/reporting.py
+?? backend/app/models/election_rule.py
+?? backend/app/models/list_assignment.py
+?? backend/app/repositories/management_repository.py
+?? backend/app/repositories/padron_repository.py
+?? backend/app/repositories/reporting_repository.py
+?? backend/app/repositories/user_module_repository.py
+?? backend/app/schemas/management.py
+?? backend/app/schemas/reporting.py
+?? backend/app/services/access_service.py
+?? backend/app/services/audit_service.py
+?? backend/app/services/composition_service.py
+?? backend/app/services/electoral_workflow_service.py
+?? backend/app/services/export_service.py
+?? backend/app/services/inspection_service.py
+?? backend/app/services/management_service.py
+?? backend/app/services/padron_service.py
+?? backend/app/services/reporting_service.py
+?? backend/app/services/submission_service.py
+?? backend/app/services/transaction.py
+?? backend/tests/test_tasks_04_09.py
+?? backend/tests/test_tasks_10_15.py
+?? docs/AUTHENTICATION.md
+?? docs/ELECTORAL_WORKFLOWS.md
+?? frontend/src/components/forms/
+?? frontend/src/components/reporting/
+?? frontend/src/hooks/
+?? frontend/src/pages/Auditoria.tsx
+?? frontend/src/pages/Ayuda.tsx
+?? frontend/src/pages/ListaDetalle.tsx
+?? frontend/src/services/management.service.ts
+?? frontend/src/services/reporting.service.ts
+?? frontend/src/tests/
+?? local-deps.yml
+?? scripts/
+
+
+$ git diff --stat
+ backend/AGENTS.md                                  |  22 +-
+ backend/README.md                                  |  34 +-
+ backend/app/api/v1/endpoints/auth.py               |  18 +-
+ backend/app/api/v1/endpoints/candidates.py         |  37 +-
+ backend/app/api/v1/endpoints/dashboard.py          |  22 +-
+ backend/app/api/v1/endpoints/elections.py          |  65 ++-
+ backend/app/api/v1/endpoints/lists.py              | 117 ++++-
+ backend/app/api/v1/endpoints/municipalities.py     |  33 +-
+ backend/app/api/v1/endpoints/offices.py            |  33 +-
+ backend/app/api/v1/endpoints/padron.py             |  38 +-
+ backend/app/api/v1/endpoints/users.py              |  47 +-
+ backend/app/api/v1/endpoints/validations.py        |   7 +-
+ backend/app/api/v1/router.py                       |  18 +-
+ backend/app/core/config.py                         |   1 +
+ backend/app/core/security.py                       |  15 +-
+ backend/app/integrations/renaper_client.py         |  26 +-
+ backend/app/main.py                                |   1 +
+ backend/app/models/__init__.py                     |   3 +
+ backend/app/models/affiliate_import_batch.py       |   3 +-
+ backend/app/models/candidate.py                    |   3 +-
+ backend/app/models/candidate_validation.py         |   3 +-
+ backend/app/models/election.py                     |   7 +-
+ backend/app/models/electoral_list.py               |   5 +-
+ backend/app/models/office.py                       |   3 +-
+ backend/app/models/party_member.py                 |  21 +-
+ backend/app/repositories/candidate_repository.py   |  51 +-
+ backend/app/repositories/list_repository.py        |  70 ++-
+ .../app/repositories/party_member_repository.py    |   1 +
+ backend/app/repositories/user_repository.py        |   5 +-
+ backend/app/services/affiliate_import_service.py   | 299 +++++++-----
+ backend/app/services/candidate_service.py          |  55 ++-
+ backend/app/services/list_service.py               |  11 +-
+ backend/app/services/list_validation_service.py    | 113 +----
+ backend/app/services/office_validation_service.py  |  45 +-
+ backend/app/services/renaper_validation_service.py |  31 +-
+ backend/requirements.txt                           | Bin 1926 -> 1956 bytes
+ backend/tests/test_auth_rbac.py                    | 158 ++++++-
+ backend/tests/test_candidate_api.py                |   4 +-
+ docs/BUSINESS_RULES.md                             |  40 +-
+ docs/PROJECT_CONTEXT.md                            | 100 +---
+ frontend/AGENTS.md                                 |  30 +-
+ frontend/README.md                                 |  29 +-
+ frontend/package-lock.json                         | 303 +++++++++++-
+ frontend/package.json                              |   4 +-
+ frontend/src/App.tsx                               |  22 +-
+ frontend/src/Root.tsx                              |   5 +
+ frontend/src/components/layout/AppLayout.tsx       |  24 +-
+ frontend/src/index.css                             |   7 +-
+ frontend/src/pages/Candidatos.tsx                  | 181 +------
+ frontend/src/pages/CandidatosRevision.tsx          | 106 +++--
+ frontend/src/pages/Configuracion.tsx               | 518 +++++++++++++++++++++
+ frontend/src/pages/Dashboard.tsx                   |  76 ++-
+ frontend/src/pages/Forbidden.tsx                   |   5 +
+ frontend/src/pages/Listas.tsx                      | 288 +++++++++---
+ frontend/src/pages/Login.tsx                       |  57 ++-
+ frontend/src/pages/Padron.tsx                      | 330 +++++++++----
+ frontend/src/pages/Reportes.tsx                    | 128 +++++
+ frontend/src/pages/Usuarios.tsx                    | 262 +++++++++++
+ frontend/src/pages/Validaciones.tsx                |  82 ++++
+ frontend/src/services/api.ts                       | 135 ++++--
+ frontend/src/services/auth.service.ts              |  14 +-
+ frontend/src/services/lists.service.ts             |  24 +-
+ frontend/src/services/padron.service.ts            |   2 +-
+ frontend/src/stores/auth.store.ts                  |  41 +-
+ 64 files changed, 3310 insertions(+), 928 deletions(-)
+
+
+$ git diff --cached --stat
+ docs/MANUAL_ADMIN.md                               |  66 +++
+ docs/MANUAL_APODERADO.md                           |  40 ++
+ docs/OPERACION_LOCAL.md                            |  63 ++
+ docs/SUBMISSION_REPORTING_AUDIT.md                 | 122 ++++
+ .../03-authentication-rbac/apoderado-mobile.png    | Bin 0 -> 33743 bytes
+ docs/task/03-authentication-rbac/report.md         | 260 +++++++++
+ docs/task/03-authentication-rbac/status.md         |  54 ++
+ docs/task/03-authentication-rbac/task-original.txt | 554 ++++++++++++++++++
+ docs/task/03-authentication-rbac/task.md           | 644 +++++++++++++++++++++
+ docs/task/04-configuracion-electoral/report.md     |  38 ++
+ docs/task/04-configuracion-electoral/status.md     |  17 +
+ docs/task/04-configuracion-electoral/task.md       | 121 ++++
+ docs/task/05-apoderados-asignaciones/report.md     |  39 ++
+ docs/task/05-apoderados-asignaciones/status.md     |  17 +
+ docs/task/05-apoderados-asignaciones/task.md       | 123 ++++
+ docs/task/06-padron-oficial/report.md              |  38 ++
+ docs/task/06-padron-oficial/status.md              |  17 +
+ docs/task/06-padron-oficial/task.md                | 122 ++++
+ docs/task/07-listas-plantillas/report.md           |  39 ++
+ docs/task/07-listas-plantillas/status.md           |  17 +
+ docs/task/07-listas-plantillas/task.md             | 123 ++++
+ docs/task/08-candidatos-requisitos/report.md       |  38 ++
+ docs/task/08-candidatos-requisitos/status.md       |  17 +
+ docs/task/08-candidatos-requisitos/task.md         | 126 ++++
+ .../task/09-renaper-validacion-identidad/report.md |  43 ++
+ .../task/09-renaper-validacion-identidad/status.md |  17 +
+ docs/task/09-renaper-validacion-identidad/task.md  | 122 ++++
+ .../task/10-composicion-envio-aprobacion/report.md |  21 +
+ .../task/10-composicion-envio-aprobacion/status.md |  25 +
+ docs/task/10-composicion-envio-aprobacion/task.md  | 129 +++++
+ .../report.md                                      |  21 +
+ .../status.md                                      |  25 +
+ .../11-bandeja-administrativa-validaciones/task.md | 120 ++++
+ docs/task/12-dashboards-por-rol/report.md          |  21 +
+ docs/task/12-dashboards-por-rol/status.md          |  25 +
+ docs/task/12-dashboards-por-rol/task.md            | 110 ++++
+ docs/task/13-reportes-exportaciones/report.md      |  21 +
+ docs/task/13-reportes-exportaciones/status.md      |  25 +
+ docs/task/13-reportes-exportaciones/task.md        | 121 ++++
+ docs/task/14-auditoria-historial/report.md         |  21 +
+ docs/task/14-auditoria-historial/status.md         |  25 +
+ docs/task/14-auditoria-historial/task.md           | 119 ++++
+ docs/task/15-aceptacion-manual-soporte/report.md   |  21 +
+ docs/task/15-aceptacion-manual-soporte/status.md   |  25 +
+ docs/task/15-aceptacion-manual-soporte/task.md     | 129 +++++
+ docs/task/CAPACIDADES.md                           |  59 ++
+ docs/task/DECISIONES.md                            |  70 +++
+ docs/task/FUENTE_MANUAL.md                         |  52 ++
+ docs/task/INFORME_04_09.md                         | 243 ++++++++
+ docs/task/INFORME_10_15.md                         | 111 ++++
+ docs/task/PLANIFICACION.md                         |  47 ++
+ docs/task/README.md                                |  57 ++
+ docs/task/evidencia-04-09/lista-mobile.png         | Bin 0 -> 53159 bytes
+ docs/task/evidencia-04-09/validaciones-mobile.png  | Bin 0 -> 72808 bytes
+ docs/task/evidencia-10-15/apoderado-envio.png      | Bin 0 -> 159323 bytes
+ docs/task/evidencia-10-15/apoderado-mobile.png     | Bin 0 -> 62852 bytes
+ docs/task/evidencia-10-15/auditoria-admin.png      | Bin 0 -> 87891 bytes
+ docs/task/evidencia-10-15/bandeja-admin.png        | Bin 0 -> 134068 bytes
+ .../evidencia-10-15/dashboard-apoderado-mobile.png | Bin 0 -> 44017 bytes
+ docs/task/evidencia-10-15/pdf-pagina-1.png         | Bin 0 -> 164694 bytes
+ docs/task/evidencia-10-15/pdf-pagina-7.png         | Bin 0 -> 47117 bytes
+ docs/task/evidencia-10-15/reportes-admin.png       | Bin 0 -> 119419 bytes
+ docs/task/evidencia-10-15/reportes-mobile.png      | Bin 0 -> 50061 bytes
+ 63 files changed, 4520 insertions(+)

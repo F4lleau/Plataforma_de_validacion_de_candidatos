@@ -9,28 +9,36 @@ export default function AppLayout() {
     ? [
         ["/dashboard", "Dashboard"],
         ["/padron", "Padrón"],
+        ["/configuracion", "Configuración"],
+        ["/usuarios", "Apoderados"],
         ["/listas", "Listas"],
+        ["/validaciones", "Listas cargadas / Validaciones"],
+        ["/reportes", "Reportes"],
+        ["/auditoria", "Auditoría"],
+        ["/ayuda", "Ayuda"],
         ["/candidatos/revision", "Candidatos en revisión"],
       ]
     : [
         ["/dashboard", "Dashboard"],
         ["/listas", "Mis listas"],
         ["/candidatos", "Candidatos"],
+        ["/ayuda", "Ayuda"],
       ];
 
   return (
     <div className="min-h-screen bg-background text-foreground">
-      <div className="flex min-h-screen">
-        <aside className="hidden w-64 shrink-0 border-r bg-card p-5 md:block">
-          <div className="mb-10">
+      <div className="flex min-h-screen flex-col md:flex-row">
+        <aside className="w-full shrink-0 border-b bg-card p-5 md:w-64 md:border-b-0 md:border-r">
+          <div className="mb-4 md:mb-10">
             <p className="text-xs font-semibold uppercase tracking-[0.2em] text-primary">
               Junta Electoral
             </p>
-            <h1 className="mt-2 font-heading text-xl font-bold">
-              Plataforma PJ
-            </h1>
+            <p className="mt-2 font-heading text-xl font-bold">Plataforma PJ</p>
           </div>
-          <nav className="space-y-1">
+          <nav
+            aria-label="Navegación principal"
+            className="flex flex-wrap gap-1 md:block md:space-y-1"
+          >
             {links.map(([to, label]) => (
               <NavLink
                 key={to}
@@ -46,7 +54,7 @@ export default function AppLayout() {
         </aside>
 
         <div className="min-w-0 flex-1">
-          <header className="flex items-center justify-between border-b bg-card px-5 py-4">
+          <header className="flex flex-wrap items-center justify-between gap-4 border-b bg-card px-5 py-4">
             <div>
               <p className="font-heading font-semibold">Gestión electoral</p>
               <p className="text-xs text-muted-foreground">

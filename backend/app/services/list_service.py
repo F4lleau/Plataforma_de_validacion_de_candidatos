@@ -1,15 +1,18 @@
 from app.models.electoral_list import ElectoralList
+from app.models.user import User
 from app.repositories.list_repository import ListRepository
 from app.schemas.electoral_list import ElectoralListCreate
-from app.utils.enums import ListStatus
+from app.utils.enums import ListStatus, UserRole
 
 
 class ListService:
     def __init__(self, list_repository: ListRepository):
         self.list_repository = list_repository
 
-    def list_lists(self):
-        return self.list_repository.list_all()
+    def list_lists(self, user: User):
+        if user.role == UserRole.ADMIN:
+            return self.list_repository.list_all()
+        return self.list_repository.list_for_user(user.id)
 
     def create_list(self, payload: ElectoralListCreate, created_by: int) -> ElectoralList:
         electoral_list = ElectoralList(

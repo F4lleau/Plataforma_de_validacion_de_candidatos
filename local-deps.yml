@@ -1,0 +1,23 @@
+name: junta-electoral-local
+
+services:
+  postgres:
+    image: postgres:17-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:?Ejecutar python3 scripts/init_local_env.py}
+      POSTGRES_USER: ${POSTGRES_USER:?Ejecutar python3 scripts/init_local_env.py}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Ejecutar python3 scripts/init_local_env.py}
+    ports:
+      - "127.0.0.1:${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U \"$$POSTGRES_USER\" -d \"$$POSTGRES_DB\""]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+      start_period: 10s
+
+volumes:
+  postgres_data:

@@ -1,16 +1,28 @@
 import { useState } from "react";
 import { Navigate, useLocation, useNavigate } from "react-router-dom";
 import { useAuthStore } from "../stores/auth.store";
+import { ApiError } from "../services/api";
+
+import { useRemote } from "../hooks/useRemote";
 
 export default function Login() {
+  const support = useRemote<{ contact: string }>("/auth/support");
   const navigate = useNavigate();
   const location = useLocation();
-  const { login, isAuthenticated } = useAuthStore();
+  const { login, isAuthenticated, isLoading } = useAuthStore();
   const [email, setEmail] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [help, setHelp] = useState(false);
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
+  if (isLoading)
+    return (
+      <p role="status" className="p-8 text-center">
+        Verificando sesión...
+      </p>
+    );
   if (isAuthenticated) return <Navigate to="/dashboard" replace />;
 
   const handleSubmit = async (event: React.FormEvent) => {
@@ -22,8 +34,14 @@ export default function Login() {
       const destination =
         (location.state as { from?: string } | null)?.from || "/dashboard";
       navigate(destination, { replace: true });
-    } catch {
-      setError("No pudimos validar tus credenciales.");
+    } catch (error) {
+      setError(
+        error instanceof ApiError && error.status === 401
+          ? "El correo o la contraseña no son correctos."
+          : error instanceof ApiError
+            ? error.message
+            : "No pudimos iniciar sesión. Intentá nuevamente.",
+      );
     } finally {
       setLoading(false);
     }
@@ -46,6 +64,7 @@ export default function Login() {
             Correo electrónico
             <input
               type="email"
+              autoComplete="username"
               required
               value={email}
               onChange={(event) => setEmail(event.target.value)}
@@ -55,15 +74,43 @@ export default function Login() {
           <label className="block text-sm font-medium">
             Contraseña
             <input
-              type="password"
+              type={showPassword ? "text" : "password"}
+              autoComplete="current-password"
               required
               value={password}
               onChange={(event) => setPassword(event.target.value)}
               className="mt-2 w-full rounded-md border px-3 py-2"
             />
           </label>
+          <button
+            type="button"
+            className="text-sm text-primary underline"
+            aria-pressed={showPassword}
+            onClick={() => setShowPassword(!showPassword)}
+          >
+            {showPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
+          </button>
+          <button
+            type="button"
+            className="block text-sm text-primary underline"
+            onClick={() => setHelp(!help)}
+          >
+            Olvidé mi contraseña
+          </button>
+          {help && (
+            <p role="status" className="rounded-md bg-muted p-3 text-sm">
+              Solicitá el restablecimiento al administrador de la Junta por tu
+              canal habitual. El administrador puede asignarte una nueva
+              contraseña desde Gestión de apoderados, luego de verificar tu
+              identidad. No se envían correos automáticos.{" "}
+              {support.data?.contact && `Contacto: ${support.data.contact}`}
+            </p>
+          )}
           {error && (
-            <p className="rounded-md bg-destructive/10 p-3 text-sm text-destructive">
+            <p
+              role="alert"
+              className="rounded-md bg-destructive/10 p-3 text-sm text-destructive"
+            >
               {error}
             </p>
           )}

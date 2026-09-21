@@ -1,4 +1,4 @@
-import { API_BASE_URL } from "./api";
+import { apiFetch } from "./api";
 
 export type UserRole = "admin" | "apoderado";
 
@@ -20,15 +20,9 @@ export interface LoginResponse {
 }
 
 export async function loginRequest(email: string, password: string): Promise<LoginResponse> {
-  const response = await fetch(`${API_BASE_URL}/auth/login`, {
+  return apiFetch<LoginResponse>("/auth/login", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ email, password }),
-  });
-
-  if (!response.ok) {
-    throw new Error("Credenciales inválidas.");
-  }
-
-  return response.json() as Promise<LoginResponse>;
+  }, false);
 }

@@ -94,7 +94,7 @@ Hay servicios de validación implementados y otros parcialmente estructurados:
 
 - `AffiliationValidationService`: valida si el DNI existe en el padrón.
 - `ListValidationService`: valida completitud, posiciones, duplicados, paridad y alternancia.
-- `OfficeValidationService` y `RenaperValidationService`: existen como estructura inicial o pendiente, no como integración productiva.
+- `OfficeValidationService` calcula edad con referencia configurable; los requisitos no confirmados quedan pendientes. `RenaperValidationService` retorna pendiente sin proveedor; no es una integración productiva.
 
 ## Padrón PJ
 
@@ -111,7 +111,7 @@ El flujo implementado incluye:
 - endpoint `POST /api/v1/candidates` para registrar candidatos y persistir la validación de afiliación.
 - endpoint `GET /api/v1/candidates/review` para consultar observaciones de afiliación.
 
-La dependencia JWT `get_current_user` ya resuelve usuarios activos desde el token y la base de datos. El login HTTP y el RBAC completo permanecen como integración de Task 03; los endpoints no aceptan IDs de usuario enviados por el frontend.
+La autenticación expone login y `/auth/me`. `get_current_user` exige firma, expiración, subject y token de acceso, y recupera usuario activo y rol desde BD. `require_roles` aplica RBAC y `AccessService`/`UserModuleRepository` limitan candidatos, listas y validaciones a los módulos habilitados del apoderado. Los endpoints no aceptan IDs de autor enviados por el frontend. Ver [autenticación y prueba manual](../docs/AUTHENTICATION.md).
 
 ### Regla crítica
 
@@ -125,7 +125,7 @@ Existe una estructura de integración en `backend/app/integrations/` y un client
 
 No asumir que RENAPER funciona en producción ni documentarlo como si estuviera operativo.
 
-La clase `RenaperClient` y el servicio `RenaperValidationService` están en una etapa de base/mock o pendiente, no como implementación productiva real.
+La clase `RenaperClient` define el contrato interno y devuelve no configurado. El servicio conserva pendientes y errores técnicos sin aprobar datos. La conexión externa real está diferida por el usuario.
 
 ## Endpoints relevantes
 
@@ -176,3 +176,19 @@ Cuando se modifique infraestructura, setup, endpoints, flujos, dependencias, val
 - [AGENTS.md](../AGENTS.md)
 - [docs/PROJECT_CONTEXT.md](../docs/PROJECT_CONTEXT.md)
 - [docs/BUSINESS_RULES.md](../docs/BUSINESS_RULES.md)
+
+## Actualización Tasks 04–09 (20/09/2026)
+
+Configuración, catálogos, usuarios/módulos, padrón de 18 campos, listas con asignación
+explícita y edición de candidatos tienen API y UI reales. RENAPER permanece pendiente
+sin proveedor; no devuelve OK ficticio. Ver [contratos y recorrido](../docs/ELECTORAL_WORKFLOWS.md).
+Tasks 10–14 y aceptación local de 15 están implementadas. RENAPER real y aceptación
+institucional siguen pendientes. Ver docs/task/INFORME_10_15.md desde la raíz.
+
+## Actualización Tasks 10–15 (20/09/2026)
+
+Envío transaccional, bandeja ADMIN, dashboards, reportes/exportaciones y auditoría
+están implementados y verificados localmente. El contenido enviado queda en lectura.
+Las reglas demo y RENAPER pendiente impiden afirmar aprobación institucional.
+Ver `docs/SUBMISSION_REPORTING_AUDIT.md`, `docs/MANUAL_ADMIN.md`,
+`docs/MANUAL_APODERADO.md` y `docs/task/INFORME_10_15.md` desde la raíz.

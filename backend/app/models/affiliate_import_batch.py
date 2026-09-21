@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from sqlalchemy import DateTime, ForeignKey, Integer, String, Text
+from sqlalchemy import DateTime, ForeignKey, Integer, String, Text, Index, text
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.db.session import Base
@@ -8,6 +8,7 @@ from app.db.session import Base
 
 class AffiliateImportBatch(Base):
     __tablename__ = "affiliate_import_batches"
+    __table_args__ = (Index("uq_affiliate_import_batches_current", "is_current", unique=True, postgresql_where=text("is_current IS TRUE"), sqlite_where=text("is_current IS TRUE")),)
 
     id: Mapped[int] = mapped_column(primary_key=True, index=True)
     file_name: Mapped[str] = mapped_column(String(255), nullable=False)

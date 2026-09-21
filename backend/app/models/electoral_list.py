@@ -25,3 +25,6 @@ class ElectoralList(Base):
 
     created_by: Mapped[int] = mapped_column(ForeignKey("users.id"), nullable=False)
     submitted_at: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
+    list_number: Mapped[str | None] = mapped_column(String(40), nullable=True)
+    created_at: Mapped[datetime | None] = mapped_column(DateTime, default=datetime.utcnow, nullable=True)
+    rule_version_id: Mapped[int | None] = mapped_column(ForeignKey("election_rules.id"), nullable=True)

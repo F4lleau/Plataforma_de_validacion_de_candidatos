@@ -37,13 +37,14 @@ frontend/
 
 ## Estado real del frontend
 
-La base visual existe y hay un scaffold inicial, pero la aplicación aún está en etapas tempranas de integración funcional. Los módulos definidos en `src/modules/` no muestran una implementación funcional completa y la app todavía debe completar:
+La aplicación integra React Router, login, sesión Zustand validada mediante `/auth/me`,
+rutas protegidas y navegación por rol en escritorio y móvil. Padrón, carga de candidatos,
+revisión administrativa y consulta de listas/plantillas consumen endpoints reales.
 
-- routing real;
-- autenticación real;
-- consumo de endpoints reales;
-- integración de formularios y estado de servidor;
-- permisos por rol y flujo de usuario.
+Configuración, apoderados/asignaciones y CRUD de listas/candidatos están implementados.
+Envío/aprobación condicionada, bandeja y auditoría están implementados. No se habilitó
+revisión administrativa resolutiva ni reapertura sin definición institucional. No existe un directorio `src/modules`
+implementado; el código actual se organiza en `pages`, `services`, `stores` y `components`.
 
 Si se implementa una funcionalidad no documentada en el código base, debe tratarse como trabajo pendiente o incompleto, no como hecho.
 
@@ -110,6 +111,7 @@ No implementar reglas frontend que bloqueen la carga o el registro únicamente p
 
 Antes de cerrar una task:
 
+- `npm run test` (Vitest: sesión y cliente API)
 - `npm run build`
 - `npm run lint` cuando corresponda
 
@@ -122,3 +124,19 @@ No declarar una task terminada si existen errores conocidos relacionados con los
 - [docs/PROJECT_CONTEXT.md](../docs/PROJECT_CONTEXT.md)
 - [docs/BUSINESS_RULES.md](../docs/BUSINESS_RULES.md)
 - [frontend/README.md](README.md)
+
+## Actualización Tasks 04–09 (20/09/2026)
+
+Configuración, catálogos, usuarios/módulos, padrón de 18 campos, listas con asignación
+explícita y edición de candidatos tienen API y UI reales. RENAPER permanece pendiente
+sin proveedor; no devuelve OK ficticio. Ver [contratos y recorrido](../docs/ELECTORAL_WORKFLOWS.md).
+Tasks 10–14 y aceptación local de 15 están implementadas. RENAPER real y aceptación
+institucional siguen pendientes. Ver docs/task/INFORME_10_15.md desde la raíz.
+
+## Actualización Tasks 10–15 (20/09/2026)
+
+Envío transaccional, bandeja ADMIN, dashboards, reportes/exportaciones y auditoría
+están implementados y verificados localmente. El contenido enviado queda en lectura.
+Las reglas demo y RENAPER pendiente impiden afirmar aprobación institucional.
+Ver `docs/SUBMISSION_REPORTING_AUDIT.md`, `docs/MANUAL_ADMIN.md`,
+`docs/MANUAL_APODERADO.md` y `docs/task/INFORME_10_15.md` desde la raíz.

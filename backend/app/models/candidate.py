@@ -25,3 +25,4 @@ class Candidate(Base):
 
     created_by: Mapped[int] = mapped_column(ForeignKey("users.id"), nullable=False)
     created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow, nullable=False)
+    revision: Mapped[int] = mapped_column(default=1, nullable=False)

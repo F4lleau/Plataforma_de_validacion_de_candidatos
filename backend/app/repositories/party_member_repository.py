@@ -29,6 +29,7 @@ class PartyMemberRepository:
             .where(
                 PartyMember.dni == normalized,
                 PartyMember.is_active.is_(True),
+                func.lower(PartyMember.affiliation_status) == "activo",
                 AffiliateImportBatch.is_current.is_(True),
                 AffiliateImportBatch.status == "completed",
             )

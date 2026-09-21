@@ -42,6 +42,9 @@ flowchart TD
 
 ## Guía de Configuración
 
+Para levantar la aplicación con API y PostgreSQL en Docker, seguir la
+[guía de desarrollo local](../README.md).
+
 ### Clonar el Repositorio
 
 ```bash
@@ -63,9 +66,14 @@ npm run dev
 
 La aplicación inicia en `/login`, restaura la sesión mediante `/api/v1/auth/me` y protege las rutas por rol. ADMIN accede al padrón y a la revisión administrativa; APODERADO accede a sus listas y a la carga de candidatos.
 
+Ver [autenticación y prueba manual](../docs/AUTHENTICATION.md). `npm run test`
+ejecuta las pruebas de sesión y cliente API con Vitest. Completar la verificación
+con `npm run build` y `npm run lint`.
+
 ### Variables de Entorno
 
-Configura el archivo `.env` en `frontend/` según corresponda (ejemplo: URL del backend).
+El cliente actual usa `http://localhost:8000/api/v1` en `src/services/api.ts`.
+No necesita un `.env` de frontend para el entorno local documentado.
 
 ## Documentación de Usuario
 
@@ -76,7 +84,7 @@ Configura el archivo `.env` en `frontend/` según corresponda (ejemplo: URL del 
 
 ### FAQ
 
-- **No carga la app:** Verifica que el backend esté corriendo y la URL en `.env` sea correcta.
+- **No carga la app:** Verifica que el backend esté corriendo y la URL de `src/services/api.ts` sea correcta.
 - **Problemas de login:** Revisa usuario y contraseña, y que el backend esté accesible.
 
 ### Solución de Problemas
@@ -93,3 +101,20 @@ Brindar una interfaz amigable para la gestión y validación de procesos elector
 ---
 
 > **Automatización:** Se recomienda documentar componentes y hooks con comentarios y herramientas como Storybook o Docz.
+
+## Actualización Tasks 04–09 (20/09/2026)
+
+Configuración, catálogos, usuarios/módulos, padrón de 18 campos, listas con asignación
+explícita y edición de candidatos tienen API y UI reales. RENAPER permanece pendiente
+sin proveedor; no devuelve OK ficticio. Ver [contratos y recorrido](../docs/ELECTORAL_WORKFLOWS.md).
+Las menciones anteriores a estos CRUD como pendientes quedan reemplazadas por este estado.
+Tasks 10–14 y aceptación local de 15 están implementadas. RENAPER real y aceptación
+institucional siguen pendientes. Ver docs/task/INFORME_10_15.md desde la raíz.
+
+## Actualización Tasks 10–15 (20/09/2026)
+
+Envío transaccional, bandeja ADMIN, dashboards, reportes/exportaciones y auditoría
+están implementados y verificados localmente. El contenido enviado queda en lectura.
+Las reglas demo y RENAPER pendiente impiden afirmar aprobación institucional.
+Ver `docs/SUBMISSION_REPORTING_AUDIT.md`, `docs/MANUAL_ADMIN.md`,
+`docs/MANUAL_APODERADO.md` y `docs/task/INFORME_10_15.md` desde la raíz.

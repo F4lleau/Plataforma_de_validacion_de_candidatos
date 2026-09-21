@@ -17,3 +17,4 @@ class CandidateValidation(Base):
     message: Mapped[str] = mapped_column(String(255), nullable=False)
     response_json: Mapped[dict | None] = mapped_column(JSON, nullable=True)
     validated_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow, nullable=False)
+    candidate_revision: Mapped[int | None] = mapped_column(nullable=True)
