@@ -57,3 +57,15 @@ obligación textual adicional. Cada ID aparece en al menos una consigna.
 
 La aceptación de producción requiere resolver las decisiones institucionales y ejecutar
 la integración autorizada de identidad. La ausencia en padrón siempre conserva el registro.
+
+## Ampliación de autenticación fuera del manual
+
+La solicitud del usuario del 20/09/2026 agrega AUTH-01–AUTH-09: JWT/sesiones,
+SMTP, bloqueo/desbloqueo, recuperación/cambio de clave e invitación/primer acceso.
+Son capacidades **planificadas**, trazadas en [LOGIN_SEGURIDAD.md](LOGIN_SEGURIDAD.md)
+y asignadas a Tasks 16–21. No se atribuyen al PDF ni modifican retrospectivamente
+el cierre del alcance anterior.
+
+En CAP-01, «revocación» de la evidencia previa se refiere a cambios de acceso por
+usuario/rol/asignación y limpieza del cliente; no equivale a revocación individual
+de JWT/sesiones en servidor. Esa capacidad sigue pendiente en Task 16.

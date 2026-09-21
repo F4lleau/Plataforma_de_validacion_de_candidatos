@@ -45,3 +45,17 @@ Ejecutar Task 04 cuando el usuario lo indique, comenzando por la auditoría y la
 decisiones de configuración. Las tasks siguientes quedan preparadas y ordenadas;
 RENAPER y ciertas reglas electorales requieren las definiciones registradas en
 DECISIONES.md antes de cerrar sus mini tasks dependientes.
+
+## Ampliación documental de login — 20/09/2026
+
+Se agregaron Tasks 16–21, con `task.md` y `status.md`, para sesiones JWT,
+SMTP, bloqueo/desbloqueo, recuperación/cambio de contraseña, invitaciones/primer
+acceso y aceptación integral. Todas quedan planificadas, con checklists sin marcar.
+
+[LOGIN_SEGURIDAD.md](LOGIN_SEGURIDAD.md) registra código actual, brechas, dependencias,
+valores propuestos, contratos futuros y nueve capacidades AUTH separadas del manual.
+Se consultaron fuentes primarias IETF, OWASP y NIST; no se declara certificación.
+El índice y D12–D16 vinculan la nueva planificación. No se implementó código,
+no se alteró DB, no se enviaron correos y no se hicieron commit/push en este cambio.
+El «Siguiente paso» de la sección anterior es histórico; para este bloque el inicio
+previsto es Task 16 cuando se solicite su ejecución.

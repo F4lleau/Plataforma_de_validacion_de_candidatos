@@ -68,3 +68,23 @@ D11: formatos técnicos adoptados para prueba: padrón XLSX/CSV de sus 18 campos
 No se obtuvo muestra institucional ni se amplió soporte a XLS.
 
 Estas decisiones operativas no cierran D01–D07 como normativa o integración real.
+
+## Ampliación solicitada: login y seguridad — 20/09/2026
+
+El usuario pidió agregar tasks para JWT/estándares, SMTP, recuperación, bloqueo por
+reintentos, desbloqueo ADMIN e invitaciones con primer acceso. Se planifican Tasks
+16–21; esta sección no cambia todavía el comportamiento ejecutable de Tasks 03/05/15.
+D10 se amplía a recuperación automática **planificada**; la asistida sigue siendo la
+implementación actual hasta ejecutar y verificar la sustitución.
+
+| ID | Decisión / dependencia | Propuesta y alcance | Estado |
+| --- | --- | --- | --- |
+| D12 | Sesiones y transporte seguro | Access JWT en memoria y refresh opaco rotativo en cookie HttpOnly; sid/revocación en BD, CSRF y reautenticación reciente. Firma según despliegue y migración coordinada. | Propuesta técnica para 16; sin implementar |
+| D13 | Umbrales y caducidades | Valores iniciales configurables de LOGIN_SEGURIDAD.md. No son exigencias legales ni del PDF; revisar con pruebas/operación. | Propuesta técnica para 16/18/19/20 |
+| D14 | SMTP y entrega externa | Capturador local, outbox durable y worker; faltan proveedor, remitente/dominio, secretos y URL HTTPS productiva. | Desarrollo local planificable; habilitación externa pendiente |
+| D15 | Invitación y datos propios | ADMIN invita APODERADO; destinatario completa nombre/username y clave, email fijo. No eleva rol ni recibe listas automáticamente. Cuentas legacy conservadas sin verificar email ficticiamente. | Alcance inicial propuesto para 20 |
+| D16 | Bloqueo versus desactivación | Bloqueo temporal limita nuevo login; desbloqueo ADMIN no reactiva ni cambia permisos. Reset exitoso limpia solo bloqueo temporal y revoca sesiones; desactivación bloquea recuperación. | Propuesta técnica para 18/19 |
+
+Ver [plan, contratos y referencias](LOGIN_SEGURIDAD.md). No se requiere aprobación
+adicional para redactar el backlog; durante ejecución resolver la configuración
+externa cuando sea necesaria y avanzar con lo independiente.

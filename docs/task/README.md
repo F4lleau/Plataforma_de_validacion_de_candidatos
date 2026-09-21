@@ -27,12 +27,22 @@ local y mantiene pendiente la institucional. Ver [informe 04–09](INFORME_04_09
 | 13 | Reports, Statistics and Excel CSV PDF Exports | Completada | 06, 11, 12 | [Task](13-reportes-exportaciones/task.md) · [Estado](13-reportes-exportaciones/status.md) |
 | 14 | Audit Trail and Electoral Action History | Completada | 04, 05, 06, 07, 08, 10, 11, 13 | [Task](14-auditoria-historial/task.md) · [Estado](14-auditoria-historial/status.md) |
 | 15 | End-to-End Acceptance, Role Manuals and Support | Aceptación local completada; aceptación institucional pendiente | 03, 04, 05, 06, 07, 08, 09, 10, 11, 12, 13, 14 | [Task](15-aceptacion-manual-soporte/task.md) · [Estado](15-aceptacion-manual-soporte/status.md) |
+| 16 | JWT Hardening, Session Rotation and Revocation | Planificada | 03, 14 | [Task](16-jwt-sesiones-seguras/task.md) · [Estado](16-jwt-sesiones-seguras/status.md) |
+| 17 | SMTP Delivery, Email Templates and Local Mail Capture | Planificada | 16, 14 | [Task](17-smtp-correo-transaccional/task.md) · [Estado](17-smtp-correo-transaccional/status.md) |
+| 18 | Login Throttling, Account Lockout and Administrative Unlock | Planificada | 16, 17, 05, 14 | [Task](18-bloqueo-desbloqueo-cuentas/task.md) · [Estado](18-bloqueo-desbloqueo-cuentas/status.md) |
+| 19 | Password Recovery, Password Changes and Credential Policy | Planificada | 16, 17, 18 | [Task](19-recuperacion-cambio-clave/task.md) · [Estado](19-recuperacion-cambio-clave/status.md) |
+| 20 | Email Invitations, Single-Use Activation and First-Access Onboarding | Planificada | 16, 17, 18, 19, 05 | [Task](20-invitaciones-onboarding/task.md) · [Estado](20-invitaciones-onboarding/status.md) |
+| 21 | Authentication Acceptance, Security Regression and Operations | Planificada | 16, 17, 18, 19, 20 | [Task](21-aceptacion-seguridad-login/task.md) · [Estado](21-aceptacion-seguridad-login/status.md) |
+
+Tasks 16–21 agregadas por la solicitud de seguridad de login. Son backlog pendiente,
+con checklists sin ejecutar. Ver [arquitectura, contratos y orden](LOGIN_SEGURIDAD.md).
 
 ## Fuente, cobertura y decisiones
 
 - [Fuente del manual](FUENTE_MANUAL.md): documento, hash, páginas revisadas y límites de interpretación.
 - [Matriz de capacidades](CAPACIDADES.md): 26 capacidades trazadas al manual y al estado actual del repo.
 - [Decisiones pendientes](DECISIONES.md): contradicciones, reglas no definidas y acceso externo.
+- [Plan de login y seguridad](LOGIN_SEGURIDAD.md): brechas actuales, política propuesta, contratos y matriz AUTH.
 - [Resumen de planificación](PLANIFICACION.md): alcance documental y verificación de los archivos.
 
 ## Forma de trabajo

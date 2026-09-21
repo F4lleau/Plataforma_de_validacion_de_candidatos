@@ -19,7 +19,7 @@ filtradas por módulos; sus mutaciones requieren ADMIN. Listas y candidatos requ
 módulo más asignación por lista. El POST antiguo de candidatos queda solo para ADMIN;
 APODERADO usa `/lists/{id}/candidates`. Ver [contratos actuales](ELECTORAL_WORKFLOWS.md).
 
-El dashboard sigue sin métricas reales (Task 12). Ausencia de token: 401; usuario
+El dashboard consume métricas reales desde Task 12. Ausencia de token: 401; usuario
 sin permiso: 403; recurso inexistente: 404. Ausencia de afiliación permite guardar.
 
 ## JWT y contraseñas
@@ -89,3 +89,9 @@ npm run lint
 Vitest cubre restauración, logout, 401 de JSON/uploads, 403, respuestas obsoletas y
 errores de login. Los tests backend mantienen Task 02B y agregan usuario inactivo,
 JWT incompleto/firma inválida, rol de BD, autoría e aislamiento por módulos.
+
+## Evolución planificada del login
+
+Tasks 16–21 documentan sesiones revocables, refresh rotativo, SMTP, recuperación,
+bloqueo/desbloqueo e invitaciones con primer acceso. Están pendientes: no cambian
+las limitaciones actuales descritas arriba. Ver [plan y contratos futuros](task/LOGIN_SEGURIDAD.md).
