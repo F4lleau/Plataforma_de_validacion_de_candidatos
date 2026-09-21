@@ -1,3 +1,4 @@
+import { PageHeading } from "../components/forms/FormUI";
 import { useState } from "react";
 import {
   ReportFilters,
@@ -33,9 +34,10 @@ export default function Validaciones() {
   }
   return (
     <div className="space-y-6">
-      <h1 className="font-heading text-3xl font-bold">
-        Listas cargadas y validaciones
-      </h1>
+      <PageHeading
+        eyebrow="Revisión administrativa"
+        title="Listas cargadas y validaciones"
+      />
       <p>
         Supervisión de todas las listas. Abrí el detalle para ver composición y
         controles por candidato.

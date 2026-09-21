@@ -1,3 +1,4 @@
+import { PageHeading } from "../components/forms/FormUI";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { Field, Panel, Feedback } from "../components/forms/FormUI";
@@ -225,7 +226,11 @@ export default function Usuarios() {
   const [selected, setSelected] = useState<Apoderado>();
   return (
     <div className="space-y-6">
-      <h1 className="font-heading text-3xl font-bold">Gestión de apoderados</h1>
+      <PageHeading
+        eyebrow="Administración"
+        title="Gestión de apoderados"
+        description="Administrá las cuentas, los módulos habilitados y sus asignaciones."
+      />
       <Feedback error={data.error} />
       <Panel title="Cuentas">
         <button className="secondary" onClick={() => setSelected(undefined)}>

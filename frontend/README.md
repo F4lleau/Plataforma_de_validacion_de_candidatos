@@ -118,3 +118,10 @@ están implementados y verificados localmente. El contenido enviado queda en lec
 Las reglas demo y RENAPER pendiente impiden afirmar aprobación institucional.
 Ver `docs/SUBMISSION_REPORTING_AUDIT.md`, `docs/MANUAL_ADMIN.md`,
 `docs/MANUAL_APODERADO.md` y `docs/task/INFORME_10_15.md` desde la raíz.
+
+## Diseño de la interfaz
+
+La interfaz comparte tipografía, colores, formularios, paneles y etiquetas de estado.
+La navegación agrupa los módulos por rol y se despliega con un menú en móvil.
+El dashboard presenta métricas y distribución de estados de la API, junto con accesos rápidos.
+Ver [criterios y componentes visuales](../docs/INTERFAZ_VISUAL.md).

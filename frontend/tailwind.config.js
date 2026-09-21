@@ -1,4 +1,3 @@
-
 import animate from "tailwindcss-animate";
 
 export default {
@@ -21,7 +20,8 @@ export default {
     },
     extend: {
       fontFamily: {
-        heading: ["Plus Jakarta Sans", "sans-serif"],
+        heading: ["Inter", "sans-serif"],
+        mono: ["JetBrains Mono", "monospace"],
         body: ["Inter", "sans-serif"],
       },
       colors: {
@@ -105,4 +105,4 @@ export default {
     },
   },
   plugins: [animate],
-} ;
+};

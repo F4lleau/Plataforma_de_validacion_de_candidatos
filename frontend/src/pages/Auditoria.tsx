@@ -1,3 +1,4 @@
+import { PageHeading } from "../components/forms/FormUI";
 import { useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { useRemote } from "../hooks/useRemote";
@@ -51,7 +52,7 @@ export default function Auditoria() {
   );
   return (
     <div className="space-y-6">
-      <h1 className="font-heading text-3xl font-bold">Auditoría</h1>
+      <PageHeading eyebrow="Seguimiento" title="Auditoría" />
       <p>
         Acciones registradas, con fecha local y actor. El historial se conserva
         aunque la cuenta esté desactivada.

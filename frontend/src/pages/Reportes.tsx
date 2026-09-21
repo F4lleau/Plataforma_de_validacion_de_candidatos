@@ -1,3 +1,4 @@
+import { PageHeading } from "../components/forms/FormUI";
 import { useState } from "react";
 import { ReportFilters, Metrics } from "../components/reporting/ReportUI";
 import { Feedback, Panel } from "../components/forms/FormUI";
@@ -28,7 +29,11 @@ export default function Reportes() {
   }
   return (
     <div className="space-y-6">
-      <h1 className="font-heading text-3xl font-bold">Reportes electorales</h1>
+      <PageHeading
+        eyebrow="Seguimiento"
+        title="Reportes electorales"
+        description="Explorá los indicadores y exportá la información del alcance seleccionado."
+      />
       <Panel title="Filtros del reporte">
         <ReportFilters value={filters} onChange={setFilters} />
       </Panel>

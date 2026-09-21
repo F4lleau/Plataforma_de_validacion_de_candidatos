@@ -1,4 +1,4 @@
-import { stateLabels } from "../services/reporting.service";
+import StatusBadge from "../components/reporting/StatusBadge";
 import CompositionPanel from "../components/reporting/CompositionPanel";
 import { useState, useEffect } from "react";
 import { Link, useParams, useLocation } from "react-router-dom";
@@ -12,13 +12,6 @@ import {
   type Apoderado,
 } from "../services/management.service";
 import { useAuthStore } from "../stores/auth.store";
-const resultLabels: Record<string, string> = {
-  ok: "Verificado",
-  warning: "Observación",
-  pendiente: "Pendiente",
-  error: "Error",
-};
-
 function CandidateEditor({
   list,
   candidate,
@@ -276,8 +269,8 @@ export default function ListaDetalle() {
       </Link>
       <h1 className="font-heading text-3xl font-bold">{list.list_name}</h1>
       <p>
-        {stateLabels[list.status] ?? list.status} · {list.candidate_count}{" "}
-        candidatos ·{" "}
+        <StatusBadge status={list.status} /> · {list.candidate_count} candidatos
+        ·{" "}
         {list.rule
           ? `Reglas versión ${list.rule.version}`
           : "Sin reglas vinculadas"}
@@ -338,14 +331,17 @@ export default function ListaDetalle() {
             )}
             <div className="grid gap-3 lg:grid-cols-3">
               {c.validations.map((v) => (
-                <div key={v.type} className="rounded-md bg-muted p-3 text-sm">
-                  <p className="font-semibold">
+                <div
+                  key={v.type}
+                  className={`rounded-xl border p-4 text-sm ${v.status === "warning" ? "border-amber-200 bg-amber-50/50" : v.status === "error" ? "border-red-200 bg-red-50/50" : "bg-muted/40"}`}
+                >
+                  <p className="mb-2 flex flex-wrap items-center gap-2 font-semibold">
                     {v.type === "afiliacion"
                       ? "Afiliación"
                       : v.type === "renaper"
                         ? "RENAPER"
                         : "Edad y requisitos"}{" "}
-                    · {resultLabels[v.status] ?? v.status}
+                    <StatusBadge status={v.status} />
                   </p>
                   <p>{v.message}</p>
                   <p className="mt-1 text-xs text-muted-foreground">

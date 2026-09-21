@@ -1,3 +1,6 @@
+import StatusBadge from "../components/reporting/StatusBadge";
+import { stateLabels } from "../services/reporting.service";
+import { PageHeading } from "../components/forms/FormUI";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useForm, useWatch } from "react-hook-form";
@@ -43,7 +46,11 @@ export default function Listas() {
   const office = offices.data?.find((o) => o.id === Number(officeId));
   return (
     <div className="space-y-6">
-      <h1 className="font-heading text-3xl font-bold">Listas electorales</h1>
+      <PageHeading
+        eyebrow="Gestión electoral"
+        title="Listas electorales"
+        description="Consultá tus listas, continuá la carga o creá una nueva."
+      />
       <Panel title="Mis listas">
         <div className="grid gap-3 sm:grid-cols-2">
           <Field label="Buscar nombre o número">
@@ -70,10 +77,13 @@ export default function Listas() {
                 "borrador",
                 "incompleta",
                 "en_validacion",
+                "rechazada_composicion",
                 "enviada_admin",
                 "aprobada_sistema",
               ].map((s) => (
-                <option key={s}>{s}</option>
+                <option key={s} value={s}>
+                  {stateLabels[s] ?? s}
+                </option>
               ))}
             </select>
           </Field>
@@ -88,7 +98,10 @@ export default function Listas() {
         )}
         <div className="grid gap-3 lg:grid-cols-2">
           {lists.data?.items.map((l) => (
-            <article className="space-y-2 rounded-lg border p-4" key={l.id}>
+            <article
+              className="space-y-3 rounded-xl border bg-muted/20 p-5"
+              key={l.id}
+            >
               <h3 className="text-lg font-semibold">
                 {l.list_number ?? "Sin número"} · {l.list_name}
               </h3>
@@ -98,15 +111,22 @@ export default function Listas() {
                   ?.name ?? "Provincial"}
               </p>
               <p className="text-sm">
-                {l.candidate_count} candidatos · {l.status}
+                <span className="mr-3 text-muted-foreground">
+                  {l.candidate_count} candidatos
+                </span>
+                <StatusBadge status={l.status} />
               </p>
               <Link className="secondary inline-block" to={`/listas/${l.id}`}>
-                Continuar carga
+                {["borrador", "incompleta", "rechazada_composicion"].includes(
+                  l.status,
+                )
+                  ? "Continuar carga"
+                  : "Ver lista"}
               </Link>
             </article>
           ))}
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center gap-3">
           <button
             className="secondary"
             disabled={page === 1}

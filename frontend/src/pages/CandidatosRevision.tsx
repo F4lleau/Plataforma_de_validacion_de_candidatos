@@ -1,3 +1,4 @@
+import { PageHeading } from "../components/forms/FormUI";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useRemote } from "../hooks/useRemote";
@@ -17,9 +18,10 @@ export default function CandidatosRevision() {
   const data = useRemote<Page<Review>>(`/admin/candidate-review?page=${page}`);
   return (
     <div className="space-y-6">
-      <h1 className="font-heading text-3xl font-bold">
-        Candidatos en revisión
-      </h1>
+      <PageHeading
+        eyebrow="Revisión administrativa"
+        title="Candidatos en revisión"
+      />
       <p>
         Observaciones vigentes. Una advertencia conserva al candidato y permite
         continuar con la carga.
@@ -30,7 +32,7 @@ export default function CandidatosRevision() {
         <p>No hay candidatos con observaciones.</p>
       )}
       {data.data?.items.map((c) => (
-        <article className="space-y-2 rounded-lg border bg-card p-4" key={c.id}>
+        <article className="surface space-y-3 p-5" key={c.id}>
           <h2 className="font-semibold">
             {c.last_name}, {c.first_name}
           </h2>

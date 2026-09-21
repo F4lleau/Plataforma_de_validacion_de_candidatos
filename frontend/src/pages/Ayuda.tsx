@@ -1,3 +1,4 @@
+import { PageHeading } from "../components/forms/FormUI";
 import { useAuthStore } from "../stores/auth.store";
 import { useRemote } from "../hooks/useRemote";
 import { Panel, Feedback } from "../components/forms/FormUI";
@@ -6,7 +7,11 @@ export default function Ayuda() {
   const support = useRemote<{ contact: string }>("/auth/support");
   return (
     <div className="space-y-6">
-      <h1 className="font-heading text-3xl font-bold">Ayuda y soporte</h1>
+      <PageHeading
+        eyebrow="Documentación"
+        title="Ayuda y soporte"
+        description="Guías para acompañarte en cada etapa de la gestión electoral."
+      />
       <Panel
         title={admin ? "Guía para administración" : "Guía para apoderados"}
       >
@@ -32,23 +37,35 @@ export default function Ayuda() {
         </ol>
       </Panel>
       <Panel title="Problemas frecuentes">
-        <p>
-          Si la sesión vence, ingresá nuevamente. Ante un error de red, recargá
-          el detalle antes de repetir: el guardado podría haberse completado.
-        </p>
-        <p>
-          Si no ves una lista, el administrador debe comprobar tanto su
-          asignación como el módulo habilitado. No se conceden permisos por
-          compartir localidad.
-        </p>
-        <p>
-          Una importación fallida no cambia el padrón vigente. Revisá las filas
-          indicadas en el historial y volvé a subir el archivo completo.
-        </p>
-        <p>
-          RENAPER está pendiente de conexión real. Los datos de prueba no
-          acreditan cumplimiento institucional.
-        </p>
+        <div className="divide-y">
+          {[
+            [
+              "¿Qué hago si vence la sesión o aparece un error de red?",
+              "Si la sesión vence, ingresá nuevamente. Ante un error de red, recargá el detalle antes de repetir: el guardado podría haberse completado.",
+            ],
+            [
+              "¿Por qué no veo una lista?",
+              "El administrador debe comprobar tanto la asignación de la lista como el módulo habilitado. No se conceden permisos por compartir localidad.",
+            ],
+            [
+              "¿Qué sucede si falla la importación del padrón?",
+              "Una importación fallida no cambia el padrón vigente. Revisá las filas indicadas en el historial y volvé a subir el archivo completo.",
+            ],
+            [
+              "¿Cuál es el estado de RENAPER?",
+              "RENAPER está pendiente de conexión real. Los datos de prueba no acreditan cumplimiento institucional.",
+            ],
+          ].map(([question, answer]) => (
+            <details key={question} className="py-3">
+              <summary className="cursor-pointer text-sm font-medium">
+                {question}
+              </summary>
+              <p className="pb-2 pt-3 text-sm leading-relaxed text-muted-foreground">
+                {answer}
+              </p>
+            </details>
+          ))}
+        </div>
       </Panel>
       <Panel title="Contacto y recuperación">
         <Feedback error={support.error} />

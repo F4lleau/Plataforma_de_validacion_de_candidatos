@@ -1,3 +1,4 @@
+import { PageHeading } from "../components/forms/FormUI";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -439,9 +440,11 @@ export default function Configuracion() {
   const office = offices.data?.find((o) => o.id === officeId);
   return (
     <div className="space-y-6">
-      <h1 className="font-heading text-3xl font-bold">
-        Configuración electoral
-      </h1>
+      <PageHeading
+        eyebrow="Administración"
+        title="Configuración electoral"
+        description="Organizá las elecciones, los cargos y las reglas de cada proceso."
+      />
       <Feedback
         error={elections.error || offices.error || municipalities.error}
       />

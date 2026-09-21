@@ -1,3 +1,16 @@
+import {
+  Files,
+  Users,
+  Send,
+  CircleCheck,
+  CircleDashed,
+  ClipboardList,
+  UserRoundCheck,
+  Percent,
+  ArrowUpRight,
+  Inbox,
+} from "lucide-react";
+import StatusBadge from "./StatusBadge";
 import { Link } from "react-router-dom";
 import { Field } from "../forms/FormUI";
 import { useRemote } from "../../hooks/useRemote";
@@ -97,23 +110,80 @@ export function ReportFilters({
   );
 }
 export function Metrics({ data }: { data: Summary }) {
+  const metrics = [
+    {
+      label: "Listas electorales",
+      value: data.total_lists,
+      icon: Files,
+      detail: "En el alcance seleccionado",
+    },
+    {
+      label: "Candidatos",
+      value: data.total_candidates,
+      icon: Users,
+      detail: "Registrados en las listas",
+    },
+    {
+      label: "Enviadas",
+      value: data.sent_lists,
+      icon: Send,
+      detail: "Para revisión administrativa",
+    },
+    {
+      label: "Aprobadas",
+      value: data.approved_lists,
+      icon: CircleCheck,
+      detail: "Por los controles del sistema",
+    },
+    {
+      label: "Incompletas",
+      value: data.incomplete_lists,
+      icon: CircleDashed,
+      detail: "Con carga pendiente",
+    },
+    {
+      label: "Composición observada",
+      value: data.rejected_lists,
+      icon: ClipboardList,
+      detail: "Requieren correcciones",
+    },
+    ...(data.active_apoderados === null
+      ? []
+      : [
+          {
+            label: "Apoderados activos",
+            value: data.active_apoderados,
+            icon: UserRoundCheck,
+            detail: "Dentro del alcance consultado",
+          },
+        ]),
+    {
+      label: "Aprobación",
+      value: `${data.approval_rate}%`,
+      icon: Percent,
+      detail: "Del total de listas",
+    },
+  ];
   return (
-    <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-      {[
-        ["Listas", data.total_lists],
-        ["Candidatos", data.total_candidates],
-        ["Enviadas", data.sent_lists],
-        ["Aprobadas", data.approved_lists],
-        ["Incompletas", data.incomplete_lists],
-        ["Composición observada", data.rejected_lists],
-        ...(data.active_apoderados === null
-          ? []
-          : [["Apoderados activos", data.active_apoderados]]),
-        ["Aprobación", `${data.approval_rate}%`],
-      ].map(([label, value]) => (
-        <div className="rounded-xl border bg-card p-4" key={label}>
-          <p className="text-sm text-muted-foreground">{label}</p>
-          <p className="mt-2 text-3xl font-bold">{value}</p>
+    <div className="grid grid-cols-2 gap-3 xl:grid-cols-4">
+      {metrics.map(({ label, value, icon: Icon, detail }, i) => (
+        <div
+          className={`surface p-4 md:p-5 ${i === metrics.length - 1 && metrics.length % 2 !== 0 ? "col-span-2" : ""} ${i === 0 ? "!border-primary/25 bg-gradient-to-br from-accent/70 to-card" : ""}`}
+          key={label}
+        >
+          <div className="flex items-center justify-between gap-2">
+            <p className="text-xs font-medium text-muted-foreground">{label}</p>
+            <Icon
+              size={17}
+              strokeWidth={1.6}
+              className={i === 0 ? "text-primary" : "text-muted-foreground/70"}
+              aria-hidden="true"
+            />
+          </div>
+          <p className="mt-4 font-mono text-3xl font-medium tracking-tight">
+            {typeof value === "number" ? value.toLocaleString("es-AR") : value}
+          </p>
+          <p className="mt-2 text-[11px] text-muted-foreground">{detail}</p>
         </div>
       ))}
     </div>
@@ -122,7 +192,7 @@ export function Metrics({ data }: { data: Summary }) {
 export function ListTable({ items }: { items: ReportList[] }) {
   return (
     <div
-      className="max-w-full overflow-x-auto"
+      className="max-w-full overflow-x-auto rounded-xl border bg-card"
       tabIndex={0}
       role="region"
       aria-label="Listas electorales"
@@ -167,14 +237,17 @@ export function ListTable({ items }: { items: ReportList[] }) {
               </td>
               <td className="border-b p-3">{l.candidate_count}</td>
               <td className="border-b p-3">
-                {stateLabels[l.status] ?? l.status}
+                <StatusBadge status={l.status} />
               </td>
               <td className="border-b p-3">
                 {l.apoderados.map((a) => a.name).join(", ") || "Sin asignar"}
               </td>
               <td className="border-b p-3">
-                <Link className="text-primary underline" to={`/listas/${l.id}`}>
-                  Ver lista
+                <Link
+                  className="text-link whitespace-nowrap"
+                  to={`/listas/${l.id}`}
+                >
+                  Ver lista <ArrowUpRight size={14} aria-hidden="true" />
                 </Link>
               </td>
             </tr>
@@ -182,7 +255,10 @@ export function ListTable({ items }: { items: ReportList[] }) {
         </tbody>
       </table>
       {items.length === 0 && (
-        <p className="p-4">No hay listas para estos filtros.</p>
+        <div className="flex flex-col items-center gap-3 p-10 text-center text-sm text-muted-foreground">
+          <Inbox size={28} strokeWidth={1.4} aria-hidden="true" />
+          <p>No hay listas para estos filtros.</p>
+        </div>
       )}
     </div>
   );
@@ -205,7 +281,7 @@ export function Pager({
       >
         Anterior
       </button>
-      <span>
+      <span className="text-xs text-muted-foreground">
         Página {page} · {total} resultados
       </span>
       <button

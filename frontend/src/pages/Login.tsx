@@ -1,3 +1,5 @@
+import Brand from "../components/layout/Brand";
+import { Layers3, ClipboardCheck, ShieldCheck } from "lucide-react";
 import { useState } from "react";
 import { Navigate, useLocation, useNavigate } from "react-router-dom";
 import { useAuthStore } from "../stores/auth.store";
@@ -48,81 +50,116 @@ export default function Login() {
   };
 
   return (
-    <main className="flex min-h-screen items-center justify-center bg-background px-4 py-10">
-      <section className="w-full max-w-md rounded-xl border bg-card p-8 shadow-sm">
-        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-primary">
-          Junta Electoral
-        </p>
-        <h1 className="mt-4 font-heading text-3xl font-bold">
-          Ingresar a la plataforma
-        </h1>
-        <p className="mt-2 text-sm text-muted-foreground">
-          Accedé a la gestión de listas y candidatos.
-        </p>
-        <form onSubmit={handleSubmit} className="mt-8 space-y-4">
-          <label className="block text-sm font-medium">
-            Correo electrónico
-            <input
-              type="email"
-              autoComplete="username"
-              required
-              value={email}
-              onChange={(event) => setEmail(event.target.value)}
-              className="mt-2 w-full rounded-md border px-3 py-2"
-            />
-          </label>
-          <label className="block text-sm font-medium">
-            Contraseña
-            <input
-              type={showPassword ? "text" : "password"}
-              autoComplete="current-password"
-              required
-              value={password}
-              onChange={(event) => setPassword(event.target.value)}
-              className="mt-2 w-full rounded-md border px-3 py-2"
-            />
-          </label>
-          <button
-            type="button"
-            className="text-sm text-primary underline"
-            aria-pressed={showPassword}
-            onClick={() => setShowPassword(!showPassword)}
-          >
-            {showPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
-          </button>
-          <button
-            type="button"
-            className="block text-sm text-primary underline"
-            onClick={() => setHelp(!help)}
-          >
-            Olvidé mi contraseña
-          </button>
-          {help && (
-            <p role="status" className="rounded-md bg-muted p-3 text-sm">
-              Solicitá el restablecimiento al administrador de la Junta por tu
-              canal habitual. El administrador puede asignarte una nueva
-              contraseña desde Gestión de apoderados, luego de verificar tu
-              identidad. No se envían correos automáticos.{" "}
-              {support.data?.contact && `Contacto: ${support.data.contact}`}
-            </p>
-          )}
-          {error && (
-            <p
-              role="alert"
-              className="rounded-md bg-destructive/10 p-3 text-sm text-destructive"
+    <main className="login-background flex min-h-screen items-center justify-center px-5 py-10 md:px-10">
+      <div className="grid w-full max-w-5xl items-center gap-12 lg:grid-cols-2 lg:gap-20">
+        <div className="hidden lg:block">
+          <Brand />
+          <p className="eyebrow mb-5 mt-20">Plataforma de gestión electoral</p>
+          <h2 className="text-5xl font-semibold leading-[1.12]">
+            Cada lista.
+            <br />
+            Cada candidato.
+            <br />
+            <span className="text-primary">Todo en su lugar.</span>
+          </h2>
+          <p className="mt-6 max-w-sm text-base leading-relaxed text-muted-foreground">
+            Un espacio para organizar las listas, consultar validaciones y
+            acompañar cada etapa del proceso electoral.
+          </p>
+          <div className="mt-10 space-y-4 border-t pt-6">
+            {[
+              { icon: Layers3, text: "Listas y candidatos organizados" },
+              {
+                icon: ClipboardCheck,
+                text: "Validaciones y observaciones claras",
+              },
+              { icon: ShieldCheck, text: "Acceso según tu rol y asignaciones" },
+            ].map(({ icon: Icon, text }) => (
+              <p
+                key={text}
+                className="flex items-center gap-3 text-sm text-muted-foreground"
+              >
+                <Icon size={17} className="text-primary" aria-hidden="true" />
+                {text}
+              </p>
+            ))}
+          </div>
+        </div>
+        <section className="surface mx-auto w-full max-w-md p-6 sm:p-9">
+          <div className="mb-8 lg:hidden">
+            <Brand />
+          </div>
+          <p className="eyebrow">Acceso a la plataforma</p>
+          <h1 className="mt-3 text-2xl font-semibold">
+            Ingresar a la plataforma
+          </h1>
+          <p className="mt-2 text-sm text-muted-foreground">
+            Accedé a la gestión de listas y candidatos.
+          </p>
+          <form onSubmit={handleSubmit} className="mt-8 space-y-4">
+            <label className="block text-sm font-medium">
+              Correo electrónico
+              <input
+                type="email"
+                autoComplete="username"
+                required
+                value={email}
+                onChange={(event) => setEmail(event.target.value)}
+                className="field mt-2"
+              />
+            </label>
+            <label className="block text-sm font-medium">
+              Contraseña
+              <input
+                type={showPassword ? "text" : "password"}
+                autoComplete="current-password"
+                required
+                value={password}
+                onChange={(event) => setPassword(event.target.value)}
+                className="field mt-2"
+              />
+            </label>
+            <button
+              type="button"
+              className="text-sm text-primary underline"
+              aria-pressed={showPassword}
+              onClick={() => setShowPassword(!showPassword)}
             >
-              {error}
-            </p>
-          )}
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full rounded-md bg-primary px-4 py-3 text-sm font-semibold text-primary-foreground disabled:opacity-60"
-          >
-            {loading ? "Ingresando..." : "Ingresar"}
-          </button>
-        </form>
-      </section>
+              {showPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
+            </button>
+            <button
+              type="button"
+              className="block text-sm text-primary underline"
+              onClick={() => setHelp(!help)}
+            >
+              Olvidé mi contraseña
+            </button>
+            {help && (
+              <p role="status" className="rounded-md bg-muted p-3 text-sm">
+                Solicitá el restablecimiento al administrador de la Junta por tu
+                canal habitual. El administrador puede asignarte una nueva
+                contraseña desde Gestión de apoderados, luego de verificar tu
+                identidad. No se envían correos automáticos.{" "}
+                {support.data?.contact && `Contacto: ${support.data.contact}`}
+              </p>
+            )}
+            {error && (
+              <p
+                role="alert"
+                className="rounded-md bg-destructive/10 p-3 text-sm text-destructive"
+              >
+                {error}
+              </p>
+            )}
+            <button type="submit" disabled={loading} className="action w-full">
+              {loading ? "Ingresando..." : "Ingresar"}
+            </button>
+          </form>
+          <p className="mt-7 border-t pt-5 text-center text-xs text-muted-foreground">
+            Partido Justicialista · Distrito Chaco
+          </p>
+        </section>
+      </div>
     </main>
   );
 }

@@ -1,3 +1,4 @@
+import { PageHeading } from "../components/forms/FormUI";
 import { download } from "../services/reporting.service";
 import { useState } from "react";
 import { importPadron } from "../services/padron.service";
@@ -60,7 +61,11 @@ export default function Padron() {
   const [message, setMessage] = useState("");
   return (
     <div className="space-y-6">
-      <h1 className="font-heading text-3xl font-bold">Padrón de afiliados</h1>
+      <PageHeading
+        eyebrow="Afiliación partidaria"
+        title="Padrón de afiliados"
+        description="Importá el padrón y consultá los registros vigentes de afiliación."
+      />
       <div className="grid gap-3 sm:grid-cols-3">
         {[
           ["Registros vigentes", data.data?.total_members ?? 0],

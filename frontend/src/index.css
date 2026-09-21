@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap");
 
 @tailwind base;
 @tailwind components;
@@ -6,72 +6,54 @@
 
 @layer base {
   :root {
-    --background: 210 20% 98%;
-    --foreground: 215 35% 15%;
-
+    --background: 225 33% 98%;
+    --foreground: 224 60% 10%;
     --card: 0 0% 100%;
-    --card-foreground: 215 35% 15%;
-
+    --card-foreground: 224 60% 10%;
     --popover: 0 0% 100%;
-    --popover-foreground: 215 35% 15%;
-
-    --primary: 213 68% 32%;
+    --popover-foreground: 224 60% 10%;
+    --primary: 222 100% 57%;
     --primary-foreground: 0 0% 100%;
-
-    --secondary: 45 90% 55%;
-    --secondary-foreground: 215 35% 15%;
-
-    --muted: 210 15% 93%;
-    --muted-foreground: 215 15% 50%;
-
-    --accent: 213 55% 94%;
-    --accent-foreground: 213 68% 32%;
-
-    --destructive: 0 72% 51%;
+    --secondary: 223 100% 96%;
+    --secondary-foreground: 224 46% 30%;
+    --muted: 225 30% 96%;
+    --muted-foreground: 222 22% 43%;
+    --accent: 223 100% 96%;
+    --accent-foreground: 224 77% 43%;
+    --destructive: 0 68% 43%;
     --destructive-foreground: 0 0% 100%;
-
-    --success: 142 72% 35%;
+    --success: 156 70% 28%;
     --success-foreground: 0 0% 100%;
-
-    --warning: 38 92% 50%;
-    --warning-foreground: 215 35% 15%;
-
-    --border: 214 20% 88%;
-    --input: 214 20% 88%;
-    --ring: 213 68% 32%;
-
-    --radius: 0.625rem;
-
-    --sidebar-background: 213 68% 22%;
-    --sidebar-foreground: 210 20% 92%;
-    --sidebar-primary: 45 90% 55%;
-    --sidebar-primary-foreground: 215 35% 15%;
-    --sidebar-accent: 213 60% 28%;
-    --sidebar-accent-foreground: 210 20% 95%;
-    --sidebar-border: 213 55% 30%;
-    --sidebar-ring: 45 90% 55%;
-    --sidebar-muted: 213 40% 40%;
-
-    --font-heading: 'Plus Jakarta Sans', sans-serif;
-    --font-body: 'Inter', sans-serif;
+    --warning: 35 90% 32%;
+    --warning-foreground: 0 0% 100%;
+    --border: 224 24% 90%;
+    --input: 224 24% 84%;
+    --ring: 222 100% 57%;
+    --radius: 0.75rem;
+    --sidebar-background: 0 0% 100%;
+    --sidebar-foreground: 224 60% 10%;
+    --sidebar-primary: 222 100% 57%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 223 100% 96%;
+    --sidebar-accent-foreground: 224 77% 43%;
+    --sidebar-border: 224 24% 90%;
+    --sidebar-ring: 222 100% 57%;
+    --sidebar-muted: 222 22% 43%;
+    --font-heading: "Inter", sans-serif;
+    --font-body: "Inter", sans-serif;
   }
-
   * {
     @apply border-border;
   }
-
   html,
   body,
   #root {
     min-height: 100%;
   }
-
   body {
-    @apply bg-background text-foreground;
+    @apply m-0 bg-background text-foreground antialiased;
     font-family: var(--font-body);
-    margin: 0;
   }
-
   h1,
   h2,
   h3,
@@ -79,16 +61,111 @@
   h5,
   h6 {
     font-family: var(--font-heading);
+    letter-spacing: -0.035em;
   }
-}
-
-@layer utilities {
-  .sidebar-gradient {
-    background: linear-gradient(180deg, hsl(213, 68%, 22%) 0%, hsl(213, 72%, 16%) 100%);
+  h1 {
+    @apply break-words;
+  }
+  button,
+  a,
+  input,
+  select,
+  textarea,
+  summary {
+    -webkit-tap-highlight-color: transparent;
+  }
+  :focus-visible {
+    outline: 2px solid hsl(var(--ring));
+    outline-offset: 3px;
+  }
+  button {
+    touch-action: manipulation;
+  }
+  button:disabled {
+    cursor: not-allowed;
+  }
+  input,
+  select,
+  textarea {
+    min-width: 0;
+    accent-color: hsl(var(--primary));
+  }
+  select {
+    text-overflow: ellipsis;
+  }
+  ::selection {
+    background: hsl(var(--primary) / 0.16);
   }
 }
 @layer components {
-  .field { @apply w-full rounded-md border bg-background px-3 py-2 text-sm; }
-  .action { @apply rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground disabled:opacity-50; }
-  .secondary { @apply rounded-md border px-3 py-2 text-sm hover:bg-muted disabled:opacity-50; }
+  .eyebrow {
+    @apply font-mono text-[10px] font-medium uppercase tracking-[0.16em] text-muted-foreground;
+  }
+  .surface {
+    @apply min-w-0 rounded-2xl border bg-card;
+    box-shadow:
+      0 2px 3px #0a122803,
+      0 8px 24px #0a122803;
+  }
+  .field {
+    @apply min-h-11 w-full rounded-lg border border-input bg-card px-3 py-2.5 text-sm font-normal text-foreground transition-colors placeholder:text-muted-foreground/70 hover:border-primary/40 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/15 disabled:bg-muted;
+  }
+  .field[type="file"] {
+    @apply p-2 text-xs file:mr-3 file:rounded-md file:border-0 file:bg-accent file:px-3 file:py-2 file:text-xs file:font-medium file:text-accent-foreground;
+  }
+  .action {
+    @apply inline-flex min-h-11 items-center justify-center gap-2 rounded-lg bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/90 disabled:opacity-50;
+    box-shadow: 0 2px 4px #2d6bff18;
+  }
+  .secondary {
+    @apply inline-flex min-h-11 items-center justify-center gap-2 rounded-lg border border-input bg-card px-3.5 py-2.5 text-sm font-medium transition-colors hover:border-primary/40 hover:bg-accent/60 disabled:opacity-50;
+  }
+  .text-link {
+    @apply inline-flex items-center gap-2 text-sm font-semibold text-accent-foreground hover:underline;
+  }
+  .data-table {
+    @apply w-full text-left text-sm;
+  }
+  .app-content table th {
+    @apply border-b bg-muted/60 px-4 py-3 text-xs font-medium text-muted-foreground;
+  }
+  .app-content table td {
+    @apply border-b border-border/70 px-4 py-4;
+  }
+  .app-content table tbody tr {
+    @apply transition-colors hover:bg-accent/30;
+  }
+  .app-content table tbody tr:last-child td {
+    border-bottom: 0;
+  }
+  .app-content details > summary {
+    @apply py-2 text-accent-foreground;
+  }
+  .app-content section,
+  .app-content article {
+    min-width: 0;
+  }
+  .app-content > div > h1 {
+    @apply text-2xl font-semibold md:text-3xl;
+  }
+  .app-content > div > h1 + p {
+    @apply max-w-3xl text-sm leading-relaxed text-muted-foreground;
+  }
+  .skip-link {
+    @apply fixed left-4 top-4 z-50 -translate-y-24 rounded-lg bg-foreground px-4 py-3 text-sm text-white focus:translate-y-0;
+  }
+  .login-background {
+    background:
+      radial-gradient(ellipse at 15% 10%, #2d6bff0e, transparent 55%),
+      hsl(var(--background));
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
