@@ -70,3 +70,9 @@ el cierre del alcance anterior.
 En CAP-01, «revocación» de la evidencia previa se refiere a cambios de acceso por
 usuario/rol/asignación y limpieza del cliente; no equivale a revocación individual
 de JWT/sesiones en servidor. Task 16 incorpora ahora la revocación individual en servidor, ver informe 16–19.
+
+
+La ampliación del 21/09/2026 agrega AUTH-10–11 (Task 22), implementadas localmente:
+aceptación única de términos antes de habilitar acceso y consulta de términos/privacidad
+en modales compartidos de login/footer. Textos provisorios, revisión institucional
+pendiente. Ver [informe 22](22-terminos-privacidad-primer-acceso/report.md).

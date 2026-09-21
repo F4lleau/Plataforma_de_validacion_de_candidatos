@@ -5,12 +5,19 @@ export const API_BASE_URL =
 
 export class ApiError extends Error {
   readonly status: number;
+  readonly code?: string;
 
-  constructor(message: string, status: number) {
+  constructor(message: string, status: number, code?: string) {
     super(message);
     this.name = "ApiError";
     this.status = status;
+    this.code = code;
   }
+}
+
+let onTermsRequired: (() => void) | undefined;
+export function setTermsRequiredHandler(handler: () => void) {
+  onTermsRequired = handler;
 }
 
 let onUnauthorized: (() => void) | undefined;
@@ -170,6 +177,22 @@ async function request<T>(
       typeof body === "object" && body !== null && "detail" in body
         ? body.detail
         : null;
+    if (authenticated && version !== generation)
+      throw new ApiError("La sesión cambió.", 401);
+    const structured =
+      typeof detail === "object" &&
+      detail !== null &&
+      "code" in detail &&
+      "message" in detail
+        ? detail
+        : null;
+    const code = structured ? String(structured.code) : undefined;
+    if (
+      authenticated &&
+      response.status === 403 &&
+      code === "TERMS_ACCEPTANCE_REQUIRED"
+    )
+      onTermsRequired?.();
     const validationMessage = Array.isArray(detail)
       ? detail
           .map((item: unknown) => {
@@ -189,8 +212,10 @@ async function request<T>(
         ? "El servidor no pudo completar la operación. Intentá nuevamente."
         : typeof detail === "string"
           ? detail
-          : validationMessage || "Revisá los datos e intentá nuevamente.";
-    throw new ApiError(message, response.status);
+          : structured
+            ? String(structured.message)
+            : validationMessage || "Revisá los datos e intentá nuevamente.";
+    throw new ApiError(message, response.status, code);
   }
   if (binary) {
     const type = response.headers.get("Content-Type") ?? "";
@@ -205,7 +230,10 @@ async function request<T>(
       disposition.match(/filename="([A-Za-z0-9_.-]+)"/)?.[1] ?? "exportacion";
     return { blob: await response.blob(), filename } as T;
   }
-  return response.json() as Promise<T>;
+  const result = (await response.json()) as T;
+  if (authenticated && version !== generation)
+    throw new ApiError("La sesión cambió.", 401);
+  return result;
 }
 
 export function apiFetch<T>(

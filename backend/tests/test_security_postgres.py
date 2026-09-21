@@ -398,3 +398,54 @@ def test_backup_restore_after_invitation_downgrade(pg):
         assert db.get(Invitation, identity).state == "pending"
         assert db.get(User, uid).is_active
     command.check(Config("alembic.ini"))
+
+
+def test_terms_concurrency_and_migration_preserve_accounts(pg):
+    from app.services.legal_service import LegalService
+    from app.repositories.legal_repository import LegalDocumentRepository
+    from app.schemas.legal import TermsAcceptanceInput
+    from app.models.audit_log import AuditLog
+    from jose import jwt
+
+    uid = account(pg)
+    with Session(pg) as db:
+        result, _ = AuthService(db).login(
+            "concurrent@example.com", "Una frase inicial privada", "local"
+        )
+        sid = jwt.get_unverified_claims(result["access_token"])["sid"]
+    doc = LegalDocumentRepository().documents()["terms"]
+    payload = TermsAcceptanceInput(
+        accepted=True, version=doc["version"], sha256=doc["sha256"]
+    )
+
+    def accept():
+        with Session(pg) as db:
+            return LegalService(db).accept(uid, sid, payload).terms_accepted_at
+
+    times = pair(accept)
+    assert times[0] == times[1]
+    with Session(pg) as db:
+        assert (
+            len(
+                list(
+                    db.scalars(
+                        select(AuditLog).where(
+                            AuditLog.action == "legal.terms_accepted"
+                        )
+                    )
+                )
+            )
+            == 1
+        )
+        assert db.get(User, uid).terms_snapshot == doc
+    cfg = Config("alembic.ini")
+    command.downgrade(cfg, "a72e903d418f")
+    with pg.connect() as conn:
+        assert conn.execute(
+            text("SELECT is_active FROM users WHERE id=:id"), {"id": uid}
+        ).scalar_one()
+    command.upgrade(cfg, "head")
+    command.check(cfg)
+    with Session(pg) as db:
+        assert db.get(User, uid).terms_accepted_at is None
+        assert db.get(AuthSession, sid).user_id == uid

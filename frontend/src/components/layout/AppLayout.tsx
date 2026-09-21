@@ -1,3 +1,4 @@
+import LegalAccess from "../legal/LegalAccess";
 import { useRef, useState } from "react";
 import { NavLink, Outlet, useLocation, Link } from "react-router-dom";
 import {
@@ -227,6 +228,9 @@ export default function AppLayout() {
             <Link to="/ayuda" className="hover:text-primary">
               Ayuda y documentación
             </Link>
+            <div className="w-full pt-2">
+              <LegalAccess />
+            </div>
           </footer>
         </div>
       </div>

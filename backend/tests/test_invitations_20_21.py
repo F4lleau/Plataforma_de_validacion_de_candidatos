@@ -18,7 +18,7 @@ from tests.test_auth_rbac import (
     headers,
 )
 from tests.test_tasks_04_09 import scenario as scenario
-from tests.auth_helpers import invitation_raw
+from tests.auth_helpers import invitation_raw, accept_terms_request
 
 
 @pytest.fixture
@@ -104,6 +104,8 @@ def test_invitation_scanner_accept_login_scope_and_no_assignment(
     )
     h = {"Authorization": "Bearer " + response.json()["access_token"]}
     assert client.get("/api/v1/auth/me", headers=h).json()["email_verified_at"]
+    assert client.get("/api/v1/lists/page", headers=h).status_code == 403
+    accept_terms_request(client, h)
     assert client.get("/api/v1/lists/page", headers=h).json()["total"] == 0
     assert (
         client.get(f"/api/v1/lists/{scenario['list']['id']}", headers=h).status_code

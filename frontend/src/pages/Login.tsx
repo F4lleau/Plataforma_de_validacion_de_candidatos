@@ -1,14 +1,15 @@
+import LegalAccess from "../components/legal/LegalAccess";
+import { safeLoginDestination } from "../services/legal.service";
 import Brand from "../components/layout/Brand";
 import { Layers3, ClipboardCheck, ShieldCheck } from "lucide-react";
 import { useState } from "react";
-import { Link, Navigate, useLocation, useNavigate } from "react-router-dom";
+import { Link, Navigate, useLocation } from "react-router-dom";
 import { useAuthStore } from "../stores/auth.store";
 import { ApiError } from "../services/api";
 
 export default function Login() {
-  const navigate = useNavigate();
   const location = useLocation();
-  const { login, isAuthenticated, isLoading } = useAuthStore();
+  const { login, isAuthenticated, isLoading, user } = useAuthStore();
   const [email, setEmail] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [password, setPassword] = useState("");
@@ -21,17 +22,20 @@ export default function Login() {
         Verificando sesión...
       </p>
     );
-  if (isAuthenticated) return <Navigate to="/dashboard" replace />;
+  const destination = safeLoginDestination(
+    (location.state as { from?: string } | null)?.from,
+  );
+  const pending = isAuthenticated && !user?.terms_accepted_at;
+  if (isAuthenticated && !pending) return <Navigate to={destination} replace />;
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
+    if (pending || loading) return;
     setLoading(true);
     setError("");
     try {
       await login(email, password);
-      const destination =
-        (location.state as { from?: string } | null)?.from || "/dashboard";
-      navigate(destination, { replace: true });
+      setPassword("");
     } catch (error) {
       setError(
         error instanceof ApiError && error.status === 401
@@ -93,54 +97,69 @@ export default function Login() {
             Accedé a la gestión de listas y candidatos.
           </p>
           <form onSubmit={handleSubmit} className="mt-8 space-y-4">
-            <label className="block text-sm font-medium">
-              Correo electrónico
-              <input
-                type="email"
-                autoComplete="username"
-                required
-                value={email}
-                onChange={(event) => setEmail(event.target.value)}
-                className="field mt-2"
-              />
-            </label>
-            <label className="block text-sm font-medium">
-              Contraseña
-              <input
-                type={showPassword ? "text" : "password"}
-                autoComplete="current-password"
-                required
-                value={password}
-                onChange={(event) => setPassword(event.target.value)}
-                className="field mt-2"
-              />
-            </label>
-            <button
-              type="button"
-              className="text-sm text-primary underline"
-              aria-pressed={showPassword}
-              onClick={() => setShowPassword(!showPassword)}
-            >
-              {showPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
-            </button>
-            <Link
-              to="/recuperar-clave"
-              className="block text-sm text-primary underline"
-            >
-              Olvidé mi contraseña
-            </Link>
-            {error && (
-              <p
-                role="alert"
-                className="rounded-md bg-destructive/10 p-3 text-sm text-destructive"
-              >
-                {error}
-              </p>
+            {!pending && (
+              <>
+                <label className="block text-sm font-medium">
+                  Correo electrónico
+                  <input
+                    type="email"
+                    autoComplete="username"
+                    required
+                    value={email}
+                    onChange={(event) => setEmail(event.target.value)}
+                    className="field mt-2"
+                  />
+                </label>
+                <label className="block text-sm font-medium">
+                  Contraseña
+                  <input
+                    type={showPassword ? "text" : "password"}
+                    autoComplete="current-password"
+                    required
+                    value={password}
+                    onChange={(event) => setPassword(event.target.value)}
+                    className="field mt-2"
+                  />
+                </label>
+                <button
+                  type="button"
+                  className="text-sm text-primary underline"
+                  aria-pressed={showPassword}
+                  onClick={() => setShowPassword(!showPassword)}
+                >
+                  {showPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
+                </button>
+                <Link
+                  to="/recuperar-clave"
+                  className="block text-sm text-primary underline"
+                >
+                  Olvidé mi contraseña
+                </Link>
+                {error && (
+                  <p
+                    role="alert"
+                    className="rounded-md bg-destructive/10 p-3 text-sm text-destructive"
+                  >
+                    {error}
+                  </p>
+                )}
+              </>
             )}
-            <button type="submit" disabled={loading} className="action w-full">
-              {loading ? "Ingresando..." : "Ingresar"}
+            <button
+              type="submit"
+              disabled={loading || pending}
+              className="action w-full"
+            >
+              {pending
+                ? "Identidad verificada"
+                : loading
+                  ? "Ingresando..."
+                  : "Ingresar"}
             </button>
           </form>
+          <div className="mt-4">
+            <LegalAccess key={user?.id ?? "public"} pending={pending} />
+          </div>
           <p className="mt-7 border-t pt-5 text-center text-xs text-muted-foreground">
             Partido Justicialista · Distrito Chaco
           </p>

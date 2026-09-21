@@ -39,6 +39,12 @@ La tabla anterior es la auditoría histórica al planificar; el contrato vigente
 | AUTH-07 | Invitaciones ADMIN, reenvío, expiración y cancelación | [20](20-invitaciones-onboarding/task.md) | Implementada localmente |
 | AUTH-08 | Primer acceso, datos propios, email verificado y contraseña inicial | [20](20-invitaciones-onboarding/task.md) | Implementada localmente |
 | AUTH-09 | E2E, regresión electoral, migración y operación segura | [21](21-aceptacion-seguridad-login/task.md) | Implementada localmente |
+| AUTH-10 | Aceptación única de términos por cuenta antes de habilitar acceso | [22](22-terminos-privacidad-primer-acceso/task.md) | Implementada localmente |
+| AUTH-11 | Términos y privacidad provisorios en modales compartidos de login/footer | [22](22-terminos-privacidad-primer-acceso/task.md) | Implementada localmente; textos definitivos pendientes |
+
+Ampliación del 21/09/2026: Task 22 se ejecuta después de 20/21. Su consigna define
+el paso de aceptación, implementado localmente. Sus endpoints complementan los
+contratos 16–21 de abajo; ver [contrato 22](../AUTHENTICATION.md#task-22-términos-y-privacidad). No proviene del PDF electoral.
 
 Ejecutar 16 → 17 → 18 → 19 → 20 → 21. El esquema de tokens, normalización de emails,
 eventos y política de cuenta se define en 16 para evitar implementaciones divergentes.

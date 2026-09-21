@@ -76,3 +76,7 @@ api_router.include_router(
 api_router.include_router(
     invitations.public_router, prefix="/auth/invitations", tags=["Invitations"]
 )
+
+from app.api.v1.endpoints import legal
+
+api_router.include_router(legal.router, tags=["Legal documents"])

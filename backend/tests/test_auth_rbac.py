@@ -1,4 +1,4 @@
-from tests.auth_helpers import session_token
+from tests.auth_helpers import session_token, accepted_terms_fixture
 from datetime import date, datetime, timedelta, timezone
 from io import BytesIO
 
@@ -76,6 +76,8 @@ def users(db_session: Session):
         role=UserRole.APODERADO,
         is_active=True,
     )
+    accepted_terms_fixture(admin)
+    accepted_terms_fixture(apoderado)
     db_session.add_all([admin, apoderado])
     db_session.commit()
     db_session.refresh(admin)

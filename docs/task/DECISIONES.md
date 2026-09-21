@@ -119,3 +119,29 @@ retención de auth/mail configurable 30 días. Ver informe 16–19 y operación.
   vencimiento; usuarios/asignaciones se conservan. SMTP aceptado no prueba entrega.
 - Evidencia local y producción se separan; MFA para ADMIN debe evaluarse antes de un
   despliegue sensible. No se afirma certificación NIST/ASVS ni integración RENAPER real.
+
+## D19 — Términos y privacidad en primer acceso (planificación, 21/09/2026)
+
+Solicitud: aceptar términos una vez antes del ingreso, aviso debajo del botón de
+login, y consultar términos/políticas en los mismos modales desde login y la app.
+Se crea [Task 22](22-terminos-privacidad-primer-acceso/task.md), sin implementación.
+
+- Requerido: aceptación explícita de términos una sola vez por cuenta; políticas
+  para lectura, textos inicialmente provisorios y enlaces permanentes en footer.
+- Propuesta operativa: validar credenciales primero y mantener acceso restringido
+  hasta aceptar; cuentas existentes sin evidencia aceptan en el siguiente acceso
+  o restauración de sesión. No se presume aceptación histórica.
+- Guardar fecha del servidor y versión/contenido aceptado; no exigir reaceptación
+  por actualizar documentos dentro de este alcance. Lectura nunca equivale a aceptación.
+- Texto definitivo/revisión institucional pendientes para producción; los borradores
+  permiten desarrollo y pruebas locales, sin afirmar cumplimiento legal.
+
+
+### D19 — Ejecución local
+
+Task 22 implementada con sesión restringida hasta aceptación de términos, para
+ADMIN/APODERADO nuevos y existentes. API pública sirve una fuente JSON; la cuenta
+guarda primera fecha UTC, versión e instantánea con hash; auditoría atómica
+`legal.terms_accepted`. Migración `b8316d72c4ef`, sin valores retroactivos. Contenido
+provisorio 0.1 del 21/09/2026; actualización no fuerza reaceptación. Textos
+institucionales definitivos siguen pendientes. Ver [informe](22-terminos-privacidad-primer-acceso/report.md).

@@ -164,3 +164,30 @@ La habilitación productiva sigue abierta hasta verificar HTTPS, cookies Secure 
 el dominio real, proxy/CORS, SMTP autorizado, SPF/DKIM/DMARC y recepción externa.
 Mailpit solo demuestra el recorrido local. La inspección de un enlace no equivale
 a validación de identidad electoral ni a consulta RENAPER.
+
+## Task 22: despliegue y documentos de primer acceso
+
+Aplicar `python -m alembic upgrade head` desde backend con su entorno cargado.
+Head: `b8316d72c4ef`, sobre `a72e903d418f`. Agrega tres columnas nullable a `users`
+y una restricción de integridad; no modifica usuarios, asignaciones o sesiones.
+Desplegar API y frontend coordinadamente: clientes anteriores no presentan el paso
+nuevo y recibirán 403 hasta actualizarse. Reiniciar procesos que cargan código,
+incluido el worker si se despliega toda la versión. No se agregan variables de entorno.
+
+Fuente única: `backend/app/legal/documents.json` desde raíz. Antes de publicar
+textos definitivos, obtener revisión institucional, completar datos pendientes,
+aumentar la versión y actualizar fecha/aviso/contenido. Reiniciar API en todos los
+workers con la misma versión. El hash detecta cambios del contenido leído durante
+la primera aceptación; no modificar contenido conservando deliberadamente la misma
+versión. Cada cuenta conserva su instantánea original aunque cambie el documento
+actual. No hay editor de textos en la UI ni reaceptación automática por versión.
+
+La limpieza de auth/mail no elimina los campos de aceptación ni la auditoría
+`legal.terms_accepted`. No registrar cuerpos con credenciales ni sumar IP/dispositivo
+al registro de aceptación. ADMIN no puede aceptar por otra persona.
+
+Rollback: respaldar la base antes del despliegue. Volver a `a72e903d418f` elimina
+columnas/evidencia de aceptación; conserva cuentas y datos electorales. El código
+anterior no aplica esta restricción. Reaplicar la migración deja aceptación pendiente;
+para recuperar evidencia previa hace falta restaurar el respaldo correspondiente.
+No ejecutar downgrade sobre datos operativos como una reparación rutinaria.

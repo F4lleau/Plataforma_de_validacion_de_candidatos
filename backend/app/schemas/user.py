@@ -20,6 +20,8 @@ class UserResponse(BaseModel):
     role: UserRole
     is_active: bool
     email_verified_at: datetime | None = None
+    terms_accepted_at: datetime | None = None
+    terms_version: str | None = None
     created_at: datetime
 
     model_config = {"from_attributes": True}

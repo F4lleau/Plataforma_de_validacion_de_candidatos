@@ -1,5 +1,22 @@
 # Guía ADMIN — entorno local
 
+## Términos y políticas en el primer acceso
+
+Después de validar tu correo y contraseña, si todavía no aceptaste los términos,
+el login muestra un aviso debajo del botón. Abrí «Ver términos y condiciones» o
+«Ver políticas de privacidad» para leer el documento en un modal. Podés cerrarlo
+con el botón de cierre o Escape; leerlo no registra aceptación.
+
+Marcá «He leído y acepto los términos y condiciones» y pulsá «Aceptar y continuar».
+Hasta guardar la aceptación no se puede ingresar a los módulos. Si hay un error,
+reintentá; también podés salir y volver más tarde. Las cuentas anteriores a esta
+función completan el paso una vez. Los próximos accesos, incluso desde otro
+navegador o después de cambiar la clave, no lo vuelven a solicitar.
+
+Dentro de la app, los enlaces del footer permiten consultar ambos documentos sin
+alterar lo que estés haciendo ni volver a aceptar. Los textos actuales son
+**provisorios para pruebas**, pendientes de revisión institucional.
+
 Abrí <http://localhost:5173> e ingresá con tu cuenta. Las credenciales locales están en
 `backend/.env`; nunca se incluyen en esta guía. Las capturas usan solo datos sintéticos.
 

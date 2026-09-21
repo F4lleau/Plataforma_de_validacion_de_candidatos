@@ -175,3 +175,42 @@ El índice único de `lower(btrim(email))` evita nuevas colisiones. La migració
 si detecta duplicados normalizados; nunca fusiona ni elimina cuentas automáticamente.
 
 Ver [operación](AUTH_OPERATIONS.md) y [aceptación consolidada](task/INFORME_16_21.md).
+
+## Task 22: términos y privacidad
+
+Tras autenticar, una cuenta sin `terms_accepted_at` tiene sesión restringida. Login,
+refresh y `/auth/me` devuelven `terms_accepted_at` y `terms_version` (NULL mientras
+estén pendientes), sin exponer la instantánea del texto. El frontend permanece en
+login y muestra debajo del botón el checkbox sin marcar y «Aceptar y continuar».
+Crear contraseña mediante invitación no acepta términos ni inicia sesión.
+
+`get_authenticated_user` verifica identidad/sesión y se utiliza únicamente para
+`/auth/me` y aceptación. `get_current_user` agrega la condición de términos y es la
+base de los permisos existentes. Mientras falte aceptación, las funciones protegidas
+(incluidos módulos, administración, archivos, exportaciones y gestión de sesiones)
+responden `403` con `detail.code=TERMS_ACCEPTANCE_REQUIRED`. Login, CSRF, refresh,
+logout y los flujos públicos de ayuda/recuperación/invitaciones siguen disponibles;
+no conceden acceso al dominio electoral. Una sesión revocada/inactiva devuelve 401.
+
+| Endpoint | Contrato |
+| --- | --- |
+| GET `/api/v1/legal/documents` | Público, no-store. Términos y políticas con título, versión, fecha, aviso provisorio, párrafos y SHA-256 del contenido. Solo lectura. |
+| POST `/api/v1/auth/terms/accept` | Sesión válida + CSRF. Body: `accepted: true` booleano estricto, `version` y `sha256` de términos. Devuelve perfil actualizado; campos extra rechazados. |
+
+La aceptación serializa usuario→sesión, revalida estado y guarda fecha UTC del
+servidor, versión e instantánea JSON del documento junto a auditoría
+`legal.terms_accepted` en una transacción. Reintentos simultáneos preservan la primera
+fecha/versión. Un texto cambiado antes de la primera confirmación devuelve `409
+TERMS_DOCUMENT_CHANGED`; la UI recarga documentos y desmarca el checkbox.
+
+La aceptación es única por cuenta, también ADMIN, y persiste entre navegadores,
+logout, cambios/reset de clave y desbloqueo. Las cuentas existentes sin evidencia
+la completan al siguiente acceso/restauración; la migración no inventa consentimiento.
+Actualizar el documento no exige reaceptación de cuentas ya aceptadas. El cliente
+no concede acceso basado en localStorage y no convierte un 403 de términos en un
+bucle de refresh. Una pestaña pendiente actualiza el perfil al recuperar foco.
+
+Los enlaces del login/footer abren el mismo modal accesible, con Escape, contención
+y devolución de foco, scroll y diseño móvil. Lectura/cierre no aceptan ni modifican
+la cuenta. Privacidad es informativa; no tiene checkbox adicional. Los documentos
+son provisorios para pruebas, pendientes de revisión institucional para producción.

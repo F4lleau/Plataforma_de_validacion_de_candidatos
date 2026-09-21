@@ -66,4 +66,24 @@ def invite_account(client, db, actor, body):
         },
     )
     assert accepted.status_code == 200, accepted.text
-    return db.scalar(select(User).where(User.email == body["email"]))
+    user = db.scalar(select(User).where(User.email == body["email"]))
+    accept_terms_request(client, {"Authorization": "Bearer " + session_token(user)})
+    return user
+
+
+def accepted_terms_fixture(user):
+    """Existing authorized-domain fixtures; new users remain pending by default."""
+    from app.repositories.legal_repository import LegalDocumentRepository
+    document = LegalDocumentRepository().documents()["terms"]
+    user.terms_accepted_at = now()
+    user.terms_version = document["version"]
+    user.terms_snapshot = document
+
+
+def accept_terms_request(client, headers):
+    document = client.get("/api/v1/legal/documents").json()["terms"]
+    response = client.post("/api/v1/auth/terms/accept", headers=headers, json={
+        "accepted": True, "version": document["version"], "sha256": document["sha256"],
+    })
+    assert response.status_code == 200, response.text
+    return response

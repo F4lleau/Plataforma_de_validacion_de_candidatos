@@ -3,7 +3,7 @@ from fastapi import APIRouter, Depends, Request, Response
 from sqlalchemy.orm import Session
 from app.core.config import settings
 from app.core.cookies import csrf, set_refresh, clear_refresh
-from app.core.security import get_current_user
+from app.core.security import get_current_user, get_authenticated_user
 from app.db.session import get_db
 from app.models.user import User
 from app.schemas.auth import (
@@ -72,7 +72,7 @@ def logout(request: Request, response: Response, db: Session = Depends(get_db)):
 
 
 @router.get("/me", response_model=UserResponse)
-def me(current_user: User = Depends(get_current_user)):
+def me(current_user: User = Depends(get_authenticated_user)):
     return current_user
 
 

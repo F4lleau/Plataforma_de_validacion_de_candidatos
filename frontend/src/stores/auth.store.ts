@@ -1,5 +1,8 @@
+import { acceptTerms, type LegalDocument } from "../services/legal.service";
 import { create } from "zustand";
 import {
+  apiFetch,
+  setTermsRequiredHandler,
   clearSession,
   getAccessToken,
   logoutSession,
@@ -21,7 +24,23 @@ interface AuthState {
   login: (email: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
   restoreSession: () => Promise<void>;
+  acceptTerms: (document: LegalDocument) => Promise<void>;
+  syncProfile: () => Promise<void>;
   hasRole: (roles: UserRole[]) => boolean;
+}
+
+// Acceptance is immutable for a given account. A concurrent /me or refresh
+// started before acceptance must not overwrite the successful server response.
+function mergeProfile(previous: AuthUser | null, incoming: AuthUser): AuthUser {
+  return previous?.id === incoming.id &&
+    previous.terms_accepted_at &&
+    !incoming.terms_accepted_at
+    ? {
+        ...incoming,
+        terms_accepted_at: previous.terms_accepted_at,
+        terms_version: previous.terms_version,
+      }
+    : incoming;
 }
 
 const signedOut = {
@@ -56,6 +75,15 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       if (!getAccessToken()) clearSession(false);
     }
   },
+  acceptTerms: async (document) => {
+    const user = await acceptTerms(document);
+    set({ user });
+  },
+  syncProfile: async () => {
+    if (!get().isAuthenticated) return;
+    const user = await apiFetch<AuthUser>("/auth/me");
+    set((state) => ({ user: mergeProfile(state.user, user) }));
+  },
   hasRole: (roles) => {
     const role = get().user?.role;
     return role !== undefined && roles.includes(role);
@@ -63,10 +91,18 @@ export const useAuthStore = create<AuthState>((set, get) => ({
 }));
 setUnauthorizedHandler(() => useAuthStore.setState(signedOut));
 setSessionHandler((result) =>
-  useAuthStore.setState({
-    user: result.user,
+  useAuthStore.setState((state) => ({
+    user: mergeProfile(state.user, result.user),
     accessToken: result.access_token,
     isAuthenticated: true,
     isLoading: false,
-  }),
+  })),
+);
+
+setTermsRequiredHandler(() =>
+  useAuthStore.setState((state) => ({
+    user: state.user
+      ? { ...state.user, terms_accepted_at: null, terms_version: null }
+      : null,
+  })),
 );

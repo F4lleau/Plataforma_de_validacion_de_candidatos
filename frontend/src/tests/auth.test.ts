@@ -258,3 +258,141 @@ it("una restauración obsoleta no cierra un login posterior", async () => {
     accessToken: "later-login",
   });
 });
+
+it("aceptación pendiente persiste solo tras respuesta del servidor", async () => {
+  const store = await authenticated();
+  const document = {
+    id: "terms" as const,
+    title: "Términos",
+    version: "v1",
+    published_on: "2026-09-21",
+    notice: "Pruebas",
+    paragraphs: [],
+    sha256: "a".repeat(64),
+  };
+  network.mockRejectedValueOnce(new TypeError("offline"));
+  await expect(store.getState().acceptTerms(document)).rejects.toMatchObject({
+    status: 0,
+  });
+  expect(store.getState().user?.terms_accepted_at).toBeFalsy();
+  const accepted = {
+    ...user,
+    terms_accepted_at: "2026-09-21T12:00:00",
+    terms_version: "v1",
+  };
+  network.mockResolvedValueOnce(Response.json(accepted));
+  await store.getState().acceptTerms(document);
+  expect(store.getState().user?.terms_accepted_at).toBe(
+    accepted.terms_accepted_at,
+  );
+  expect(JSON.parse(String(network.mock.calls[2][1]?.body))).toEqual({
+    accepted: true,
+    version: "v1",
+    sha256: "a".repeat(64),
+  });
+});
+
+it("403 de términos limita acceso sin renovar ni cerrar la identidad", async () => {
+  const store = await authenticated();
+  const { apiFetch } = await import("../services/api");
+  network.mockResolvedValueOnce(
+    Response.json(
+      {
+        detail: {
+          code: "TERMS_ACCEPTANCE_REQUIRED",
+          message: "Aceptá los términos",
+        },
+      },
+      { status: 403 },
+    ),
+  );
+  await expect(apiFetch("/lists/")).rejects.toMatchObject({
+    status: 403,
+    code: "TERMS_ACCEPTANCE_REQUIRED",
+    message: "Aceptá los términos",
+  });
+  expect(store.getState().isAuthenticated).toBe(true);
+  expect(store.getState().user?.terms_accepted_at).toBeNull();
+  expect(network).toHaveBeenCalledTimes(2);
+});
+
+it("logout durante aceptación no restaura la cuenta", async () => {
+  const store = await authenticated();
+  const pending = pendingResponse();
+  network.mockReturnValueOnce(pending.promise);
+  const accepting = store.getState().acceptTerms({
+    id: "terms",
+    title: "Términos",
+    version: "v1",
+    published_on: "2026-09-21",
+    notice: "Pruebas",
+    paragraphs: [],
+    sha256: "a".repeat(64),
+  });
+  await vi.waitFor(() => expect(network).toHaveBeenCalledTimes(2));
+  network.mockResolvedValueOnce(Response.json({ message: "ok" }));
+  await store.getState().logout();
+  pending.resolve(Response.json({ ...user, terms_accepted_at: "2026-09-21" }));
+  await expect(accepting).rejects.toMatchObject({ status: 401 });
+  expect(store.getState().user).toBeNull();
+});
+
+it("restauración y actualización de perfil respetan aceptación del servidor", async () => {
+  const store = await authenticated();
+  network.mockResolvedValueOnce(
+    Response.json({ ...result, user: { ...user, terms_accepted_at: null } }),
+  );
+  await store.getState().restoreSession();
+  expect(store.getState().user?.terms_accepted_at).toBeNull();
+  network.mockResolvedValueOnce(
+    Response.json({ ...user, terms_accepted_at: "2026-09-21" }),
+  );
+  await store.getState().syncProfile();
+  expect(store.getState().user?.terms_accepted_at).toBe("2026-09-21");
+});
+
+it("destino de login limita redirecciones externas y evita bucles", async () => {
+  const { safeLoginDestination } = await import("../services/legal.service");
+  for (const input of [
+    null,
+    "https://example.com",
+    "//example.com",
+    "/\\example.com",
+    "/login",
+    "/login?from=/login",
+    "/invitacion",
+  ])
+    expect(safeLoginDestination(input)).toBe("/dashboard");
+  expect(safeLoginDestination("/listas")).toBe("/listas");
+});
+
+it("perfil iniciado antes de aceptar no restaura el aviso pendiente", async () => {
+  const store = await authenticated();
+  const stale = pendingResponse();
+  network.mockReturnValueOnce(stale.promise);
+  const syncing = store.getState().syncProfile();
+  await vi.waitFor(() => expect(network).toHaveBeenCalledTimes(2));
+  network.mockResolvedValueOnce(
+    Response.json({
+      ...user,
+      terms_accepted_at: "2026-09-21",
+      terms_version: "v1",
+    }),
+  );
+  await store
+    .getState()
+    .acceptTerms({
+      id: "terms",
+      title: "Términos",
+      version: "v1",
+      published_on: "2026-09-21",
+      notice: "Pruebas",
+      paragraphs: [],
+      sha256: "a".repeat(64),
+    });
+  stale.resolve(
+    Response.json({ ...user, terms_accepted_at: null, terms_version: null }),
+  );
+  await syncing;
+  expect(store.getState().user?.terms_accepted_at).toBe("2026-09-21");
+});

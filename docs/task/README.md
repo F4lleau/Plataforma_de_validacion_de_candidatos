@@ -33,10 +33,15 @@ local y mantiene pendiente la institucional. Ver [informe 04–09](INFORME_04_09
 | 19 | Password Recovery, Password Changes and Credential Policy | Completada localmente | 16, 17, 18 | [Task](19-recuperacion-cambio-clave/task.md) · [Estado](19-recuperacion-cambio-clave/status.md) |
 | 20 | Email Invitations, Single-Use Activation and First-Access Onboarding | Completada localmente | 16, 17, 18, 19, 05 | [Task](20-invitaciones-onboarding/task.md) · [Estado](20-invitaciones-onboarding/status.md) |
 | 21 | Authentication Acceptance, Security Regression and Operations | Aceptación local completa; producción pendiente | 16, 17, 18, 19, 20 | [Task](21-aceptacion-seguridad-login/task.md) · [Estado](21-aceptacion-seguridad-login/status.md) |
+| 22 | First-Login Terms Acceptance and Privacy Documents | Completada localmente; textos definitivos pendientes | 16, 20, 21, 14 | [Task](22-terminos-privacidad-primer-acceso/task.md) · [Estado](22-terminos-privacidad-primer-acceso/status.md) · [Informe](22-terminos-privacidad-primer-acceso/report.md) |
 
 Tasks 16–19 implementadas y verificadas localmente; SMTP externo pendiente. Task 18
 incorpora el estado de invitación desde Task 20. Tasks 20–21 verificadas localmente. Ver
 [informe 16–19](INFORME_16_19.md) y [arquitectura/orden](LOGIN_SEGURIDAD.md).
+
+**Task 22 implementada localmente:** aceptación única de términos antes del ingreso
+y consulta de términos/privacidad mediante modales desde login y footer. Los textos
+provisorios requieren revisión institucional antes de producción.
 
 ## Fuente, cobertura y decisiones
 

@@ -477,6 +477,8 @@ def test_admin_unlock_other_admin_and_apoderado_forbidden(client, users, db_sess
     db_session.add(operator)
     db_session.commit()
     result = login(client, operator, "Another admin phrase")
+    from tests.auth_helpers import accept_terms_request
+    accept_terms_request(client, bearer(result))
     client.post(
         "/api/v1/auth/reauthenticate",
         headers=bearer(result),

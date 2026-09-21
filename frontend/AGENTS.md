@@ -158,3 +158,12 @@ conservan sin afirmar verificación histórica. Migración `a72e903d418f`; Mailp
 pruebas, SMTP externo aún pendiente. Variables en `backend/.env.example` desde raíz.
 Ver [contratos](../docs/AUTHENTICATION.md), [operación](../docs/AUTH_OPERATIONS.md)
 y [informe consolidado](../docs/task/INFORME_16_21.md).
+
+## Task 22: aceptación inicial
+
+Una identidad autenticada puede seguir pendiente de términos: `ProtectedRoute`
+exige `user.terms_accepted_at`. El login presenta checkbox/confirmación y actualiza
+perfil solo tras respuesta del backend. `LegalAccess`/`LegalModal` comparten lectura
+pública de documentos entre login/footer; no duplicar contenido en el bundle ni
+persistir aceptación en localStorage. Un 403 `TERMS_ACCEPTANCE_REQUIRED` vuelve al
+paso pendiente sin bucles de refresh. Ver [contratos](../docs/AUTHENTICATION.md).

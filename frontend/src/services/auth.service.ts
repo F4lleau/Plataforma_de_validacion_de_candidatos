@@ -10,6 +10,8 @@ export interface AuthUser {
   role: UserRole;
   is_active: boolean;
   created_at: string;
+  terms_accepted_at: string | null;
+  terms_version: string | null;
   email_verified_at?: string | null;
 }
 

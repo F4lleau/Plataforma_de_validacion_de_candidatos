@@ -96,7 +96,7 @@ def valid_session(session):
     )
 
 
-def get_current_user(
+def get_authenticated_user(
     request: Request,
     credentials: HTTPAuthorizationCredentials | None = Depends(bearer_scheme),
     db: Session = Depends(get_db),
@@ -119,6 +119,19 @@ def get_current_user(
     ):
         raise HTTPException(401, "Sesión inválida o vencida.")
     request.state.session_id = session.id
+    return user
+
+
+def get_current_user(user: User = Depends(get_authenticated_user)) -> User:
+    """Default dependency for every protected operation, including role checks."""
+    if not user.terms_accepted_at:
+        raise HTTPException(
+            403,
+            {
+                "code": "TERMS_ACCEPTANCE_REQUIRED",
+                "message": "Aceptá los términos y condiciones antes de ingresar.",
+            },
+        )
     return user
 
 

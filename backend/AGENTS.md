@@ -210,3 +210,12 @@ conservan sin afirmar verificación histórica. Migración `a72e903d418f`; Mailp
 pruebas, SMTP externo aún pendiente. Variables en `backend/.env.example` desde raíz.
 Ver [contratos](../docs/AUTHENTICATION.md), [operación](../docs/AUTH_OPERATIONS.md)
 y [informe consolidado](../docs/task/INFORME_16_21.md).
+
+## Task 22: aceptación inicial
+
+`get_authenticated_user` verifica identidad sin habilitar módulos; solo `/auth/me`
+y aceptación lo usan directamente. El resto conserva `get_current_user`/roles,
+que exigen aceptación persistida. No agregar rutas protegidas que omitan esta capa.
+Términos versionados en `app/legal/documents.json`, instantánea/fecha en User y
+migración `b8316d72c4ef`; auditoría `legal.terms_accepted` fuera de limpieza auth/mail.
+Ver [contratos](../docs/AUTHENTICATION.md) y [operación](../docs/AUTH_OPERATIONS.md).

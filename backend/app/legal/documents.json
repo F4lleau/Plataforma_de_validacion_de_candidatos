@@ -1,0 +1,26 @@
+{
+  "terms": {
+    "id": "terms",
+    "title": "Términos y condiciones",
+    "version": "provisional-0.1",
+    "published_on": "2026-09-21",
+    "notice": "Texto provisorio para pruebas. Pendiente de revisión institucional antes de su uso en producción.",
+    "paragraphs": [
+      "Esta plataforma permite a usuarios autorizados gestionar listas, candidatos y validaciones para la Junta Electoral del Partido Justicialista, Distrito Chaco.",
+      "Al utilizarla, te comprometés a cuidar tus credenciales, cargar información que consideres correcta y realizar únicamente las acciones correspondientes a tu rol y asignaciones. La información consultada debe utilizarse para las tareas electorales autorizadas.",
+      "Las validaciones y observaciones de la plataforma acompañan la revisión administrativa y no sustituyen las decisiones de la Junta Electoral. Ante errores o inconvenientes, utilizá el canal de ayuda disponible en la aplicación."
+    ]
+  },
+  "privacy": {
+    "id": "privacy",
+    "title": "Políticas de privacidad",
+    "version": "provisional-0.1",
+    "published_on": "2026-09-21",
+    "notice": "Texto provisorio para pruebas. Pendiente de revisión institucional antes de su uso en producción.",
+    "paragraphs": [
+      "La plataforma utiliza información de las cuentas, listas y candidatos, el padrón cargado por la administración y registros de actividad para gestionar el trabajo electoral, controlar accesos y permitir la revisión de operaciones.",
+      "El acceso a la información depende del rol y de las asignaciones de cada usuario. Los flujos de invitación y recuperación utilizan el correo de la cuenta.",
+      "Este documento provisorio describe el funcionamiento general; falta completar y revisar la información institucional sobre responsables, contacto, conservación de datos, destinatarios y canales para consultas sobre privacidad."
+    ]
+  }
+}
