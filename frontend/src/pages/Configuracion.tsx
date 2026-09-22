@@ -253,7 +253,6 @@ function RulesForm({
           requires_parity: true,
           requires_alternation: office.municipality_based,
           requires_affiliation: true,
-          requires_renaper: true,
           other_requirements_confirmed: false,
           template_is_test: true,
           positions: [],
@@ -339,7 +338,6 @@ function RulesForm({
             "requires_parity",
             "requires_alternation",
             "requires_affiliation",
-            "requires_renaper",
             "other_requirements_confirmed",
             "template_is_test",
           ] as const
@@ -352,7 +350,6 @@ function RulesForm({
                 "Paridad 50/50",
                 "Alternancia",
                 "Afiliación requerida",
-                "RENAPER requerido",
                 "Otros requisitos confirmados",
                 "Plantilla de prueba",
               ][i]

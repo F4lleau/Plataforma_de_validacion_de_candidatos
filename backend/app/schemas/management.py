@@ -66,7 +66,6 @@ class RulesInput(Input):
     requires_parity: bool = True
     requires_alternation: bool = False
     requires_affiliation: bool = True
-    requires_renaper: bool = True
     other_requirements_confirmed: bool = False
     template_is_test: bool = True
     positions: list[Position] = Field(default_factory=list, max_length=200)

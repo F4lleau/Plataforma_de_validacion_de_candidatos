@@ -1,6 +1,7 @@
 """Persistence primitives shared by administrative services; never commit here."""
 
 from sqlalchemy import select, func
+from app.utils.enums import ValidationType
 from app.models import (
     ElectionRule,
     UserModule,
@@ -94,6 +95,7 @@ class ManagementRepository:
             self.db.scalars(
                 select(CandidateValidation)
                 .where(
+                    CandidateValidation.validation_type != ValidationType.RENAPER,
                     CandidateValidation.candidate_id == candidate.id,
                     CandidateValidation.candidate_revision == candidate.revision,
                 )

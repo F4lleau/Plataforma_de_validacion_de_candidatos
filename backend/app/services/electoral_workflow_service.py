@@ -16,7 +16,6 @@ from app.services.management_service import ManagementService
 from app.services.access_service import AccessService
 from app.services.affiliation_validation_service import AffiliationValidationService
 from app.services.office_validation_service import OfficeValidationService
-from app.services.renaper_validation_service import RenaperValidationService
 from app.repositories.party_member_repository import PartyMemberRepository
 from app.repositories.list_repository import ListRepository
 from app.utils.enums import (
@@ -90,7 +89,7 @@ class ElectoralWorkflowService(ManagementService):
     def detail(self, identity, user):
         row = self.get_list(identity, user)
         result = self.list_output(row)
-        result["rule"] = (
+        result["rule"] = self.rule_output(
             self.repo.get(ElectionRule, row.rule_version_id)
             if row.rule_version_id
             else None
@@ -348,7 +347,6 @@ class ElectoralWorkflowService(ManagementService):
     def validate_candidate(
         self, candidate, person, row, include_requirements=True, actor_id=None
     ):
-        # No network calls: RENAPER is explicitly unconfigured until a provider exists.
         rule = (
             self.repo.get(ElectionRule, row.rule_version_id)
             if row.rule_version_id
@@ -370,9 +368,6 @@ class ElectoralWorkflowService(ManagementService):
                 "message": "Borrador guardado; pulse Guardar y validar.",
             }
         )
-        identity = RenaperValidationService().validate(
-            person.dni, person.first_name, person.last_name
-        )
         results = [
             (
                 ValidationType.AFILIACION,
@@ -384,7 +379,6 @@ class ElectoralWorkflowService(ManagementService):
                 },
             ),
             (ValidationType.REQUISITOS_CARGO, requirements),
-            (ValidationType.RENAPER, identity),
         ]
         before = {
             v.validation_type.value: v.status.value
@@ -403,12 +397,8 @@ class ElectoralWorkflowService(ManagementService):
             evidence = {
                 "rule_version_id": row.rule_version_id,
                 "batch_id": batches[0].id if batches else None,
-                "origin": "local"
-                if typ != ValidationType.RENAPER
-                else result.get("source", "not_configured"),
-                "approvable": result.get("approvable", False)
-                if typ == ValidationType.RENAPER
-                else result["status"] == "ok",
+                "origin": "local",
+                "approvable": result["status"] == "ok",
                 "election_date": str(election.election_date),
                 "loading_closes": str(election.loading_closes),
             }

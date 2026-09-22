@@ -1,5 +1,7 @@
 # Estado — Task 08
 
+> Estado vigente al 22/09/2026: RENAPER retirado del alcance; sus menciones como pendiente más abajo describen el cierre histórico. Ver [retiro](../RETIRO_RENAPER.md).
+
 **Completada en alcance de prueba.**
 
 Alta y corrección transaccional por lista, borrador/validación separados, posiciones, edad configurable, afiliación no bloqueante y revisión de resultados. Borrador exige identidad mínima completa.

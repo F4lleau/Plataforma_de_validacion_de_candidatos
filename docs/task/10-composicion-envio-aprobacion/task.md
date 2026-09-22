@@ -1,5 +1,8 @@
 # TASK 10 — List Composition, Submission and Automatic Approval
 
+> Actualización 22/09/2026: RENAPER fue retirado por el usuario. Las consignas de identidad externa y dependencias de Task 09 que aparecen abajo son antecedentes, no trabajo pendiente. Se conservan los controles locales y el feedback granular. Ver [alcance vigente](../RETIRO_RENAPER.md).
+
+
 Trabajar sobre `develop`, reutilizando el checkpoint y la implementación existente.
 **NO hacer commit ni push al finalizar.** El estado ejecutado y sus límites se registran en status.md y report.md.
 

@@ -1,4 +1,7 @@
 # TASK 08 — Candidate Drafts, Editing and Office Requirements
+
+> Actualización 22/09/2026: RENAPER fue retirado por el usuario. Las consignas de identidad externa y dependencias de Task 09 que aparecen abajo son antecedentes, no trabajo pendiente. Se conservan los controles locales y el feedback granular. Ver [alcance vigente](../RETIRO_RENAPER.md).
+
 > Estado al 20/09/2026: **Completada en alcance de prueba**. El usuario indicó «no tengo la plantilla oficial, vamos con datos de prueba» y «renaper aún no, solo prepara el proyecto». Ver [informe](report.md) y [decisiones](../DECISIONES.md).
 > Las casillas de muestras/contratos institucionales pendientes no impiden el cierre del alcance de prueba autorizado; no significan capacidad productiva verificada.
 

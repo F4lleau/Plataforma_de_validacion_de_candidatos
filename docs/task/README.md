@@ -7,8 +7,8 @@ de las capturas del manual. No se hace commit ni push sin indicación.
 ## Índice y orden de ejecución
 
 Tasks 03–08 implementadas; 04/06/07/08 usan reglas y datos de prueba autorizados.
-Task 09 completó la preparación solicitada; la conexión real está diferida hasta disponer
-de API. Tasks 10–14 están implementadas en el alcance local; Task 15 completó aceptación
+Task 09 fue retirada del alcance el 22/09/2026: RENAPER deja de ser una dependencia
+y sus resultados granulares locales continúan en Task 08. Ver [retiro](RETIRO_RENAPER.md). Tasks 10–14 están implementadas en el alcance local; Task 15 completó aceptación
 local y mantiene pendiente la institucional. Ver [informe 04–09](INFORME_04_09.md) y
 [informe 10–15](INFORME_10_15.md).
 
@@ -20,13 +20,13 @@ local y mantiene pendiente la institucional. Ver [informe 04–09](INFORME_04_09
 | 06 | Official Membership Register Import, Search and History | Completada (alcance de prueba) | 03, 04 | [Task](06-padron-oficial/task.md) · [Estado](06-padron-oficial/status.md) |
 | 07 | Electoral Lists, Templates and Assigned Ownership | Completada (alcance de prueba) | 04, 05 | [Task](07-listas-plantillas/task.md) · [Estado](07-listas-plantillas/status.md) |
 | 08 | Candidate Drafts, Editing and Office Requirements | Completada (alcance de prueba) | 06, 07 | [Task](08-candidatos-requisitos/task.md) · [Estado](08-candidatos-requisitos/status.md) |
-| 09 | RENAPER Integration and Candidate Validation Results | Preparada; API diferida | 08 | [Task](09-renaper-validacion-identidad/task.md) · [Estado](09-renaper-validacion-identidad/status.md) |
-| 10 | List Composition, Submission and Automatic Approval | Completada en entorno de prueba; habilitación institucional pendiente | 07, 08, 09 | [Task](10-composicion-envio-aprobacion/task.md) · [Estado](10-composicion-envio-aprobacion/status.md) |
+| 09 | RENAPER Integration and Candidate Validation Results | Retirada por el usuario (22/09/2026) | — | [Task](09-renaper-validacion-identidad/task.md) · [Estado](09-renaper-validacion-identidad/status.md) |
+| 10 | List Composition, Submission and Automatic Approval | Completada en entorno de prueba; habilitación institucional pendiente | 07, 08 | [Task](10-composicion-envio-aprobacion/task.md) · [Estado](10-composicion-envio-aprobacion/status.md) |
 | 11 | Administrative List Inbox and Granular Validation Review | Completada | 07, 08, 10 | [Task](11-bandeja-administrativa-validaciones/task.md) · [Estado](11-bandeja-administrativa-validaciones/status.md) |
 | 12 | Role-Based Dashboards and Live Electoral Metrics | Completada | 05, 07, 10, 11 | [Task](12-dashboards-por-rol/task.md) · [Estado](12-dashboards-por-rol/status.md) |
 | 13 | Reports, Statistics and Excel CSV PDF Exports | Completada | 06, 11, 12 | [Task](13-reportes-exportaciones/task.md) · [Estado](13-reportes-exportaciones/status.md) |
 | 14 | Audit Trail and Electoral Action History | Completada | 04, 05, 06, 07, 08, 10, 11, 13 | [Task](14-auditoria-historial/task.md) · [Estado](14-auditoria-historial/status.md) |
-| 15 | End-to-End Acceptance, Role Manuals and Support | Aceptación local completada; aceptación institucional pendiente | 03, 04, 05, 06, 07, 08, 09, 10, 11, 12, 13, 14 | [Task](15-aceptacion-manual-soporte/task.md) · [Estado](15-aceptacion-manual-soporte/status.md) |
+| 15 | End-to-End Acceptance, Role Manuals and Support | Aceptación local completada; aceptación institucional pendiente | 03, 04, 05, 06, 07, 08, 10, 11, 12, 13, 14 | [Task](15-aceptacion-manual-soporte/task.md) · [Estado](15-aceptacion-manual-soporte/status.md) |
 | 16 | JWT Hardening, Session Rotation and Revocation | Completada localmente | 03, 14 | [Task](16-jwt-sesiones-seguras/task.md) · [Estado](16-jwt-sesiones-seguras/status.md) |
 | 17 | SMTP Delivery, Email Templates and Local Mail Capture | Completada localmente | 16, 14 | [Task](17-smtp-correo-transaccional/task.md) · [Estado](17-smtp-correo-transaccional/status.md) |
 | 18 | Login Throttling, Account Lockout and Administrative Unlock | Completada localmente | 16, 17, 05, 14 | [Task](18-bloqueo-desbloqueo-cuentas/task.md) · [Estado](18-bloqueo-desbloqueo-cuentas/status.md) |
@@ -65,10 +65,10 @@ provisorios requieren revisión institucional antes de producción.
 
 ## Notas de dependencias
 
-- Tasks 10–15 ejecutadas localmente. Siguiente hito externo: reglas oficiales, contrato RENAPER y aceptación institucional.
-- Task 09 ya tiene contratos/estados; requiere acceso/documentación RENAPER para la conexión real, diferida por el usuario.
-- Task 10 puede desarrollarse con contratos de validación de 09; no habilitar aprobación real con un proveedor simulado.
-- Las Tasks 11–14 pueden avanzar sobre contratos y datos reales disponibles aunque falte un proveedor externo; la aceptación integral de 15 lo registra.
+- Tasks 10–15 ejecutadas localmente. Pendientes externos: reglas oficiales y aceptación institucional.
+- Task 09 retirada: no se requiere proveedor/API RENAPER para completar el sistema.
+- Tasks 08/10/11/13/15 conservan afiliación, requisitos, composición, revisión y reportes.
+- Los informes y capturas anteriores son históricos; [RETIRO_RENAPER.md](RETIRO_RENAPER.md) describe el alcance vigente y la conservación de datos.
 - Auditoría se instrumenta desde Task 04 y en cada operación de dominio; Task 14 completa consulta/historial, no reconstruye acciones nunca registradas.
 - Las declaraciones históricas de Task 03 sobre carpeta ignorada describen el cierre anterior. Este índice refleja la decisión actual de versionarla.
 

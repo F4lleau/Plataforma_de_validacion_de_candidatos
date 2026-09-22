@@ -13,7 +13,7 @@ fecha, responsable y evidencia aquí; no interpretar el silencio como aprobació
 | D04 | Captura p. 8 menciona requisitos de edad y ciudadanía; no hay umbral/criterio de ciudadanía, residencia o antigüedad. | Implementar edad cuando se defina D03. Mantener los demás requisitos pendientes/no configurados; no inventar verificaciones ni tratarlos como cumplidos. | 04, 08 | Pendiente |
 | D05 | P. 11 establece paridad 50/50 y alternancia solo en Consejos. El servicio actual aplica alternancia a todo cargo y el PDF no define paridad por grupo ni tratamiento de categorías distintas de M/F. | Respetar diferencia por cargo. Confirmar paridad global o por titulares/suplentes, alcance de alternancia entre grupos y categorías antes de activar reglas definitivas. No inventar exclusiones de personas. | 04, 07, 10 | Pendiente |
 | D06 | Manual pide afiliación obligatoria; AGENTS exige guardar ausentes del padrón con warning. Excel contiene estado de afiliación/estado elector. | La carga no bloqueante ya está resuelta por AGENTS y se conserva. Para aprobación, una observación no equivale a OK. Confirmar estados válidos del padrón y tratamiento administrativo sin inventar una dispensa. | 06, 08, 10, 11 | Regla de carga confirmada; detalle de estados pendiente |
-| D07 | Manual exige RENAPER; repositorio solo tiene cliente base y stubs que pueden devolver OK. No se aportó contrato ni acceso a proveedor. | Corregir estados honestos y preparar integración. Solicitar proveedor/documentación/credenciales autorizadas al ejecutarla; no dar por integrada una prueba mock ni aprobar datos reales por simulación. | 09, 10, 15 | Dependencia externa pendiente |
+| D07 | Manual exige RENAPER; repositorio solo tiene cliente base y stubs que pueden devolver OK. No se aportó contrato ni acceso a proveedor. | Corregir estados honestos y preparar integración. Solicitar proveedor/documentación/credenciales autorizadas al ejecutarla; no dar por integrada una prueba mock ni aprobar datos reales por simulación. | 09, 10, 15 | Retirada por el usuario el 22/09/2026; ver D20 |
 | D08 | Flujo p. 11: validar composición → enviar → aprobar si todo cumple. Capturas muestran listas de pocos candidatos ya enviadas; no explican reabrir, corregir después del envío o resolver observaciones manualmente. | Definir máquina de estados, condiciones de envío, edición/reapertura y facultades administrativas. Conservar envío y aprobación como eventos distintos; ningún error/pendiente se trata como aprobación. | 08, 10, 11 | Pendiente |
 | D09 | Manual habla de listas propias/asignadas y número de lista. UserModule actual da alcance por módulo; municipio de candidato está en Person. No se define propiedad compartida, unicidad del número, multiplicidad de elecciones activas ni cierre horario. | Definir propiedad/asignación por lista, transferencias, número, fechas/zona y duplicados entre listas. Separar distrito electoral de domicilio: lista determina contexto, no el domicilio personal. Proponer migración explícita de datos existentes. | 04, 05, 07, 08, 12 | Pendiente |
 | D10 | Captura p. 3 muestra Olvidó su contraseña y p. 11 remite a la Junta para soporte/credenciales; no hay canal concreto ni proveedor de correo. | Definir contacto real configurable y recuperación asistida o automática. Se puede ofrecer ayuda funcional asistida; no inventar email/teléfono ni simular envíos. | 05, 15 | Pendiente |
@@ -145,3 +145,13 @@ guarda primera fecha UTC, versión e instantánea con hash; auditoría atómica
 `legal.terms_accepted`. Migración `b8316d72c4ef`, sin valores retroactivos. Contenido
 provisorio 0.1 del 21/09/2026; actualización no fuerza reaceptación. Textos
 institucionales definitivos siguen pendientes. Ver [informe](22-terminos-privacidad-primer-acceso/report.md).
+
+
+## D20 — Retiro de RENAPER (22/09/2026)
+
+El usuario solicita quitar RENAPER después de revisar y actualizar `develop`.
+Esta decisión reemplaza D07 y la autorización anterior de preparar una conexión
+futura: CAP-15/Task 09 quedan fuera de alcance, sin dependencia externa pendiente.
+Se conservan los resultados locales de Task 08, el padrón y los requisitos electorales.
+La aprobación de Task 10 ya no exige identidad externa. No se cambian estados de
+listas enviadas ni se eliminan evidencias históricas. Ver [detalle](RETIRO_RENAPER.md).

@@ -1,5 +1,7 @@
 # Estado — Task 06
 
+> Estado vigente al 22/09/2026: RENAPER retirado del alcance; sus menciones como pendiente más abajo describen el cierre histórico. Ver [retiro](../RETIRO_RENAPER.md).
+
 **Completada con muestras sintéticas.**
 
 18 campos del manual, XLSX, fechas/documentos normalizados, importación atómica, lote único concurrente, filtros/paginación/indicadores/historial. Validación de muestra institucional diferida.

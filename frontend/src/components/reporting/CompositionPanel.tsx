@@ -102,9 +102,10 @@ export default function CompositionPanel({
       {editable ? (
         <>
           <p className="text-sm">
-            Para enviar, la composición debe estar completa. Afiliación
-            observada o RENAPER pendiente permiten enviar para revisión, pero no
-            aprobar. Después del envío la lista queda en lectura.
+            Para enviar, la composición debe estar completa. La afiliación
+            observada permite enviar para revisión; la aprobación exige cumplir
+            todos los controles obligatorios. Después del envío la lista queda
+            en lectura.
           </p>
           <div className="flex flex-wrap gap-3">
             <button

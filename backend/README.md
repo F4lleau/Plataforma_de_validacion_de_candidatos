@@ -10,7 +10,7 @@ La aplicación backend de Junta Electoral gestiona la administración de eleccio
 - Administración de listas electorales y candidatos.
 - Validación de afiliaciones y candidaturas.
 - Registro de logs de auditoría.
-- Integración con servicios externos (ej: RENAPER).
+- Validaciones locales contra el padrón y las reglas electorales configuradas.
 
 ### Requisitos No Funcionales
 
@@ -25,7 +25,7 @@ La aplicación backend de Junta Electoral gestiona la administración de eleccio
 - **Base de datos:** PostgreSQL (Docker local o Neon, configurado por entorno)
 - **Migraciones:** Alembic
 - **Autenticación:** JWT
-- **Integraciones:** padrón importado desde Excel; RENAPER pendiente de integración productiva
+- **Integraciones:** padrón importado desde Excel; sin consulta externa de identidad
 
 ### Estructura de Carpetas
 
@@ -132,17 +132,17 @@ Facilitar la gestión y validación de procesos electorales, optimizando la tran
 ## Actualización Tasks 04–09 (20/09/2026)
 
 Configuración, catálogos, usuarios/módulos, padrón de 18 campos, listas con asignación
-explícita y edición de candidatos tienen API y UI reales. RENAPER permanece pendiente
-sin proveedor; no devuelve OK ficticio. Ver [contratos y recorrido](../docs/ELECTORAL_WORKFLOWS.md).
+explícita y edición de candidatos tienen API y UI reales. RENAPER fue retirado
+del alcance el 22/09/2026 por pedido del usuario. Ver [contratos y recorrido](../docs/ELECTORAL_WORKFLOWS.md).
 Las menciones anteriores a estos CRUD como pendientes quedan reemplazadas por este estado.
-Tasks 10–14 y aceptación local de 15 están implementadas. RENAPER real y aceptación
-institucional siguen pendientes. Ver docs/task/INFORME_10_15.md desde la raíz.
+Tasks 10–14 y aceptación local de 15 están implementadas. La aceptación
+institucional sigue pendiente. Ver docs/task/INFORME_10_15.md desde la raíz.
 
 ## Actualización Tasks 10–15 (20/09/2026)
 
 Envío transaccional, bandeja ADMIN, dashboards, reportes/exportaciones y auditoría
 están implementados y verificados localmente. El contenido enviado queda en lectura.
-Las reglas demo y RENAPER pendiente impiden afirmar aprobación institucional.
+Las reglas demo impiden afirmar aprobación institucional.
 Ver `docs/SUBMISSION_REPORTING_AUDIT.md`, `docs/MANUAL_ADMIN.md`,
 `docs/MANUAL_APODERADO.md` y `docs/task/INFORME_10_15.md` desde la raíz.
 

@@ -49,7 +49,7 @@ class InspectionService(ElectoralWorkflowService):
         result["assigned_user_ids"] = [a["id"] for a in result["apoderados"]]
         from app.models import ElectionRule
 
-        result["rule"] = (
+        result["rule"] = self.rule_output(
             self.repo.get(ElectionRule, row.rule_version_id)
             if row.rule_version_id
             else None

@@ -46,7 +46,8 @@ manualmente; Enviada al administrador y Aprobada por sistema son estados diferen
 **Dashboard** y **Reportes** calculan datos de la base. El alcance electoral se muestra
 explícitamente. La tasa divide aprobadas por todas las listas del filtro; no suma enviadas
 y aprobadas dos veces. El reporte filtra 2 listas, 46 candidatos, 2 enviadas y 0 aprobadas
-en esta captura, porque RENAPER y las reglas institucionales siguen pendientes.
+en esta captura histórica. Las reglas institucionales siguen pendientes; RENAPER
+fue retirado del alcance y las listas ya enviadas conservan su estado original.
 
 ![Reporte ADMIN filtrado](task/evidencia-10-15/reportes-admin.png)
 

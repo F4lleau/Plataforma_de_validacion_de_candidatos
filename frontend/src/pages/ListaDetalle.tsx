@@ -119,8 +119,8 @@ function CandidateEditor({
         </Field>
       </div>
       <p className="text-sm text-muted-foreground">
-        La ausencia en padrón genera una advertencia y permite guardar. RENAPER
-        permanece pendiente hasta contar con el proveedor.
+        La ausencia en padrón genera una advertencia y permite guardar para
+        revisión administrativa.
       </p>
       <Feedback error={error} message={message} />
       <div className="flex flex-wrap gap-3">
@@ -329,7 +329,7 @@ export default function ListaDetalle() {
             {c.validations.length === 0 && (
               <p>Datos históricos sin validaciones vigentes.</p>
             )}
-            <div className="grid gap-3 lg:grid-cols-3">
+            <div className="grid gap-3 lg:grid-cols-2">
               {c.validations.map((v) => (
                 <div
                   key={v.type}
@@ -338,9 +338,7 @@ export default function ListaDetalle() {
                   <p className="mb-2 flex flex-wrap items-center gap-2 font-semibold">
                     {v.type === "afiliacion"
                       ? "Afiliación"
-                      : v.type === "renaper"
-                        ? "RENAPER"
-                        : "Edad y requisitos"}{" "}
+                      : "Edad y requisitos"}{" "}
                     <StatusBadge status={v.status} />
                   </p>
                   <p>{v.message}</p>

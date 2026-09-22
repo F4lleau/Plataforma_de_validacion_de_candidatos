@@ -1,5 +1,7 @@
 # Task 12 — Estado
 
+> Estado vigente al 22/09/2026: RENAPER retirado del alcance; sus menciones como pendiente más abajo describen el cierre histórico. Ver [retiro](../RETIRO_RENAPER.md).
+
 - Estado: **Completada**.
 - Fecha: 20/09/2026. Rama develop, sin commit ni push.
 - Alcance: Métricas SQL y dashboards por rol/elección, módulos, últimas listas y acciones reales. Sin filtros el alcance se muestra explícitamente.

@@ -47,8 +47,8 @@ de candidatos tienen backend y frontend reales. PostgreSQL local usa Alembic.
 Las rutas incluyen `/configuracion`, `/usuarios`, `/padron`, `/listas`, `/listas/:id`,
 `/candidatos` y revisión administrativa. Las operaciones se autorizan en backend.
 
-Las plantillas/datos locales son de prueba por pedido del usuario. RENAPER permanece
-no configurado y devuelve pendiente. Reglas institucionales ambiguas conservan su
+Las plantillas/datos locales son de prueba por pedido del usuario. RENAPER fue
+retirado del alcance el 22/09/2026. Reglas institucionales ambiguas conservan su
 estado pendiente; no hay aprobación productiva por simulación.
 
 Envío/aprobación condicionada, bandeja administrativa, métricas, exportaciones e historial
@@ -77,6 +77,6 @@ Ver [flujos y contratos actuales](ELECTORAL_WORKFLOWS.md),
 
 Envío transaccional, bandeja ADMIN, dashboards, reportes/exportaciones y auditoría
 están implementados y verificados localmente. El contenido enviado queda en lectura.
-Las reglas demo y RENAPER pendiente impiden afirmar aprobación institucional.
+Las reglas demo impiden afirmar aprobación institucional.
 Ver `docs/SUBMISSION_REPORTING_AUDIT.md`, `docs/MANUAL_ADMIN.md`,
 `docs/MANUAL_APODERADO.md` y `docs/task/INFORME_10_15.md` desde la raíz.

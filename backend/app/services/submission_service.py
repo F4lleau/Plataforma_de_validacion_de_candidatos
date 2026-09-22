@@ -66,13 +66,10 @@ class SubmissionService(ElectoralWorkflowService):
         required = [ValidationType.REQUISITOS_CARGO]
         if not rule or rule.rules.get("requires_affiliation", True):
             required.append(ValidationType.AFILIACION)
-        if not rule or rule.rules.get("requires_renaper", True):
-            required.append(ValidationType.RENAPER)
         for member, candidate, person in rows:
             validations = output[candidate.id]
             for kind in required:
                 val = next((v for v in validations if v.validation_type == kind), None)
-                evidence = (val.response_json or {}) if val else {}
                 if (
                     not val
                     or val.status != ValidationResult.OK
@@ -80,13 +77,6 @@ class SubmissionService(ElectoralWorkflowService):
                 ):
                     blockers.append(
                         f"Posición {member.position_number}: {kind.value} pendiente u observada."
-                    )
-                elif kind == ValidationType.RENAPER and (
-                    evidence.get("origin") != "authorized_provider"
-                    or evidence.get("approvable") is not True
-                ):
-                    blockers.append(
-                        f"Posición {member.position_number}: identidad sin verificación real."
                     )
         return blockers
 

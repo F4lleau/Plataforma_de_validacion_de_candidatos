@@ -163,7 +163,7 @@ Para esa prueba se requiere Docker Compose además del permiso de crear bases.
 La habilitación productiva sigue abierta hasta verificar HTTPS, cookies Secure en
 el dominio real, proxy/CORS, SMTP autorizado, SPF/DKIM/DMARC y recepción externa.
 Mailpit solo demuestra el recorrido local. La inspección de un enlace no equivale
-a validación de identidad electoral ni a consulta RENAPER.
+a validación de identidad electoral.
 
 ## Task 22: despliegue y documentos de primer acceso
 

@@ -27,7 +27,7 @@ export default function Ayuda() {
             : [
                 "Creá o abrí una lista asignada desde Mis listas.",
                 "Cargá cada candidato en su posición. Guardar borrador conserva la identidad mínima.",
-                "Usá Guardar y validar para consultar afiliación, requisitos y RENAPER. Una ausencia en padrón no impide guardar.",
+                "Usá Guardar y validar para consultar afiliación y requisitos. Una ausencia en padrón no impide guardar.",
                 "Corregí la composición hasta completar todas las posiciones y las reglas configuradas.",
                 "Enviá la lista para revisión. Después del envío queda en lectura; enviada no significa aprobada.",
               ]
@@ -52,8 +52,8 @@ export default function Ayuda() {
               "Una importación fallida no cambia el padrón vigente. Revisá las filas indicadas en el historial y volvé a subir el archivo completo.",
             ],
             [
-              "¿Cuál es el estado de RENAPER?",
-              "RENAPER está pendiente de conexión real. Los datos de prueba no acreditan cumplimiento institucional.",
+              "¿Una lista enviada ya está aprobada?",
+              "El envío deja la lista en lectura. La aprobación exige composición y controles obligatorios conformes, con reglas institucionales confirmadas.",
             ],
           ].map(([question, answer]) => (
             <details key={question} className="py-3">

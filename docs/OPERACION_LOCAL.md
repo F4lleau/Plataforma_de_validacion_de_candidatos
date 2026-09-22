@@ -55,7 +55,7 @@ se ensayó envío concurrente allí y se eliminó únicamente esa copia.
 - Exportación 413: acotar filtros; máximo 50.000 registros, PDF 5.000 listas.
 - `SUPPORT_CONTACT` en `backend/.env` permite mostrar el canal real en correos/Ayuda; reiniciar
   la API tras cambiarlo. Sin valor, se remite al administrador sin inventar email/teléfono.
-- RENAPER no está configurado. No reemplazar un pendiente por OK ni usar mocks para aprobar.
+- RENAPER fue retirado. No reemplazar requisitos institucionales pendientes por OK ni usar mocks para aprobar.
 - Las fechas de auditoría se filtran por días Argentina y se almacenan UTC. PDF indica UTC.
 
 Ver [guía ADMIN](MANUAL_ADMIN.md), [guía APODERADO](MANUAL_APODERADO.md) y

@@ -2,7 +2,7 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.models.candidate_validation import CandidateValidation
-from app.utils.enums import ValidationResult
+from app.utils.enums import ValidationResult, ValidationType
 
 
 class CandidateValidationRepository:
@@ -18,7 +18,10 @@ class CandidateValidationRepository:
     def list_by_candidate(self, candidate_id: int) -> list[CandidateValidation]:
         stmt = (
             select(CandidateValidation)
-            .where(CandidateValidation.candidate_id == candidate_id)
+            .where(
+                CandidateValidation.candidate_id == candidate_id,
+                CandidateValidation.validation_type != ValidationType.RENAPER,
+            )
             .order_by(CandidateValidation.validated_at.desc())
         )
         return list(self.db.scalars(stmt).all())
@@ -27,5 +30,6 @@ class CandidateValidationRepository:
         stmt = select(CandidateValidation).where(
             CandidateValidation.candidate_id == candidate_id,
             CandidateValidation.status == ValidationResult.WARNING,
+            CandidateValidation.validation_type != ValidationType.RENAPER,
         )
         return self.db.scalar(stmt) is not None

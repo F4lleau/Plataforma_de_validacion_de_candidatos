@@ -146,7 +146,7 @@ def render_table(rows, columns, fmt, title, subtitle="", metrics=None):
     flow.extend(
         [
             Paragraph(
-                f"Registros: {len(rows)}. Los datos de prueba y RENAPER pendiente no equivalen a aprobación institucional.",
+                f"Registros: {len(rows)}. Los datos de prueba no equivalen a aprobación institucional.",
                 styles["Normal"],
             ),
             Spacer(1, 12),
