@@ -17,8 +17,6 @@ from app.models import (
     PartyMember,
 )
 from app.services.affiliate_import_service import AffiliateImportService
-from app.services.renaper_validation_service import RenaperValidationService
-from app.integrations.renaper_client import IdentityResult
 
 
 @pytest.fixture
@@ -297,7 +295,6 @@ def test_draft_edit_validate_preserves_warning_and_versions(
     assert {v["type"]: v["status"] for v in c["validations"]} == {
         "afiliacion": "warning",
         "requisitos_cargo": "pendiente",
-        "renaper": "pendiente",
     }
     r = client.put(p + f"/{c['id']}", json=candidate(first_name="Corregida"), headers=a)
     assert r.status_code == 200, r.text
@@ -488,29 +485,6 @@ def test_inactive_register_row_is_warning(scenario, db_session):
         )["status"]
         == "warning"
     )
-
-
-@pytest.mark.parametrize("source", ["mock", "not_configured"])
-def test_renaper_mock_never_approves(source):
-    class Fake:
-        def get_person_by_dni(self, dni):
-            return IdentityResult("ok", "MOCK", "Simulado", source, True)
-
-    result = RenaperValidationService(Fake()).validate(
-        "98000001", "Sintético", "Prueba"
-    )
-    assert result["status"] == "pendiente" and result["approvable"] is False
-
-
-def test_renaper_timeout_and_unconfigured():
-    class Timeout:
-        def get_person_by_dni(self, dni):
-            raise TimeoutError()
-
-    for service in (RenaperValidationService(), RenaperValidationService(Timeout())):
-        assert (
-            service.validate("98000001", "Sintético", "Prueba")["status"] == "pendiente"
-        )
 
 
 @pytest.mark.parametrize(

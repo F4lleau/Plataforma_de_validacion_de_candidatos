@@ -79,7 +79,6 @@ La validación actual `ListValidationService` incluye controles sobre:
 Las validaciones del proyecto se modelan con tipos y resultados como:
 
 - `AFILIACION`
-- `RENAPER`
 - `REQUISITOS_CARGO`
 - `COMPOSICION_LISTA`
 
@@ -113,7 +112,7 @@ posiciones genéricas para Consejos con alternancia. No son plantillas oficiales
 La política no definida para otros géneros queda pendiente, sin impedir carga.
 
 Edad se calcula con referencia configurable; el entorno de prueba usa día electoral.
-Otros requisitos no confirmados y RENAPER sin proveedor permanecen pendientes.
+Otros requisitos no confirmados permanecen pendientes.
 Ausencia/inactividad en padrón produce warning, nunca rechazo automático del registro.
 Editar genera nueva revisión; los resultados históricos no validan los datos nuevos.
 
@@ -122,7 +121,7 @@ Editar genera nueva revisión; los resultados históricos no validan los datos n
 Confirmar plantilla de Consejos, reglas oficiales, fecha de cómputo, ciudadanía,
 antigüedad y estados del padrón antes de operar con datos reales. El envío con
 composición correcta y pendientes a revisión fue confirmado para pruebas; resolución
-manual/reapertura requieren definición institucional. RENAPER real queda diferido por instrucción del usuario.
+manual/reapertura requieren definición institucional. RENAPER está fuera de alcance por instrucción del usuario del 22/09/2026.
 
 ## 12. Principio general
 
@@ -139,6 +138,6 @@ No inventar requisitos electorales no presentes en el repositorio. Toda regla fu
 
 Envío transaccional, bandeja ADMIN, dashboards, reportes/exportaciones y auditoría
 están implementados y verificados localmente. El contenido enviado queda en lectura.
-Las reglas demo y RENAPER pendiente impiden afirmar aprobación institucional.
+Las reglas demo impiden afirmar aprobación institucional.
 Ver `docs/SUBMISSION_REPORTING_AUDIT.md`, `docs/MANUAL_ADMIN.md`,
 `docs/MANUAL_APODERADO.md` y `docs/task/INFORME_10_15.md` desde la raíz.

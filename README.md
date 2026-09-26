@@ -2,10 +2,10 @@
 
 Backend FastAPI + SQLAlchemy, frontend React + Vite y PostgreSQL en Docker.
 La API usa las migraciones Alembic existentes. La afiliación se consulta en el
-padrón importado desde Excel; RENAPER todavía no tiene una integración productiva.
+padrón importado desde Excel. RENAPER fue retirado del alcance el 22/09/2026.
 Autenticación, configuración, padrón, listas/candidatos, envío, bandeja, dashboards,
 reportes/exportaciones y auditoría están implementados y probados localmente. Las
-reglas de prueba no sustituyen confirmación institucional ni integración real RENAPER.
+reglas de prueba no sustituyen la confirmación institucional.
 
 ## Requisitos
 
@@ -109,7 +109,7 @@ y [seguimiento de Tasks 04–09](docs/task/INFORME_04_09.md).
 
 Una lista completa con observaciones puede enviarse a revisión y queda en lectura.
 La aprobación automática exige controles obligatorios vigentes y verificados;
-RENAPER pendiente y plantillas experimentales nunca la habilitan.
+las plantillas experimentales nunca la habilitan. Ver [retiro de RENAPER](docs/task/RETIRO_RENAPER.md).
 
 ## Tasks 20–21: invitaciones y aceptación local
 

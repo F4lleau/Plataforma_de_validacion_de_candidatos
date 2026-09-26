@@ -18,7 +18,7 @@ from app.models import (
     ListValidation,
 )
 from app.repositories.user_module_repository import UserModuleRepository
-from app.utils.enums import UserRole, ListStatus, ValidationResult
+from app.utils.enums import UserRole, ListStatus, ValidationResult, ValidationType
 
 
 class ReportingRepository:
@@ -239,7 +239,10 @@ class ReportingRepository:
         return list(
             self.db.scalars(
                 select(CandidateValidation)
-                .where(CandidateValidation.candidate_id.in_(candidate_ids))
+                .where(
+                    CandidateValidation.candidate_id.in_(candidate_ids),
+                    CandidateValidation.validation_type != ValidationType.RENAPER,
+                )
                 .order_by(CandidateValidation.id.desc())
             )
         )
@@ -261,6 +264,7 @@ class ReportingRepository:
             select(versioned.id)
             .where(
                 versioned.candidate_id == Candidate.id,
+                versioned.validation_type != ValidationType.RENAPER,
                 versioned.candidate_revision.is_not(None),
             )
             .correlate(Candidate)
@@ -270,6 +274,7 @@ class ReportingRepository:
             select(cv.id)
             .where(
                 cv.candidate_id == Candidate.id,
+                cv.validation_type != ValidationType.RENAPER,
                 or_(
                     cv.candidate_revision == Candidate.revision,
                     and_(cv.candidate_revision.is_(None), ~has_history),

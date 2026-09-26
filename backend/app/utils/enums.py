@@ -17,6 +17,7 @@ class CandidateStatus(str, Enum):
     APROBADO_AUTOMATICAMENTE = "aprobado_automaticamente"
     RECHAZADO_AFILIACION = "rechazado_afiliacion"
     RECHAZADO_REQUISITOS = "rechazado_requisitos"
+    # Legacy database value only; no active workflow produces this status.
     RECHAZADO_RENAPER = "rechazado_renaper"
     ERROR_INTEGRACION = "error_integracion"
 
@@ -32,6 +33,7 @@ class ListStatus(str, Enum):
 
 class ValidationType(str, Enum):
     AFILIACION = "afiliacion"
+    # Legacy database value only; excluded from operational validations.
     RENAPER = "renaper"
     REQUISITOS_CARGO = "requisitos_cargo"
     COMPOSICION_LISTA = "composicion_lista"

@@ -94,7 +94,7 @@ Hay servicios de validación implementados y otros parcialmente estructurados:
 
 - `AffiliationValidationService`: valida si el DNI existe en el padrón.
 - `ListValidationService`: valida completitud, posiciones, duplicados, paridad y alternancia.
-- `OfficeValidationService` calcula edad con referencia configurable; los requisitos no confirmados quedan pendientes. `RenaperValidationService` retorna pendiente sin proveedor; no es una integración productiva.
+- `OfficeValidationService` calcula edad con referencia configurable; los requisitos no confirmados quedan pendientes.
 
 ## Padrón PJ
 
@@ -119,13 +119,13 @@ La ausencia en padrón no debe bloquea automáticamente un candidato. La validac
 
 Esto es un punto disciplinario del proyecto y debe respetarse en futuros cambios.
 
-## RENAPER
+## Validación externa de identidad retirada
 
-Existe una estructura de integración en `backend/app/integrations/` y un cliente base, pero no hay integración real productiva.
-
-No asumir que RENAPER funciona en producción ni documentarlo como si estuviera operativo.
-
-La clase `RenaperClient` define el contrato interno y devuelve no configurado. El servicio conserva pendientes y errores técnicos sin aprobar datos. La conexión externa real está diferida por el usuario.
+RENAPER quedó fuera de alcance el 22/09/2026 por pedido del usuario. No restaurar
+el cliente, pendientes ni requisito de aprobación. Los enums y registros antiguos
+se conservan solo por compatibilidad histórica; los repositorios excluyen esos
+controles de las consultas operativas. Las reglas versionadas se exponen sin
+`requires_renaper`. Ver [decisión y verificación](../docs/task/RETIRO_RENAPER.md).
 
 ## Endpoints relevantes
 
@@ -180,16 +180,16 @@ Cuando se modifique infraestructura, setup, endpoints, flujos, dependencias, val
 ## Actualización Tasks 04–09 (20/09/2026)
 
 Configuración, catálogos, usuarios/módulos, padrón de 18 campos, listas con asignación
-explícita y edición de candidatos tienen API y UI reales. RENAPER permanece pendiente
-sin proveedor; no devuelve OK ficticio. Ver [contratos y recorrido](../docs/ELECTORAL_WORKFLOWS.md).
-Tasks 10–14 y aceptación local de 15 están implementadas. RENAPER real y aceptación
-institucional siguen pendientes. Ver docs/task/INFORME_10_15.md desde la raíz.
+explícita y edición de candidatos tienen API y UI reales. RENAPER fue retirado
+del alcance el 22/09/2026 por pedido del usuario. Ver [contratos y recorrido](../docs/ELECTORAL_WORKFLOWS.md).
+Tasks 10–14 y aceptación local de 15 están implementadas. La aceptación
+institucional sigue pendiente. Ver docs/task/INFORME_10_15.md desde la raíz.
 
 ## Actualización Tasks 10–15 (20/09/2026)
 
 Envío transaccional, bandeja ADMIN, dashboards, reportes/exportaciones y auditoría
 están implementados y verificados localmente. El contenido enviado queda en lectura.
-Las reglas demo y RENAPER pendiente impiden afirmar aprobación institucional.
+Las reglas demo impiden afirmar aprobación institucional.
 Ver `docs/SUBMISSION_REPORTING_AUDIT.md`, `docs/MANUAL_ADMIN.md`,
 `docs/MANUAL_APODERADO.md` y `docs/task/INFORME_10_15.md` desde la raíz.
 

@@ -16,7 +16,7 @@ La actualización visual toma como referencia [Inerxia — Sistema operativo](ht
 
 ## Alcance funcional
 
-Se mantienen los contratos API, los permisos y las reglas de validación. Una observación de afiliación permite guardar; RENAPER permanece pendiente de integración real. Las listas enviadas conservan el modo lectura. En el listado se muestra «Ver lista» para estados no editables y se incluye el estado existente «Composición observada» en el filtro.
+Se mantienen los contratos API, los permisos y las reglas de validación. Una observación de afiliación permite guardar. Los controles vigentes son afiliación y requisitos, tras retirar RENAPER del alcance. Las listas enviadas conservan el modo lectura. En el listado se muestra «Ver lista» para estados no editables y se incluye el estado existente «Composición observada» en el filtro.
 
 ## Verificación
 

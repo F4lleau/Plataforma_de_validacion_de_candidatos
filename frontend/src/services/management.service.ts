@@ -74,7 +74,6 @@ export interface Rules {
   requires_parity: boolean;
   requires_alternation: boolean;
   requires_affiliation: boolean;
-  requires_renaper: boolean;
   other_requirements_confirmed: boolean;
   template_is_test: boolean;
   positions: Position[];

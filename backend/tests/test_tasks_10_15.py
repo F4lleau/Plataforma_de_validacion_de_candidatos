@@ -1,4 +1,4 @@
-"""Synthetic acceptance; authorized-provider responses below are test doubles only."""
+"""Synthetic electoral acceptance; fixtures do not certify institutional rules."""
 
 import csv
 from io import BytesIO, StringIO
@@ -6,7 +6,7 @@ import pytest
 from openpyxl import load_workbook
 from sqlalchemy import select, func
 from tests.test_auth_rbac import db_session, client, users, headers
-from tests.test_tasks_04_09 import scenario, candidate
+from tests.test_tasks_04_09 import scenario, candidate, xlsx, official
 from app.models import (
     ElectoralList,
     ListCandidate,
@@ -19,8 +19,7 @@ from app.models import (
     UserModule,
 )
 from app.services.composition_service import CompositionService
-from app.services.renaper_validation_service import RenaperValidationService
-from app.services.affiliation_validation_service import AffiliationValidationService
+from app.services.affiliate_import_service import AffiliateImportService
 from app.services.export_service import render_table, ExportService
 from app.services.audit_service import AuditService
 from app.utils.enums import ListStatus, ValidationResult
@@ -222,8 +221,8 @@ def test_alternation_applies_to_council_not_deputies(client, scenario, db_sessio
         assert ("ALTERNATION" in {i["code"] for i in result["issues"]}) is local
 
 
-def test_test_double_approval_order_and_current_evidence(
-    client, scenario, db_session, monkeypatch
+def test_approval_without_identity_provider_uses_current_register(
+    client, scenario, db_session
 ):
     s = scenario
     row = complete(client, s)
@@ -232,22 +231,13 @@ def test_test_double_approval_order_and_current_evidence(
         **rule.rules,
         "template_is_test": False,
         "other_requirements_confirmed": True,
+        "requires_renaper": True,  # Historical configuration must have no effect.
     }
     db_session.commit()
-    monkeypatch.setattr(
-        RenaperValidationService,
-        "validate",
-        lambda *args: {
-            "status": "ok",
-            "source": "authorized_provider",
-            "approvable": True,
-            "message": "Test double only",
-        },
-    )
-    monkeypatch.setattr(
-        AffiliationValidationService,
-        "validate",
-        lambda *args: {"status": "verified", "message": "Synthetic match"},
+    AffiliateImportService(db_session).import_excel(
+        xlsx([official(**{"Matrícula": str(97000000 + i)}) for i in range(24)]),
+        "synthetic-register.xlsx",
+        s["admin"].id,
     )
     r = client.post(f"/api/v1/lists/{row['id']}/submit", headers=headers(s["apod"]))
     assert r.status_code == 200, r.text

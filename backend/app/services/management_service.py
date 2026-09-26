@@ -229,6 +229,15 @@ class ManagementService:
         self.commit()
         return {"message": "Localidades habilitadas actualizadas."}
 
+    @staticmethod
+    def rule_output(rule):
+        if rule is None:
+            return None
+        return {
+            **{c.name: getattr(rule, c.name) for c in rule.__table__.columns},
+            "rules": {k: v for k, v in rule.rules.items() if k != "requires_renaper"},
+        }
+
     def save_rules(self, election_id, office_id, payload, actor):
         self.require(Election, election_id, True)
         self.require(Office, office_id)
@@ -236,9 +245,10 @@ class ManagementService:
         if (
             old
             and old.enabled == payload.enabled
-            and old.rules == payload.model_dump(mode="json", exclude={"enabled"})
+            and self.rule_output(old)["rules"]
+            == payload.model_dump(mode="json", exclude={"enabled"})
         ):
-            return old
+            return self.rule_output(old)
         rule = self.repo.add(
             ElectionRule(
                 election_id=election_id,
@@ -257,7 +267,7 @@ class ManagementService:
         )
         self.commit()
         self.db.refresh(rule)
-        return rule
+        return self.rule_output(rule)
 
     def context(self, election_id, office_id, municipality_id, window=False):
         election = self.require(Election, election_id)

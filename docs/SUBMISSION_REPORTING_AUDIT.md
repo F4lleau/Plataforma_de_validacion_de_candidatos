@@ -1,7 +1,7 @@
 # Envío, revisión, reportes y auditoría
 
-Estado comprobado: 20/09/2026. Implementación local de Tasks 10–15. Las plantillas
-siguen siendo de prueba y RENAPER no tiene proveedor conectado.
+Implementación local de Tasks 10–15, actualizada al 22/09/2026. Las plantillas
+siguen siendo de prueba. RENAPER fue retirado del alcance por el usuario.
 
 ## Composición y estados
 
@@ -14,7 +14,7 @@ Las categorías de género sin política confirmada conservan el registro y requ
 resolver la composición antes de enviar; nunca se elimina al candidato.
 
 El usuario confirmó para pruebas: lista incompleta/composición inválida no se envía;
-lista completa con afiliación observada o RENAPER pendiente puede enviarse a revisión.
+lista completa con afiliación observada o requisitos pendientes puede enviarse a revisión.
 
 | Acción / condición | Estado resultante | Edición de lista y candidatos |
 | --- | --- | --- |
@@ -39,9 +39,10 @@ mínimas usados al enviar. No se ofrece reapertura ni decisión manual inventada
 ADMIN puede mantener asignaciones de acceso, sin editar el contenido enviado.
 
 Aprobar exige composición OK, plantilla no experimental, otros requisitos confirmados
-y todos los controles obligatorios OK de la revisión actual. RENAPER además debe
-provenir de `authorized_provider` y ser `approvable`. El cliente actual retorna pendiente;
-la aprobación positiva solo se probó con dobles en tests aislados, nunca en la DB local.
+y todos los controles obligatorios OK de la revisión actual: requisitos del cargo
+y afiliación cuando es requerida. La aprobación positiva se verifica con padrón y
+reglas sintéticos en tests aislados; no acredita reglas institucionales reales.
+RENAPER no se evalúa, aunque una versión histórica conserve `requires_renaper=true`.
 Cambios posteriores del padrón/fecha electoral se muestran como controles pendientes;
 una aprobación histórica conserva su evidencia del momento del envío.
 

@@ -27,15 +27,15 @@ a un entorno de prueba; las capturas siguientes contienen personas ficticias.
    localidad cuando corresponda. Abrí una lista existente con **Ver lista**.
 3. Cargá DNI, nombre, apellido, fecha de nacimiento, género y posición. **Guardar borrador**
    conserva los datos mínimos y deja los requisitos pendientes. **Guardar y validar**
-   evalúa afiliación, edad/requisitos y estado de RENAPER.
+   evalúa afiliación y edad/requisitos.
 4. Revisá los mensajes de cada candidato. No figurar en el padrón genera una observación,
-   pero permite guardar y continuar. RENAPER pendiente no significa identidad verificada.
+   pero permite guardar y continuar.
    Usá **Editar candidato** para corregir y **Volver a validar** cuando cambie el padrón.
 5. **Validar composición** comprueba posiciones/grupos, paridad y alternancia configurada.
    Diputados demo tiene 16 titulares + 8 suplentes sin alternancia; Consejos demo tiene
    22 posiciones de prueba alternadas. La pantalla identifica las posiciones a corregir.
 6. Cuando la composición esté completa, pulsá **Enviar lista** y confirmá en pantalla.
-   Las advertencias de afiliación y los pendientes de RENAPER permiten enviarla a revisión.
+   Las advertencias de afiliación y los requisitos pendientes permiten enviarla a revisión.
    Una composición incompleta o incorrecta impide enviarla.
 7. Después del envío los datos y candidatos quedan en lectura. **Enviada al administrador**
    no significa **Aprobada por sistema**. La aprobación necesita todos los controles
@@ -56,7 +56,7 @@ la sesión, ingresá nuevamente. Si falla la red durante un guardado/envío, rec
 antes de repetir. El doble envío no crea dos eventos ni dos listas. No hay reapertura automática;
 consultá a la Junta por el canal habitual si una lista enviada requiere corrección.
 
-El proyecto aún no tiene API RENAPER. Las reglas y personas de estas pruebas no acreditan
+Las capturas corresponden a pruebas anteriores al retiro de RENAPER. Las reglas y personas de estas pruebas no acreditan
 validez institucional. Ver [estado y evidencia](task/INFORME_10_15.md).
 
 ## Primer acceso por invitación

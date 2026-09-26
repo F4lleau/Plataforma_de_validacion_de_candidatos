@@ -1,7 +1,7 @@
 # Configuración y carga electoral — Tasks 04 a 09
 
-Implementación local del 20/09/2026. El usuario autorizó datos/plantillas de prueba y
-preparar RENAPER sin una API disponible. Las plantillas de prueba no son normativa.
+Implementación local de Tasks 04–09, actualizada al 22/09/2026. El usuario autorizó
+datos/plantillas de prueba y retiró RENAPER del alcance. Las plantillas de prueba no son normativa.
 
 ## Recorrido
 
@@ -18,7 +18,7 @@ preparar RENAPER sin una API disponible. Las plantillas de prueba no son normati
 6. **Padrón** permite importación XLSX, consulta paginada, filtros, indicadores e historial.
 
 Envío, bandeja, dashboards, exportaciones y auditoría se completaron en Tasks 10–14.
-Ver [contratos y estados](SUBMISSION_REPORTING_AUDIT.md). RENAPER real sigue pendiente.
+Ver [contratos y estados](SUBMISSION_REPORTING_AUDIT.md).
 
 ## Reglas y decisiones técnicas
 
@@ -59,11 +59,11 @@ no representan los datos corregidos. Revalidar la misma revisión actualiza un r
 por control, sin duplicar la persona ni la candidatura. El contexto conserva versión de
 reglas, lote y fechas: cambiar padrón/fechas obliga a revalidar el resultado dependiente.
 
-RENAPER tiene un contrato interno `IdentityResult` y un cliente **no configurado**, sin
-URL inventada, llamadas de red ni respuesta OK ficticia. Devuelve pendiente, origen y
-`approvable=false`. Los dobles de prueba se usan solo en tests. La futura integración
-necesitará contrato autorizado, adaptador HTTP, credenciales por entorno, timeout,
-rate limits y prueba real; no se habilita con una variable ficticia.
+Desde el 22/09/2026 se generan solo controles de afiliación y requisitos del cargo.
+RENAPER no es un requisito ni una integración pendiente. Los resultados anteriores
+se conservan en la base y en la auditoría de su momento, pero no se incluyen en
+controles ni historial de candidatos de la UI. Las instantáneas de envíos previos
+permanecen intactas y no se recalculan sus estados.
 
 ## Padrón
 
@@ -144,6 +144,6 @@ auditoría e historial contextual está implementada en Task 14.
 
 Envío transaccional, bandeja ADMIN, dashboards, reportes/exportaciones y auditoría
 están implementados y verificados localmente. El contenido enviado queda en lectura.
-Las reglas demo y RENAPER pendiente impiden afirmar aprobación institucional.
+Las reglas demo impiden afirmar aprobación institucional.
 Ver `docs/SUBMISSION_REPORTING_AUDIT.md`, `docs/MANUAL_ADMIN.md`,
 `docs/MANUAL_APODERADO.md` y `docs/task/INFORME_10_15.md` desde la raíz.

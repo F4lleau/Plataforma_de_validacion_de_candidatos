@@ -1,5 +1,7 @@
 # Estado — Task 05
 
+> Estado vigente al 22/09/2026: RENAPER retirado del alcance; sus menciones como pendiente más abajo describen el cierre histórico. Ver [retiro](../RETIRO_RENAPER.md).
+
 **Completada.**
 
 Alta/edición de apoderados, módulos, activación, hashes, recuperación asistida y contacto configurable. Revocación inmediata por estado/módulos.

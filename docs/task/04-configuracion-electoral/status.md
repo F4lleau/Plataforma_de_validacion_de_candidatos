@@ -1,5 +1,7 @@
 # Estado — Task 04
 
+> Estado vigente al 22/09/2026: RENAPER retirado del alcance; sus menciones como pendiente más abajo describen el cierre histórico. Ver [retiro](../RETIRO_RENAPER.md).
+
 **Completada con configuración y plantillas de prueba.**
 
 Elecciones/cargos/localidades, fechas inclusivas, reglas versionadas, auditoría y UI administrativa. Reglas no confirmadas permanecen configurables/pendientes.

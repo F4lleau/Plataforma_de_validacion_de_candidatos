@@ -1,5 +1,7 @@
 # Task 10 — Estado
 
+> Estado vigente al 22/09/2026: RENAPER retirado del alcance; sus menciones como pendiente más abajo describen el cierre histórico. Ver [retiro](../RETIRO_RENAPER.md).
+
 - Estado: **Completada en entorno de prueba; habilitación institucional pendiente**.
 - Fecha: 20/09/2026. Rama develop, sin commit ni push.
 - Alcance: Composición exacta configurable, snapshots, envío idempotente y aprobación condicionada. El usuario confirmó D08. No hay aprobación productiva sin reglas/proveedor reales.

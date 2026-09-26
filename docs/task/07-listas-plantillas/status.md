@@ -1,5 +1,7 @@
 # Estado — Task 07
 
+> Estado vigente al 22/09/2026: RENAPER retirado del alcance; sus menciones como pendiente más abajo describen el cierre histórico. Ver [retiro](../RETIRO_RENAPER.md).
+
 **Completada con plantillas de prueba.**
 
 Listas, detalle, edición, número, filtros/paginación, versiones de plantilla y asignaciones compartidas explícitas. Migración conserva autoría y datos.

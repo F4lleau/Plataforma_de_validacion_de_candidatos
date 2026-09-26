@@ -79,7 +79,7 @@ def rules(
         raise HTTPException(403, "Elección no habilitada.")
     allowed = {o.id for o in service.catalogs(Office, user)}
     return [
-        r
+        service.rule_output(r)
         for r in service.repo.all(ElectionRule, election_id=identity)
         if r.office_id in allowed
     ]

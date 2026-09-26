@@ -1,5 +1,7 @@
 # Task 15 — Estado
 
+> Estado vigente al 22/09/2026: RENAPER retirado del alcance; sus menciones como pendiente más abajo describen el cierre histórico. Ver [retiro](../RETIRO_RENAPER.md).
+
 - Estado: **Aceptación local completada; aceptación institucional pendiente**.
 - Fecha: 20/09/2026. Rama develop, sin commit ni push.
 - Alcance: Guías ADMIN/APODERADO, ayuda configurable, regresión, navegador, respaldos y matriz de 26 capacidades. RENAPER real y criterios institucionales siguen diferidos.
