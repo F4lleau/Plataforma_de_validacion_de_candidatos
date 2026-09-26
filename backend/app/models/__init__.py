@@ -9,10 +9,14 @@ from app.models.list_role_definition import ListRoleDefinition
 from app.models.list_validation import ListValidation
 from app.models.municipality import Municipality
 from app.models.office import Office
+from app.models.office_type import OfficeType
+from app.models.election_office import ElectionOffice
+from app.models.election_municipality import ElectionMunicipality
 from app.models.party_member import PartyMember
 from app.models.person import Person
 from app.models.user import User
 from app.models.user_module import UserModule
+from app.models.unlock_request import UnlockRequest
 
 __all__ = [
     "AffiliateImportBatch",
@@ -26,10 +30,14 @@ __all__ = [
     "ListValidation",
     "Municipality",
     "Office",
+    "OfficeType",
+    "ElectionOffice",
+    "ElectionMunicipality",
     "PartyMember",
     "Person",
     "User",
     "UserModule",
+    "UnlockRequest",
 ]
 
 from app.models.election_rule import ElectionRule

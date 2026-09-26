@@ -13,6 +13,7 @@ from app.schemas.auth import (
     ForgotInput,
     ResetInput,
     ChangeInput,
+    UnlockRequestInput,
 )
 from app.schemas.user import UserResponse
 from app.services.auth_service import AuthService
@@ -152,6 +153,13 @@ def revoke(
 @router.post("/password/forgot", dependencies=[Depends(csrf)])
 def forgot(payload: ForgotInput, request: Request, db: Session = Depends(get_db)):
     return AuthService(db).forgot(payload.email, ip(request))
+
+
+@router.post("/unlock-request", dependencies=[Depends(csrf)])
+def unlock_request(
+    payload: UnlockRequestInput, request: Request, db: Session = Depends(get_db)
+):
+    return AuthService(db).request_unlock(payload.email, ip(request), payload.note)
 
 
 @router.post("/password/reset", dependencies=[Depends(csrf)])

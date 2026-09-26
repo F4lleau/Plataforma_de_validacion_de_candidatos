@@ -40,6 +40,7 @@
     --sidebar-muted: 222 22% 43%;
     --font-heading: "Inter", sans-serif;
     --font-body: "Inter", sans-serif;
+    --font-mono: "JetBrains Mono", "SFMono-Regular", Consolas, monospace;
   }
   * {
     @apply border-border;
@@ -118,6 +119,15 @@
   }
   .secondary {
     @apply inline-flex min-h-11 items-center justify-center gap-2 rounded-lg border border-input bg-card px-3.5 py-2.5 text-sm font-medium transition-colors hover:border-primary/40 hover:bg-accent/60 disabled:opacity-50;
+  }
+  .font-mono {
+    font-family: var(--font-mono);
+  }
+  .login-pill-primary {
+    @apply inline-flex min-h-11 items-center justify-center gap-2 rounded-full bg-slate-950 px-4 py-2.5 text-center font-mono text-xs font-semibold text-white shadow-sm transition-colors hover:bg-slate-800;
+  }
+  .login-pill-secondary {
+    @apply inline-flex min-h-11 items-center justify-center gap-2 rounded-full border border-slate-300 bg-white px-4 py-2.5 text-center font-mono text-xs font-semibold text-slate-950 shadow-sm transition-colors hover:border-slate-400 hover:bg-slate-50 disabled:opacity-50;
   }
   .text-link {
     @apply inline-flex items-center gap-2 text-sm font-semibold text-accent-foreground hover:underline;

@@ -5,6 +5,8 @@ import {
   LayoutDashboard,
   BookUser,
   Settings2,
+  MapPin,
+  BriefcaseBusiness,
   Users,
   Files,
   ClipboardCheck,
@@ -51,8 +53,18 @@ const adminGroups = [
     name: "Administración",
     items: [
       { to: "/padron", label: "Padrón de afiliados", icon: BookUser },
-      { to: "/usuarios", label: "Apoderados", icon: Users },
-      { to: "/configuracion", label: "Configuración", icon: Settings2 },
+      { to: "/usuarios", label: "Gestión de usuarios", icon: Users },
+      {
+        to: "/configuracion/proceso-electoral",
+        label: "Proceso electoral",
+        icon: Settings2,
+      },
+      { to: "/configuracion/cargos", label: "Cargos", icon: BriefcaseBusiness },
+      {
+        to: "/configuracion/localidades",
+        label: "Localidades habilitadas",
+        icon: MapPin,
+      },
     ],
   },
   {

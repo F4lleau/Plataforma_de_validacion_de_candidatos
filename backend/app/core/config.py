@@ -5,7 +5,7 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
-    support_contact: str = ""
+    support_contact: str = "juspjchaco@gmail.com"
     app_name: str = "junta_electoral"
     app_env: str = "development"
     debug: bool = False
@@ -25,9 +25,9 @@ class Settings(BaseSettings):
     reauth_minutes: int = 5
     cookie_secure: bool = False
     frontend_url: str = "http://localhost:5173"
-    login_max_failures: int = 5
+    login_max_failures: int = 3
     login_window_minutes: int = 15
-    login_lock_minutes: int = 15
+    login_lock_minutes: int = 30
     auth_ip_limit: int = 100
     auth_identifier_limit: int = 20
     invitation_expire_hours: int = 48

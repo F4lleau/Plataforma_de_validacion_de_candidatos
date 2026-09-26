@@ -33,6 +33,14 @@ def locks(
     ]
 
 
+@router.get("/users/unlock-requests")
+def unlock_requests(
+    status: str = Query("pending", pattern="^(pending|resolved|all)$"),
+    db: Session = Depends(get_db),
+):
+    return AuthService(db).unlock_requests(status)
+
+
 @router.post("/users/{identity}/unlock", dependencies=[Depends(csrf)])
 def unlock(
     identity: int,

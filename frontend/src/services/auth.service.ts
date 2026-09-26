@@ -1,4 +1,4 @@
-import { loginSession } from "./api";
+import { apiFetch, loginSession } from "./api";
 
 export type UserRole = "admin" | "apoderado";
 
@@ -26,4 +26,15 @@ export async function loginRequest(
   password: string,
 ): Promise<LoginResponse> {
   return loginSession(email, password);
+}
+
+export async function requestUnlock(email: string): Promise<{ message: string }> {
+  return apiFetch(
+    "/auth/unlock-request",
+    {
+      method: "POST",
+      body: JSON.stringify({ email }),
+    },
+    false,
+  );
 }

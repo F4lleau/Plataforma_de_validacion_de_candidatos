@@ -43,6 +43,9 @@ export default function App() {
           <Route path="/listas/:id" element={<ListaDetalle />} />
           <Route element={<ProtectedRoute roles={["admin"]} />}>
             <Route path="/configuracion" element={<Configuracion />} />
+            <Route path="/configuracion/proceso-electoral" element={<Configuracion />} />
+            <Route path="/configuracion/cargos" element={<Configuracion />} />
+            <Route path="/configuracion/localidades" element={<Configuracion />} />
             <Route path="/usuarios" element={<Usuarios />} />
           </Route>
           <Route path="/listas" element={<Listas />} />

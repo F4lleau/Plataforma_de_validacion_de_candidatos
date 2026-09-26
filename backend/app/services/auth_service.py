@@ -2,6 +2,8 @@ from datetime import timedelta
 from uuid import uuid4
 import secrets
 from fastapi import HTTPException
+from sqlalchemy import select
+from sqlalchemy.exc import IntegrityError
 from app.core.config import settings
 from app.core.auth_timing import comparable_response
 from app.core.passwords import (
@@ -12,6 +14,8 @@ from app.core.passwords import (
 )
 from app.core.security import create_access_token, valid_session
 from app.models.auth_session import AuthSession, RefreshCredential, PasswordReset
+from app.models.unlock_request import UnlockRequest
+from app.models.user import User
 from app.repositories.auth_repository import AuthRepository, digest, now
 from app.services.audit_service import AuditService
 
@@ -229,6 +233,99 @@ class AuthService:
             self.db.rollback()
         return GENERIC
 
+    @comparable_response
+    def request_unlock(self, email, ip, note=None):
+        self.throttle("unlock-request", ip, email.lower().strip(), 5)
+        verify_password(secrets.token_urlsafe(32), DUMMY_HASH)
+        user = self.repo.email_user(email)
+        if user and user.is_active:
+            existing = self.db.scalar(
+                select(UnlockRequest).where(
+                    UnlockRequest.user_id == user.id,
+                    UnlockRequest.status == "pending",
+                )
+            )
+            if existing:
+                existing.note = note or existing.note
+                request = existing
+            else:
+                request = UnlockRequest(
+                    user_id=user.id,
+                    email=user.email,
+                    status="pending",
+                    note=note,
+                    requested_at=now(),
+                )
+                self.db.add(request)
+                self.db.flush()
+            from app.services.mail_service import MailService
+
+            try:
+                MailService(self.db).enqueue_unlock_request(request, user)
+            except IntegrityError:
+                self.db.rollback()
+                return {
+                    "message": "Si la cuenta existe, enviaremos la solicitud al administrador."
+                }
+            self.audit.record(
+                user.id,
+                "auth.unlock_requested",
+                "users",
+                user.id,
+                {"request_id": request.id},
+            )
+            self.db.commit()
+        else:
+            self.db.rollback()
+        return {"message": "Si la cuenta existe, enviaremos la solicitud al administrador."}
+
+    def unlock_requests(self, status="pending"):
+        stmt = (
+            select(UnlockRequest)
+            .order_by(UnlockRequest.requested_at.desc())
+            .limit(100)
+        )
+        if status != "all":
+            stmt = stmt.where(UnlockRequest.status == status)
+        requests = list(self.db.scalars(stmt).all())
+        user_ids = {row.user_id for row in requests}
+        users = (
+            {
+                user.id: user
+                for user in self.db.scalars(
+                    select(User).where(User.id.in_(user_ids))
+                ).all()
+            }
+            if user_ids
+            else {}
+        )
+        return [
+            {
+                "id": row.id,
+                "user_id": row.user_id,
+                "email": row.email,
+                "status": row.status,
+                "note": row.note,
+                "requested_at": row.requested_at,
+                "resolved_at": row.resolved_at,
+                "user_full_name": users[row.user_id].full_name
+                if row.user_id in users
+                else "",
+                "failed_attempts": users[row.user_id].failed_attempts
+                if row.user_id in users
+                else 0,
+                "locked_until": users[row.user_id].locked_until
+                if row.user_id in users
+                else None,
+                "locked": bool(
+                    row.user_id in users
+                    and users[row.user_id].locked_until
+                    and users[row.user_id].locked_until > now()
+                ),
+            }
+            for row in requests
+        ]
+
     def set_password(self, user, password, action):
         validate_password(password)
         if verify_password(password, user.password_hash):
@@ -276,6 +373,7 @@ class AuthService:
         user = self.repo.user(identity)
         if not user:
             raise HTTPException(404, "Cuenta no encontrada.")
+        changed = False
         if user.failed_attempts or user.locked_until:
             before = {
                 "attempts": user.failed_attempts,
@@ -296,4 +394,16 @@ class AuthService:
                 user.id,
                 {"before": before, "reason": reason},
             )
+            changed = True
+        for request in self.db.scalars(
+            select(UnlockRequest).where(
+                UnlockRequest.user_id == user.id,
+                UnlockRequest.status == "pending",
+            )
+        ):
+            request.status = "resolved"
+            request.resolved_at = now()
+            request.resolved_by = actor.id
+            changed = True
+        if changed:
             self.db.commit()

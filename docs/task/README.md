@@ -34,6 +34,7 @@ local y mantiene pendiente la institucional. Ver [informe 04–09](INFORME_04_09
 | 20 | Email Invitations, Single-Use Activation and First-Access Onboarding | Completada localmente | 16, 17, 18, 19, 05 | [Task](20-invitaciones-onboarding/task.md) · [Estado](20-invitaciones-onboarding/status.md) |
 | 21 | Authentication Acceptance, Security Regression and Operations | Aceptación local completa; producción pendiente | 16, 17, 18, 19, 20 | [Task](21-aceptacion-seguridad-login/task.md) · [Estado](21-aceptacion-seguridad-login/status.md) |
 | 22 | First-Login Terms Acceptance and Privacy Documents | Completada localmente; textos definitivos pendientes | 16, 20, 21, 14 | [Task](22-terminos-privacidad-primer-acceso/task.md) · [Estado](22-terminos-privacidad-primer-acceso/status.md) · [Informe](22-terminos-privacidad-primer-acceso/report.md) |
+| 23 | Admin Panel and Electoral Configuration UX Improvement | Implementación parcial avanzada | 04, 05, 14, 18, 21, 22 | [Task](23-mejora-panel-admin-configuracion/task.md) · [Estado](23-mejora-panel-admin-configuracion/status.md) · [Informe parcial](23-mejora-panel-admin-configuracion/report.md) |
 
 Tasks 16–19 implementadas y verificadas localmente; SMTP externo pendiente. Task 18
 incorpora el estado de invitación desde Task 20. Tasks 20–21 verificadas localmente. Ver
@@ -42,6 +43,10 @@ incorpora el estado de invitación desde Task 20. Tasks 20–21 verificadas loca
 **Task 22 implementada localmente:** aceptación única de términos antes del ingreso
 y consulta de términos/privacidad mediante modales desde login y footer. Los textos
 provisorios requieren revisión institucional antes de producción.
+
+**Task 23 en implementación parcial:** mejora de panel ADMIN y Configuración con
+submenú de cargos, proceso electoral y localidades habilitadas, sistema visual global
+para botones/enlaces y limpieza de información técnica visible para usuarios finales.
 
 ## Fuente, cobertura y decisiones
 

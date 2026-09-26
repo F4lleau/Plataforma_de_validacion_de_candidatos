@@ -8,6 +8,10 @@ export function useRemote<T>(path: string, revision = 0) {
     loading: boolean;
   }>({ path: "", loading: true });
   useEffect(() => {
+    if (!path) {
+      setState({ path, loading: false });
+      return;
+    }
     const controller = new AbortController();
     apiFetch<T>(path, { signal: controller.signal })
       .then((data) => {

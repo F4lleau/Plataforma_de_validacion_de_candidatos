@@ -3,7 +3,12 @@ from sqlalchemy.orm import Session
 from app.db.session import get_db
 from app.core.security import get_current_user, require_admin
 from app.models import Election, Office, User
-from app.schemas.management import ElectionInput, ElectionOutput
+from app.schemas.management import (
+    ElectionInput,
+    ElectionOutput,
+    EnabledMunicipalitiesInput,
+    MunicipalityOutput,
+)
 from app.services.management_service import ManagementService
 
 router = APIRouter()
@@ -31,6 +36,32 @@ def update(
     user: User = Depends(require_admin),
 ):
     return ManagementService(db).catalog_save(Election, payload, user, identity)
+
+
+@router.delete("/{identity}")
+def delete(
+    identity: int,
+    db: Session = Depends(get_db),
+    user: User = Depends(require_admin),
+):
+    return ManagementService(db).deactivate(Election, identity, user)
+
+
+@router.get("/{identity}/municipalities", response_model=list[MunicipalityOutput])
+def enabled_municipalities(
+    identity: int, db: Session = Depends(get_db), user: User = Depends(get_current_user)
+):
+    return ManagementService(db).election_municipalities(identity, user)
+
+
+@router.put("/{identity}/municipalities")
+def save_enabled_municipalities(
+    identity: int,
+    payload: EnabledMunicipalitiesInput,
+    db: Session = Depends(get_db),
+    user: User = Depends(require_admin),
+):
+    return ManagementService(db).save_election_municipalities(identity, payload, user)
 
 
 from app.schemas.management import RulesInput

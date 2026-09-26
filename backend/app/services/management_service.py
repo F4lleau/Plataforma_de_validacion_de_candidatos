@@ -1,8 +1,20 @@
 from datetime import datetime
 from zoneinfo import ZoneInfo
+import re
 from fastapi import HTTPException
 from sqlalchemy.exc import IntegrityError
-from app.models import Election, Office, Municipality, ElectionRule, User, UserModule
+from sqlalchemy import select
+from app.models import (
+    Election,
+    Office,
+    Municipality,
+    ElectionRule,
+    User,
+    UserModule,
+    OfficeType,
+    ElectionOffice,
+    ElectionMunicipality,
+)
 from app.repositories.management_repository import ManagementRepository
 from app.services.audit_service import AuditService
 from app.utils.enums import UserRole, UserModuleType
@@ -42,6 +54,46 @@ class ManagementService:
         ids = {getattr(m, key) for m in modules}
         return [r for r in rows if r.id in ids and r.active]
 
+    def slug(self, value):
+        base = re.sub(r"[^a-z0-9]+", "-", value.lower()).strip("-") or "cargo"
+        candidate = base
+        suffix = 2
+        while self.db.scalar(select(Office.id).where(Office.code == candidate)):
+            candidate = f"{base}-{suffix}"
+            suffix += 1
+        return candidate
+
+    def office_types(self):
+        return [
+            row for row in self.repo.all(OfficeType) if row.active
+        ]
+
+    def offices(self, user):
+        rows = self.catalogs(Office, user)
+        types = {row.id: row.name for row in self.repo.all(OfficeType)}
+        links = self.repo.all(ElectionOffice)
+        election_ids = {}
+        for link in links:
+            election_ids.setdefault(link.office_id, []).append(link.election_id)
+        return [
+            {
+                "id": row.id,
+                "code": row.code,
+                "name": row.name,
+                "office_type_id": row.office_type_id,
+                "office_type_name": types.get(row.office_type_id),
+                "election_id": None,
+                "election_ids": sorted(election_ids.get(row.id, [])),
+                "scope_type": row.scope_type,
+                "municipality_based": row.municipality_based,
+                "required_positions": row.required_positions,
+                "requires_parity": row.requires_parity,
+                "requires_alternation": row.requires_alternation,
+                "active": row.active,
+            }
+            for row in rows
+        ]
+
     def catalog_save(self, model, payload, actor, identity=None):
         obj = self.require(model, identity, True) if identity else model()
         before = {k: str(getattr(obj, k, None)) for k in type(payload).model_fields}
@@ -70,6 +122,112 @@ class ManagementService:
             raise HTTPException(409, "Nombre o código duplicado.") from exc
         self.db.refresh(obj)
         return obj
+
+    def save_office(self, payload, actor, identity=None):
+        obj = self.require(Office, identity, True) if identity else Office()
+        self.require(OfficeType, payload.office_type_id)
+        if payload.election_id:
+            self.require(Election, payload.election_id)
+        if identity and (
+            obj.municipality_based != payload.municipality_based
+            or obj.scope_type != payload.scope_type
+        ):
+            raise HTTPException(
+                409, "El alcance del cargo es estable; creá otro cargo si cambia."
+            )
+        obj.name = payload.name
+        obj.code = obj.code or self.slug(payload.name)
+        obj.office_type_id = payload.office_type_id
+        obj.scope_type = payload.scope_type
+        obj.municipality_based = payload.municipality_based
+        obj.required_positions = payload.required_positions
+        obj.requires_parity = payload.requires_parity
+        obj.requires_alternation = payload.requires_alternation
+        obj.active = payload.active
+        try:
+            self.repo.add(obj)
+            if payload.election_id and not self.db.scalar(
+                select(ElectionOffice).where(
+                    ElectionOffice.election_id == payload.election_id,
+                    ElectionOffice.office_id == obj.id,
+                )
+            ):
+                self.repo.add(
+                    ElectionOffice(
+                        election_id=payload.election_id,
+                        office_id=obj.id,
+                    )
+                )
+            self.audit.record(
+                actor.id,
+                "office.updated" if identity else "office.created",
+                "offices",
+                obj.id,
+                {
+                    "name": obj.name,
+                    "office_type_id": obj.office_type_id,
+                    "election_id": payload.election_id,
+                    "active": obj.active,
+                },
+            )
+            self.commit()
+        except IntegrityError as exc:
+            self.db.rollback()
+            raise HTTPException(409, "Nombre o código duplicado.") from exc
+        return self.offices(actor)[
+            next(i for i, item in enumerate(self.offices(actor)) if item["id"] == obj.id)
+        ]
+
+    def deactivate(self, model, identity, actor):
+        obj = self.require(model, identity, True)
+        obj.active = False
+        self.audit.record(actor.id, "catalog.deactivated", model.__tablename__, obj.id)
+        self.commit()
+        return {"message": "Registro desactivado."}
+
+    def election_municipalities(self, election_id, user):
+        self.require(Election, election_id)
+        allowed = {e.id for e in self.catalogs(Election, user)}
+        if election_id not in allowed:
+            raise HTTPException(403, "Elección no habilitada.")
+        return self.db.scalars(
+            select(Municipality)
+            .join(ElectionMunicipality, ElectionMunicipality.municipality_id == Municipality.id)
+            .where(ElectionMunicipality.election_id == election_id)
+            .order_by(Municipality.name)
+        ).all()
+
+    def save_election_municipalities(self, election_id, payload, actor):
+        self.require(Election, election_id, True)
+        selected = set(payload.municipality_ids)
+        if selected:
+            found = {
+                row.id
+                for row in self.db.scalars(
+                    select(Municipality).where(Municipality.id.in_(selected))
+                )
+            }
+            if found != selected:
+                raise HTTPException(422, "Hay localidades inexistentes.")
+        for row in self.repo.all(ElectionMunicipality, election_id=election_id):
+            self.repo.remove(row)
+        self.db.flush()
+        for municipality_id in sorted(selected):
+            self.repo.add(
+                ElectionMunicipality(
+                    election_id=election_id,
+                    municipality_id=municipality_id,
+                )
+            )
+        self.audit.record(
+            actor.id,
+            "election.municipalities_updated",
+            "elections",
+            election_id,
+            {"municipality_ids": sorted(selected)},
+        )
+        self.commit()
+        return {"message": "Localidades habilitadas actualizadas."}
 
     def save_rules(self, election_id, office_id, payload, actor):
         self.require(Election, election_id, True)

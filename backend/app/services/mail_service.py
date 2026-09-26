@@ -24,6 +24,48 @@ class MailService:
         recipient = SimpleNamespace(id=None, full_name="", email=invitation.email)
         self.enqueue(recipient, "invitation", raw=raw, invitation=invitation)
 
+    def enqueue_unlock_request(self, request, user):
+        support_email = settings.support_contact or "juspjchaco@gmail.com"
+        text = (
+            "Solicitud de desbloqueo de usuario.\n\n"
+            f"Usuario: {user.full_name}\n"
+            f"Correo: {user.email}\n"
+            f"Rol: {user.role.value}\n"
+            f"Intentos fallidos: {user.failed_attempts}\n"
+            f"Bloqueado hasta: {user.locked_until or 'sin bloqueo vigente'}\n"
+            f"Mensaje: {request.note or 'Sin mensaje adicional'}\n\n"
+            "Revisá el panel administrador para desbloquear la cuenta si corresponde."
+        )
+        data = {
+            "to": support_email,
+            "subject": "Solicitud de desbloqueo de usuario",
+            "text": text,
+            "html": "<html lang=\"es\"><body><h1>Solicitud de desbloqueo</h1><p>"
+            + escape(text).replace("\n", "<br>")
+            + "</p></body></html>",
+        }
+        payload = (
+            Fernet(settings.mail_outbox_key.encode())
+            .encrypt(json.dumps(data).encode())
+            .decode()
+        )
+        identity = str(uuid4())
+        self.db.add(
+            MailOutbox(
+                id=identity,
+                event_key=f"unlock_request:{request.id}",
+                user_id=user.id,
+                kind="unlock_request",
+                payload=payload,
+                state="pending",
+                attempts=0,
+                available_at=now(),
+                expires_at=now() + timedelta(days=1),
+                created_at=now(),
+            )
+        )
+        self.db.flush()
+
     def enqueue(
         self, user, kind, raw=None, reset=None, cooldown=False, invitation=None
     ):

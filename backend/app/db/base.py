@@ -4,6 +4,9 @@ from app.models.user import User
 from app.models.user_module import UserModule
 from app.models.election import Election
 from app.models.office import Office
+from app.models.office_type import OfficeType
+from app.models.election_office import ElectionOffice
+from app.models.election_municipality import ElectionMunicipality
 from app.models.municipality import Municipality
 from app.models.party_member import PartyMember
 from app.models.person import Person
@@ -15,6 +18,7 @@ from app.models.list_validation import ListValidation
 from app.models.audit_log import AuditLog
 from app.models.affiliate_import_batch import AffiliateImportBatch
 from app.models.list_role_definition import ListRoleDefinition
+from app.models.unlock_request import UnlockRequest
 
 __all__ = [
     "Base",
@@ -22,6 +26,9 @@ __all__ = [
     "UserModule",
     "Election",
     "Office",
+    "OfficeType",
+    "ElectionOffice",
+    "ElectionMunicipality",
     "Municipality",
     "PartyMember",
     "Person",
@@ -33,4 +40,5 @@ __all__ = [
     "AuditLog",
     "AffiliateImportBatch",
     "ListRoleDefinition",
+    "UnlockRequest",
 ]

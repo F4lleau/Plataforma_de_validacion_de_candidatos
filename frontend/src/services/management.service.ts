@@ -12,11 +12,21 @@ export interface Office {
   id: number;
   code: string;
   name: string;
+  election_id?: number | null;
+  election_ids?: number[];
+  office_type_id: number;
+  office_type_name?: string | null;
   scope_type: string;
   municipality_based: boolean;
   required_positions: number;
   requires_parity: boolean;
   requires_alternation: boolean;
+  active: boolean;
+}
+export interface OfficeType {
+  id: number;
+  code: string;
+  name: string;
   active: boolean;
 }
 export interface Municipality {
@@ -38,6 +48,19 @@ export interface Apoderado {
   full_name: string;
   is_active: boolean;
   modules: Module[];
+}
+export interface UnlockRequest {
+  id: number;
+  user_id: number;
+  email: string;
+  status: "pending" | "resolved";
+  note: string | null;
+  requested_at: string;
+  resolved_at: string | null;
+  user_full_name: string;
+  failed_attempts: number;
+  locked_until: string | null;
+  locked: boolean;
 }
 export interface Position {
   position: number;
@@ -120,6 +143,13 @@ export interface ListDetail extends ListRow {
 }
 export function save<T>(path: string, body: unknown, method = "POST") {
   return apiFetch<T>(path, { method, body: JSON.stringify(body) });
+}
+export function unlockUser(userId: number, reason: string) {
+  return save<{ message: string }>(
+    `/admin/users/${userId}/unlock`,
+    { reason },
+    "POST",
+  );
 }
 export async function catalogs(signal?: AbortSignal) {
   const [elections, offices, municipalities] = await Promise.all([

@@ -1,11 +1,20 @@
 import LegalAccess from "../components/legal/LegalAccess";
 import { safeLoginDestination } from "../services/legal.service";
 import Brand from "../components/layout/Brand";
-import { Layers3, ClipboardCheck, ShieldCheck } from "lucide-react";
+import {
+  Layers3,
+  ClipboardCheck,
+  ShieldCheck,
+  Eye,
+  EyeOff,
+  LockKeyhole,
+  LifeBuoy,
+} from "lucide-react";
 import { useState } from "react";
 import { Link, Navigate, useLocation } from "react-router-dom";
 import { useAuthStore } from "../stores/auth.store";
 import { ApiError } from "../services/api";
+import { requestUnlock } from "../services/auth.service";
 
 export default function Login() {
   const location = useLocation();
@@ -14,7 +23,9 @@ export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [unlockLoading, setUnlockLoading] = useState(false);
   const [error, setError] = useState("");
+  const [message, setMessage] = useState("");
 
   if (isLoading)
     return (
@@ -33,6 +44,7 @@ export default function Login() {
     if (pending || loading) return;
     setLoading(true);
     setError("");
+    setMessage("");
     try {
       await login(email, password);
       setPassword("");
@@ -46,6 +58,28 @@ export default function Login() {
       );
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleUnlockRequest = async () => {
+    if (!email.trim()) {
+      setError("Ingresá tu correo electrónico para solicitar el desbloqueo.");
+      return;
+    }
+    setUnlockLoading(true);
+    setError("");
+    setMessage("");
+    try {
+      const result = await requestUnlock(email);
+      setMessage(result.message);
+    } catch (error) {
+      setError(
+        error instanceof ApiError
+          ? error.message
+          : "No pudimos enviar la solicitud de desbloqueo.",
+      );
+    } finally {
+      setUnlockLoading(false);
     }
   };
 
@@ -112,35 +146,68 @@ export default function Login() {
                 </label>
                 <label className="block text-sm font-medium">
                   Contraseña
-                  <input
-                    type={showPassword ? "text" : "password"}
-                    autoComplete="current-password"
-                    required
-                    value={password}
-                    onChange={(event) => setPassword(event.target.value)}
-                    className="field mt-2"
-                  />
+                  <span className="relative mt-2 block">
+                    <input
+                      type={showPassword ? "text" : "password"}
+                      autoComplete="current-password"
+                      required
+                      value={password}
+                      onChange={(event) => setPassword(event.target.value)}
+                      className="field pr-12"
+                    />
+                    <button
+                      type="button"
+                      className="absolute right-2 top-1/2 inline-flex size-8 -translate-y-1/2 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+                      aria-label={
+                        showPassword
+                          ? "Ocultar contraseña"
+                          : "Mostrar contraseña"
+                      }
+                      aria-pressed={showPassword}
+                      title={
+                        showPassword
+                          ? "Ocultar contraseña"
+                          : "Mostrar contraseña"
+                      }
+                      onClick={() => setShowPassword(!showPassword)}
+                    >
+                      {showPassword ? (
+                        <EyeOff size={18} aria-hidden="true" />
+                      ) : (
+                        <Eye size={18} aria-hidden="true" />
+                      )}
+                    </button>
+                  </span>
                 </label>
-                <button
-                  type="button"
-                  className="text-sm text-primary underline"
-                  aria-pressed={showPassword}
-                  onClick={() => setShowPassword(!showPassword)}
-                >
-                  {showPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
-                </button>
-                <Link
-                  to="/recuperar-clave"
-                  className="block text-sm text-primary underline"
-                >
-                  Olvidé mi contraseña
-                </Link>
+                <div className="grid gap-3 pt-1 sm:grid-cols-2">
+                  <Link to="/recuperar-clave" className="login-pill-primary">
+                    <LifeBuoy size={17} aria-hidden="true" />
+                    Olvidé mi contraseña
+                  </Link>
+                  <button
+                    type="button"
+                    className="login-pill-secondary"
+                    disabled={unlockLoading}
+                    onClick={handleUnlockRequest}
+                  >
+                    <LockKeyhole size={17} aria-hidden="true" />
+                    {unlockLoading ? "Enviando..." : "Desbloquear usuario"}
+                  </button>
+                </div>
                 {error && (
                   <p
                     role="alert"
                     className="rounded-md bg-destructive/10 p-3 text-sm text-destructive"
                   >
                     {error}
+                  </p>
+                )}
+                {message && (
+                  <p
+                    role="status"
+                    className="rounded-md bg-success/10 p-3 text-sm text-success"
+                  >
+                    {message}
                   </p>
                 )}
               </>

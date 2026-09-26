@@ -16,7 +16,7 @@ class Input(BaseModel):
 
 class ElectionInput(Input):
     name: str = Field(min_length=1, max_length=255)
-    election_type: str = Field(min_length=1, max_length=100)
+    election_type: str = Field(default="interna", min_length=1, max_length=100)
     election_date: date
     active: bool = True
     loading_opens: date | None = None
@@ -35,8 +35,10 @@ class ElectionInput(Input):
 
 
 class OfficeInput(Input):
-    code: str = Field(min_length=1, max_length=100, pattern=r"^[A-Za-z0-9_-]+$")
+    code: str | None = Field(default=None, max_length=100, pattern=r"^[A-Za-z0-9_-]+$")
     name: str = Field(min_length=1, max_length=150)
+    election_id: int | None = Field(default=None, gt=0)
+    office_type_id: int = Field(gt=0)
     scope_type: str = Field(min_length=1, max_length=50)
     municipality_based: bool = False
     required_positions: int = Field(ge=1, le=200)
@@ -48,6 +50,10 @@ class OfficeInput(Input):
 class MunicipalityInput(Input):
     name: str = Field(min_length=1, max_length=150)
     active: bool = True
+
+
+class EnabledMunicipalitiesInput(Input):
+    municipality_ids: list[int] = Field(max_length=200)
 
 
 class Position(Input):
@@ -150,6 +156,17 @@ class ElectionOutput(ElectionInput):
 class OfficeOutput(OfficeInput):
     model_config = ConfigDict(from_attributes=True)
     id: int
+    code: str
+    election_ids: list[int] = []
+    office_type_name: str | None = None
+
+
+class OfficeTypeOutput(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+    id: int
+    code: str
+    name: str
+    active: bool
 
 
 class MunicipalityOutput(MunicipalityInput):

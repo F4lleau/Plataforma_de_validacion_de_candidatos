@@ -8,10 +8,12 @@ import { useRemote } from "../hooks/useRemote";
 import {
   save,
   type Apoderado,
+  type UnlockRequest,
   type Module,
   type Election,
   type Office,
   type Municipality,
+  unlockUser,
 } from "../services/management.service";
 function Editor({ user, changed }: { user?: Apoderado; changed: () => void }) {
   const f = useForm({
@@ -233,17 +235,143 @@ function Editor({ user, changed }: { user?: Apoderado; changed: () => void }) {
     </form>
   );
 }
+function UnlockRequests({ revision, changed }: { revision: number; changed: () => void }) {
+  const requests = useRemote<UnlockRequest[]>(
+    "/admin/users/unlock-requests",
+    revision,
+  );
+  const form = useForm({
+    defaultValues: {
+      password: "",
+      reason: "Solicitud de desbloqueo iniciada por el usuario.",
+    },
+  });
+  const [target, setTarget] = useState<UnlockRequest | null>(null);
+  const [error, setError] = useState("");
+  const [message, setMessage] = useState("");
+  return (
+    <Panel title="Solicitudes de desbloqueo">
+      <Feedback error={error || requests.error} message={message} />
+      {requests.loading && <p role="status">Cargando solicitudes...</p>}
+      {!requests.loading && !requests.data?.length && (
+        <p className="text-sm text-muted-foreground">
+          No hay solicitudes pendientes.
+        </p>
+      )}
+      <div className="space-y-3">
+        {requests.data?.map((request) => (
+          <div
+            key={request.id}
+            className="flex flex-wrap items-center justify-between gap-3 rounded-lg border bg-card p-4"
+          >
+            <div className="min-w-0">
+              <p className="font-semibold">
+                {request.user_full_name || request.email}
+              </p>
+              <p className="mt-1 text-sm text-muted-foreground">
+                {request.email} ·{" "}
+                {request.locked
+                  ? `Bloqueado hasta ${new Date(
+                      request.locked_until ?? "",
+                    ).toLocaleString()}`
+                  : `${request.failed_attempts} intentos fallidos`}
+              </p>
+              {request.note && (
+                <p className="mt-2 text-sm text-muted-foreground">
+                  {request.note}
+                </p>
+              )}
+            </div>
+            <button
+              type="button"
+              className="secondary"
+              onClick={() => {
+                setTarget(request);
+                form.reset({
+                  password: "",
+                  reason: "Solicitud de desbloqueo iniciada por el usuario.",
+                });
+              }}
+            >
+              Revisar desbloqueo
+            </button>
+          </div>
+        ))}
+      </div>
+      {target && (
+        <form
+          className="mt-4 max-w-xl space-y-3 rounded-lg border p-4"
+          onSubmit={form.handleSubmit(async (values) => {
+            setError("");
+            setMessage("");
+            try {
+              await save("/auth/reauthenticate", {
+                password: values.password,
+              });
+              await unlockUser(target.user_id, values.reason);
+              setMessage("Usuario desbloqueado y solicitud resuelta.");
+              setTarget(null);
+              form.reset();
+              changed();
+            } catch (error) {
+              setError((error as Error).message);
+            }
+          })}
+        >
+          <h3 className="font-semibold">
+            Confirmar desbloqueo: {target.user_full_name || target.email}
+          </h3>
+          <Field label="Motivo del desbloqueo">
+            <input
+              className="field"
+              minLength={5}
+              maxLength={300}
+              required
+              {...form.register("reason")}
+            />
+          </Field>
+          <Field label="Tu contraseña de administrador">
+            <input
+              className="field"
+              type="password"
+              autoComplete="current-password"
+              required
+              {...form.register("password")}
+            />
+          </Field>
+          <div className="flex flex-wrap gap-2">
+            <button className="action" disabled={form.formState.isSubmitting}>
+              Confirmar desbloqueo
+            </button>
+            <button
+              className="secondary"
+              type="button"
+              onClick={() => {
+                setTarget(null);
+                form.reset();
+              }}
+            >
+              Cancelar
+            </button>
+          </div>
+        </form>
+      )}
+    </Panel>
+  );
+}
 export default function Usuarios() {
   const [revision, refresh] = useState(0);
   const data = useRemote<Apoderado[]>("/users/", revision);
   const [selected, setSelected] = useState<Apoderado>();
-  const [tab, setTab] = useState<"accounts" | "invitations">("accounts");
+  const [tab, setTab] = useState<"accounts" | "invitations" | "unlock">(
+    "accounts",
+  );
   return (
     <div className="space-y-6">
       <PageHeading
         eyebrow="Administración"
-        title="Gestión de apoderados"
-        description="Administrá las cuentas, los módulos habilitados y sus asignaciones."
+        title="Gestión de usuarios"
+        description="Administrá cuentas, apoderados, módulos habilitados y solicitudes de desbloqueo."
       />
       <Link className="secondary inline-flex" to="/seguridad">
         Bloqueos y recuperación de cuentas
@@ -266,6 +394,16 @@ export default function Usuarios() {
           }}
         >
           Invitaciones
+        </button>
+        <button
+          className={tab === "unlock" ? "action" : "secondary"}
+          aria-pressed={tab === "unlock"}
+          onClick={() => {
+            setTab("unlock");
+            setSelected(undefined);
+          }}
+        >
+          Solicitudes de desbloqueo
         </button>
       </div>
       {tab === "accounts" ? (
@@ -301,8 +439,13 @@ export default function Usuarios() {
             </div>
           ))}
         </Panel>
-      ) : (
+      ) : tab === "invitations" ? (
         <InvitationsAdmin
+          revision={revision}
+          changed={() => refresh((v) => v + 1)}
+        />
+      ) : (
+        <UnlockRequests
           revision={revision}
           changed={() => refresh((v) => v + 1)}
         />

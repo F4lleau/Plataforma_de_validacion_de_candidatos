@@ -25,6 +25,16 @@ class ForgotInput(AuthInput):
     email: EmailStr
 
 
+class UnlockRequestInput(AuthInput):
+    email: EmailStr
+    note: str | None = Field(default=None, max_length=300)
+
+    @field_validator("note", mode="before")
+    @classmethod
+    def strip_note(cls, value):
+        return value.strip() if isinstance(value, str) else value
+
+
 class ResetInput(AuthInput):
     token: str = Field(min_length=20, max_length=128)
     new_password: str = Field(min_length=15, max_length=128)
