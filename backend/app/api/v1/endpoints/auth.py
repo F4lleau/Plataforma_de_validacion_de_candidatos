@@ -33,7 +33,7 @@ def csrf_token(request: Request, response: Response):
         token,
         httponly=True,
         secure=settings.cookie_secure,
-        samesite="strict",
+        samesite=settings.cookie_samesite,
         path=settings.api_v1_prefix,
     )
     return {"csrf_token": token}

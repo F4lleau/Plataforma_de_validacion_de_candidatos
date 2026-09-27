@@ -19,8 +19,13 @@ def import_padron(
     db: Session = Depends(get_db),
     current_user: User = Depends(require_admin),
 ):
-    if not (file.filename or "").lower().endswith((".xlsx",)):
-        raise HTTPException(status_code=400, detail="Solo se permiten archivos Excel.")
+    if not (file.filename or "").lower().endswith(
+        AffiliateImportService.supported_extensions
+    ):
+        raise HTTPException(
+            status_code=400,
+            detail="Formato no soportado. Usá XLSX, XLSM, XLS, ODS, CSV, TSV o TXT.",
+        )
 
     with tempfile.NamedTemporaryFile(
         delete=False, suffix=os.path.splitext(file.filename)[1]
@@ -63,12 +68,28 @@ def query(
     section: str = "",
     circuit: str = "",
     state: str = "",
+    section_code: str = "",
+    circuit_code: str = "",
     page: int = Query(1, ge=1),
     page_size: int = Query(25, ge=1, le=100),
     db: Session = Depends(get_db),
     user: User = Depends(require_admin),
 ):
-    return PadronService(db).query(search, section, circuit, state, page, page_size)
+    return PadronService(db).query(
+        search,
+        section,
+        circuit,
+        state,
+        page,
+        page_size,
+        section_code,
+        circuit_code,
+    )
+
+
+@router.get("/catalog")
+def catalog(db: Session = Depends(get_db), user: User = Depends(require_admin)):
+    return PadronService(db).catalog()
 
 
 @router.get("/batches")

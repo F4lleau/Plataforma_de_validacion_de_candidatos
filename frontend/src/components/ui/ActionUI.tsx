@@ -9,16 +9,16 @@ export function ActionButton({
   ...props
 }: ButtonHTMLAttributes<HTMLButtonElement> & { variant?: ButtonVariant }) {
   const base =
-    "inline-flex min-h-10 items-center justify-center gap-2 rounded-full px-4 py-2 text-xs font-semibold transition-colors disabled:opacity-50";
+    "inline-flex min-h-9 items-center justify-center gap-2 rounded-full px-3.5 py-2 font-mono text-[11px] font-semibold uppercase tracking-[0.09em] transition-all disabled:opacity-50";
   const styles = {
-    primary: "bg-slate-950 text-white shadow-sm hover:bg-slate-800",
+    primary: "bg-[#00384a] text-white shadow-sm hover:bg-[#005a72]",
     secondary:
-      "border border-slate-300 bg-white text-slate-950 shadow-sm hover:border-slate-400 hover:bg-slate-50",
-    ghost: "text-slate-700 hover:bg-slate-100",
+      "border border-[#9fc6d3] bg-white text-[#00384a] shadow-sm hover:border-[#5fa9c7] hover:bg-[#eaf6fa]",
+    ghost: "text-[#00384a] hover:bg-[#eaf6fa]",
   };
   return (
     <button
-      className={`${base} ${styles[variant]} font-mono ${className}`}
+      className={`${base} ${styles[variant]} ${className}`}
       {...props}
     />
   );

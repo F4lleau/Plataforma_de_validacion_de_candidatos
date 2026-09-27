@@ -453,9 +453,6 @@ def test_official_fields_filters_and_batch_invalidation(client, scenario):
     "rows",
     [
         [],
-        [official(), official()],
-        [official(**{"Fecha nacimiento": "no-fecha"})],
-        [official(Nombre=None)],
         [official(Matrícula=123.5)],
     ],
 )

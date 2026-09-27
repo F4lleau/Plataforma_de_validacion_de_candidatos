@@ -15,6 +15,7 @@ import {
   type Municipality,
   unlockUser,
 } from "../services/management.service";
+import { formatDateTime } from "../utils/date";
 function Editor({ user, changed }: { user?: Apoderado; changed: () => void }) {
   const f = useForm({
     defaultValues: {
@@ -271,9 +272,7 @@ function UnlockRequests({ revision, changed }: { revision: number; changed: () =
               <p className="mt-1 text-sm text-muted-foreground">
                 {request.email} ·{" "}
                 {request.locked
-                  ? `Bloqueado hasta ${new Date(
-                      request.locked_until ?? "",
-                    ).toLocaleString()}`
+                  ? `Bloqueado hasta ${formatDateTime(request.locked_until)}`
                   : `${request.failed_attempts} intentos fallidos`}
               </p>
               {request.note && (

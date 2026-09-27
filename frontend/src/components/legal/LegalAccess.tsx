@@ -9,8 +9,10 @@ import LegalModal from "./LegalModal";
 
 export default function LegalAccess({
   pending = false,
+  variant = "default",
 }: {
   pending?: boolean;
+  variant?: "default" | "footer";
 }) {
   const [documents, setDocuments] = useState<LegalDocuments | null>(null);
   const [open, setOpen] = useState<keyof LegalDocuments | null>(null);
@@ -73,6 +75,10 @@ export default function LegalAccess({
       setBusy(false);
     }
   }
+  const legalButtonClass =
+    variant === "footer"
+      ? "inline-flex min-h-7 items-center rounded-full border border-[#9fc6d3] bg-white px-3 py-1 font-mono text-[10px] font-semibold uppercase tracking-[0.1em] text-[#00384a] shadow-sm transition-colors hover:border-[#5fa9c7] hover:bg-[#eaf6fa] disabled:opacity-50"
+      : "text-primary underline disabled:opacity-50";
   return (
     <section aria-label="Términos y privacidad" className="space-y-3 text-sm">
       {pending && (
@@ -96,30 +102,40 @@ export default function LegalAccess({
           </label>
         </>
       )}
-      <div className="flex flex-wrap gap-x-4 gap-y-2">
+      <div
+        className={
+          variant === "footer"
+            ? "flex flex-wrap items-center justify-center gap-2"
+            : "flex flex-wrap gap-x-4 gap-y-2"
+        }
+      >
         <button
           type="button"
           disabled={!documents}
-          className="text-primary underline disabled:opacity-50"
+          className={legalButtonClass}
           onClick={() => setOpen("terms")}
         >
-          Ver términos y condiciones
+          {variant === "footer"
+            ? "Términos y condiciones"
+            : "Ver términos y condiciones"}
         </button>
         <button
           type="button"
           disabled={!documents}
-          className="text-primary underline disabled:opacity-50"
+          className={legalButtonClass}
           onClick={() => setOpen("privacy")}
         >
-          Ver políticas de privacidad
+          {variant === "footer"
+            ? "Políticas de seguridad"
+            : "Ver políticas de privacidad"}
         </button>
       </div>
-      {!documents && !loadError && (
+      {!documents && !loadError && variant !== "footer" && (
         <p role="status" className="text-xs text-muted-foreground">
           Cargando documentos...
         </p>
       )}
-      {loadError && (
+      {loadError && variant !== "footer" && (
         <div role="alert">
           <p>{loadError}</p>
           <button

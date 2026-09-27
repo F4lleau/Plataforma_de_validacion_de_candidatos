@@ -26,6 +26,7 @@ import {
   type ReportList,
   type Summary,
 } from "../../services/reporting.service";
+import { formatDateTime } from "../../utils/date";
 export function ReportFilters({
   value,
   onChange,
@@ -226,7 +227,7 @@ export function ListTable({ items }: { items: ReportList[] }) {
                 </p>
                 <p className="text-xs text-muted-foreground">
                   {l.created_at
-                    ? `Creada: ${new Date(l.created_at + "Z").toLocaleString()}`
+                    ? `Creada: ${formatDateTime(l.created_at)}`
                     : "Fecha histórica no disponible"}
                 </p>
               </td>

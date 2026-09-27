@@ -20,7 +20,7 @@ export default function Ayuda() {
             ? [
                 "Configurá elección, fechas, cargos y reglas. Las plantillas de prueba deben seguir identificadas.",
                 "Creá apoderados y habilitá sus módulos. La asignación por lista es independiente.",
-                "Importá el padrón XLSX. Si hay errores, el lote previo permanece vigente.",
+                "Importá el padrón en formato XLSX, XLS, ODS, CSV, TSV o TXT. Si hay errores, el lote previo permanece vigente.",
                 "Revisá Listas cargadas y Validaciones, incluyendo cada observación del candidato.",
                 "Consultá Reportes para filtrar y exportar. Auditoría registra el actor y la fecha.",
               ]

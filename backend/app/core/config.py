@@ -24,6 +24,7 @@ class Settings(BaseSettings):
     session_idle_hours: int = 24
     reauth_minutes: int = 5
     cookie_secure: bool = False
+    cookie_samesite: Literal["strict", "lax", "none"] = "strict"
     frontend_url: str = "http://localhost:5173"
     login_max_failures: int = 3
     login_window_minutes: int = 15
@@ -79,6 +80,7 @@ class Settings(BaseSettings):
             if (
                 self.debug
                 or not self.cookie_secure
+                or self.cookie_samesite != "none"
                 or not self.frontend_url.startswith("https://")
                 or any(not o.startswith("https://") for o in self.cors_origins)
                 or self.smtp_tls == "none"

@@ -1,0 +1,39 @@
+services:
+  - type: web
+    name: junta-electoral-api-qa
+    runtime: docker
+    plan: free
+    dockerContext: backend
+    dockerfilePath: backend/Dockerfile
+    healthCheckPath: /api/v1/auth/health
+    envVars:
+      - key: APP_ENV
+        value: development
+      - key: DEBUG
+        value: "false"
+      - key: API_V1_PREFIX
+        value: /api/v1
+      - key: DATABASE_URL
+        sync: false
+      - key: SECRET_KEY
+        sync: false
+      - key: MAIL_OUTBOX_KEY
+        sync: false
+      - key: COOKIE_SECURE
+        value: "true"
+      - key: COOKIE_SAMESITE
+        value: none
+      - key: CORS_ORIGINS
+        sync: false
+      - key: FRONTEND_URL
+        sync: false
+      - key: SUPPORT_CONTACT
+        value: juspjchaco@gmail.com
+      - key: SMTP_HOST
+        value: 127.0.0.1
+      - key: SMTP_PORT
+        value: "1025"
+      - key: SMTP_TLS
+        value: none
+      - key: SMTP_FROM
+        value: Junta Electoral <no-reply@junta.local>

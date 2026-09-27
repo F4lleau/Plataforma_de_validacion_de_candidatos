@@ -15,6 +15,7 @@ import {
   type Office,
   type OfficeType,
 } from "../services/management.service";
+import { formatDate } from "../utils/date";
 
 type Mode = "cargos" | "proceso" | "localidades";
 
@@ -50,9 +51,7 @@ type OfficeForm = {
 };
 
 function tableDate(value?: string | null) {
-  return value
-    ? new Date(`${value}T00:00:00`).toLocaleDateString()
-    : "Sin definir";
+  return value ? formatDate(value) : "Sin definir";
 }
 
 function headerCopy(mode: Mode) {

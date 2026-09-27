@@ -101,11 +101,22 @@ def export_padron(
     section: str = "",
     circuit: str = "",
     state: str = "",
+    section_code: str = "",
+    circuit_code: str = "",
     db: Session = Depends(get_db),
     user: User = Depends(require_admin),
 ):
     content, mime, name = ExportService(db).padron(
-        user, dict(search=search, section=section, circuit=circuit, state=state), format
+        user,
+        dict(
+            search=search,
+            section=section,
+            circuit=circuit,
+            state=state,
+            section_code=section_code,
+            circuit_code=circuit_code,
+        ),
+        format,
     )
     return Response(
         content,

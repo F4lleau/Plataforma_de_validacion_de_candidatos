@@ -1,40 +1,45 @@
 import LegalAccess from "../legal/LegalAccess";
 import { useRef, useState } from "react";
-import { NavLink, Outlet, useLocation, Link } from "react-router-dom";
+import { Link, NavLink, Outlet, useLocation } from "react-router-dom";
 import {
-  LayoutDashboard,
   BookUser,
-  Settings2,
-  MapPin,
   BriefcaseBusiness,
-  Users,
-  Files,
-  ClipboardCheck,
   ChartNoAxesCombined,
-  History,
-  CircleHelp,
-  UserRoundSearch,
-  UserRound,
-  LogOut,
-  Menu,
-  X,
   ChevronRight,
+  CircleHelp,
+  ClipboardCheck,
+  Files,
+  History,
+  LayoutDashboard,
+  LogOut,
+  MapPin,
+  Menu,
+  PanelLeftClose,
+  PanelLeftOpen,
+  Settings2,
+  UserRound,
+  UserRoundSearch,
+  Users,
+  X,
   type LucideIcon,
 } from "lucide-react";
 import { useAuthStore } from "../../stores/auth.store";
 import Brand from "./Brand";
 
 type NavItem = { to: string; label: string; icon: LucideIcon };
+
 const overview: NavItem = {
   to: "/dashboard",
   label: "Resumen",
   icon: LayoutDashboard,
 };
+
 const help: NavItem = {
   to: "/ayuda",
   label: "Ayuda y guías",
   icon: CircleHelp,
 };
+
 const adminGroups = [
   {
     name: "Espacio de trabajo",
@@ -77,6 +82,7 @@ const adminGroups = [
     ],
   },
 ];
+
 const proxyGroups = [
   {
     name: "Espacio de trabajo",
@@ -94,6 +100,7 @@ export default function AppLayout() {
   const user = useAuthStore((s) => s.user);
   const logout = useAuthStore((s) => s.logout);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [collapsed, setCollapsed] = useState(false);
   const menuButton = useRef<HTMLButtonElement>(null);
   const location = useLocation();
   const isAdmin = user?.role === "admin";
@@ -105,12 +112,14 @@ export default function AppLayout() {
         location.pathname === i.to || location.pathname.startsWith(i.to + "/"),
     );
   const role = isAdmin ? "Administración" : "Apoderado";
+
   return (
     <div className="min-h-screen">
       <a className="skip-link" href="#contenido">
         Saltar al contenido
       </a>
-      <div className="flex items-center justify-between border-b bg-card px-5 py-4 lg:hidden">
+
+      <div className="flex items-center justify-between border-b border-[#cfe1e7] bg-white px-5 py-4 lg:hidden">
         <Brand />
         <button
           ref={menuButton}
@@ -127,10 +136,11 @@ export default function AppLayout() {
           {menuOpen ? <X size={20} /> : <Menu size={20} />}
         </button>
       </div>
+
       <div className="lg:flex">
         <aside
           id="navigation-panel"
-          className={`${menuOpen ? "flex" : "hidden"} shrink-0 flex-col border-b bg-card lg:sticky lg:top-0 lg:flex lg:h-screen lg:w-64 lg:overflow-y-auto lg:border-b-0 lg:border-r`}
+          className={`${menuOpen ? "flex" : "hidden"} shrink-0 flex-col border-b border-[#cfe1e7] bg-white lg:sticky lg:top-0 lg:flex lg:h-screen lg:overflow-y-auto lg:border-b-0 lg:border-r ${collapsed ? "lg:w-20" : "lg:w-56"}`}
           onKeyDown={(e) => {
             if (e.key === "Escape") {
               setMenuOpen(false);
@@ -138,38 +148,63 @@ export default function AppLayout() {
             }
           }}
         >
-          <div className="hidden px-6 py-7 lg:block">
-            <Brand />
+          <div className="hidden items-center justify-between gap-3 px-4 py-5 lg:flex">
+            <Brand compact={collapsed} />
+            <button
+              type="button"
+              className="secondary !min-h-9 !p-2"
+              aria-label={collapsed ? "Expandir menú" : "Colapsar menú"}
+              onClick={() => setCollapsed((value) => !value)}
+            >
+              {collapsed ? (
+                <PanelLeftOpen size={16} aria-hidden="true" />
+              ) : (
+                <PanelLeftClose size={16} aria-hidden="true" />
+              )}
+            </button>
           </div>
+
           <nav
             aria-label="Navegación principal"
-            className="flex-1 space-y-6 px-4 py-5 lg:pt-3"
+            className="flex-1 space-y-5 px-3 py-5 lg:pt-2"
           >
             {groups.map((group) => (
               <div key={group.name}>
-                <p className="eyebrow mb-2 px-3">{group.name}</p>
+                <p className={`eyebrow mb-2 px-3 ${collapsed ? "lg:sr-only" : ""}`}>
+                  {group.name}
+                </p>
                 <div className="space-y-1">
                   {group.items.map(({ to, label, icon: Icon }) => (
                     <NavLink
                       key={to}
                       to={to}
+                      title={collapsed ? label : undefined}
                       onClick={() => {
                         setMenuOpen(false);
                         if (menuOpen) menuButton.current?.focus();
                       }}
                       className={({ isActive }) =>
-                        `flex min-h-11 items-center gap-3 rounded-lg px-3 py-2.5 text-[13px] font-medium transition-colors ${isActive ? "bg-accent text-accent-foreground" : "text-muted-foreground hover:bg-muted hover:text-foreground"}`
+                        `flex min-h-10 items-center rounded-lg px-3 py-2 text-[13px] font-medium transition-colors ${collapsed ? "lg:justify-center lg:gap-0" : "gap-3"} ${
+                          isActive
+                            ? "bg-[#eaf6fa] text-[#00384a]"
+                            : "text-[#36586a] hover:bg-[#f5fbfd] hover:text-[#00384a]"
+                        }`
                       }
                     >
                       <Icon size={18} strokeWidth={1.7} aria-hidden="true" />
-                      <span>{label}</span>
+                      <span className={collapsed ? "lg:sr-only" : ""}>
+                        {label}
+                      </span>
                     </NavLink>
                   ))}
                 </div>
               </div>
             ))}
           </nav>
-          <div className="mx-5 mb-5 border-t pt-4">
+
+          <div
+            className={`mx-4 mb-5 border-t border-[#cfe1e7] pt-4 ${collapsed ? "lg:hidden" : ""}`}
+          >
             <p className="eyebrow">Plataforma PJ</p>
             <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
               Gestión de listas y validación
@@ -178,8 +213,9 @@ export default function AppLayout() {
             </p>
           </div>
         </aside>
+
         <div className="min-w-0 flex-1">
-          <header className="flex min-h-[76px] flex-wrap items-center justify-between gap-3 border-b bg-card/90 px-5 py-4 md:px-8">
+          <header className="flex min-h-[72px] flex-wrap items-center justify-between gap-3 border-b border-[#cfe1e7] bg-white/95 px-5 py-4 md:px-8">
             <div className="flex items-center gap-2 text-xs text-muted-foreground">
               <span className="hidden sm:inline">Gestión electoral</span>
               <ChevronRight
@@ -187,13 +223,13 @@ export default function AppLayout() {
                 size={14}
                 aria-hidden="true"
               />
-              <span className="font-medium text-foreground">
+              <span className="font-medium text-[#00384a]">
                 {current?.label ?? "Plataforma"}
               </span>
             </div>
             <div className="flex min-w-0 items-center gap-3">
               <span
-                className="flex size-9 shrink-0 items-center justify-center rounded-full border bg-muted text-xs font-semibold text-muted-foreground"
+                className="flex size-9 shrink-0 items-center justify-center rounded-full border border-[#9fc6d3] bg-[#eaf6fa] font-mono text-xs font-semibold text-[#00384a]"
                 aria-hidden="true"
               >
                 {user?.full_name
@@ -204,10 +240,10 @@ export default function AppLayout() {
                   .join("")}
               </span>
               <div className="max-w-40">
-                <p className="truncate text-xs font-semibold">
+                <p className="truncate text-xs font-semibold text-[#00384a]">
                   {user?.full_name}
                 </p>
-                <p className="mt-0.5 text-[11px] text-muted-foreground">
+                <p className="mt-0.5 font-mono text-[11px] text-[#5f8fa1]">
                   {role}
                 </p>
               </div>
@@ -228,6 +264,7 @@ export default function AppLayout() {
               </button>
             </div>
           </header>
+
           <main
             id="contenido"
             tabIndex={-1}
@@ -235,13 +272,17 @@ export default function AppLayout() {
           >
             <Outlet />
           </main>
-          <footer className="mx-5 flex flex-wrap justify-between gap-2 border-t py-5 text-[11px] text-muted-foreground md:mx-8 xl:mx-10">
+
+          <footer className="mx-5 flex flex-wrap items-center justify-between gap-3 border-t border-[#cfe1e7] py-5 text-[11px] text-muted-foreground md:mx-8 xl:mx-10">
             <span>Junta Electoral · Partido Justicialista · Chaco</span>
-            <Link to="/ayuda" className="hover:text-primary">
-              Ayuda y documentación
-            </Link>
-            <div className="w-full pt-2">
-              <LegalAccess />
+            <div className="flex flex-wrap items-center justify-center gap-2">
+              <Link
+                to="/ayuda"
+                className="inline-flex min-h-7 items-center rounded-full border border-[#9fc6d3] bg-white px-3 py-1 font-mono text-[10px] font-semibold uppercase tracking-[0.1em] text-[#00384a] shadow-sm transition-colors hover:border-[#5fa9c7] hover:bg-[#eaf6fa]"
+              >
+                Ayuda y documentación
+              </Link>
+              <LegalAccess variant="footer" />
             </div>
           </footer>
         </div>

@@ -5,6 +5,7 @@ import { useRemote } from "../hooks/useRemote";
 import { Field, Feedback, Panel } from "../components/forms/FormUI";
 import { Pager } from "../components/reporting/ReportUI";
 import { query, type Page } from "../services/reporting.service";
+import { formatDateTime } from "../utils/date";
 const actionLabels: Record<string, string> = {
   "catalog.created": "Configuración creada",
   "catalog.updated": "Configuración actualizada",
@@ -114,9 +115,7 @@ export default function Auditoria() {
           <p className="font-semibold">{actionLabels[e.action] ?? e.action}</p>
           <p className="text-sm">
             {e.actor_name} ·{" "}
-            {new Date(e.created_at + "Z").toLocaleString("es-AR", {
-              timeZone: "America/Argentina/Cordoba",
-            }) + " (Argentina, UTC−3)"}{" "}
+            {formatDateTime(e.created_at)}{" "}
             · {e.entity_type} {e.entity_id ?? ""}
           </p>
           {e.entity_type === "electoral_lists" && e.entity_id && (

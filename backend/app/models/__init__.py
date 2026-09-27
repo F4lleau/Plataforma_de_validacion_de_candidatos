@@ -13,6 +13,7 @@ from app.models.office_type import OfficeType
 from app.models.election_office import ElectionOffice
 from app.models.election_municipality import ElectionMunicipality
 from app.models.party_member import PartyMember
+from app.models.padron_circuit import PadronCircuit
 from app.models.person import Person
 from app.models.user import User
 from app.models.user_module import UserModule
@@ -34,6 +35,7 @@ __all__ = [
     "ElectionOffice",
     "ElectionMunicipality",
     "PartyMember",
+    "PadronCircuit",
     "Person",
     "User",
     "UserModule",

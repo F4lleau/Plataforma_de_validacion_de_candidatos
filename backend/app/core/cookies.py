@@ -24,7 +24,7 @@ def set_refresh(response: Response, raw: str):
         max_age=settings.refresh_token_expire_days * 86400,
         httponly=True,
         secure=settings.cookie_secure,
-        samesite="strict",
+        samesite=settings.cookie_samesite,
         path=COOKIE_PATH,
     )
 
@@ -35,5 +35,5 @@ def clear_refresh(response: Response):
         path=COOKIE_PATH,
         httponly=True,
         secure=settings.cookie_secure,
-        samesite="strict",
+        samesite=settings.cookie_samesite,
     )

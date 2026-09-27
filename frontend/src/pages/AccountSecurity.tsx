@@ -10,6 +10,7 @@ import {
 import { useRemote } from "../hooks/useRemote";
 import { apiFetch, clearSession } from "../services/api";
 import { useAuthStore } from "../stores/auth.store";
+import { formatDateTime } from "../utils/date";
 
 type Session = {
   id: string;
@@ -30,7 +31,7 @@ type Account = {
 };
 const post = <T,>(url: string, body: unknown = {}) =>
   apiFetch<T>(url, { method: "POST", body: JSON.stringify(body) });
-const date = (value: string) => new Date(value + "Z").toLocaleString();
+const date = (value: string) => formatDateTime(value);
 
 function AdminLocks() {
   const [revision, refresh] = useState(0);

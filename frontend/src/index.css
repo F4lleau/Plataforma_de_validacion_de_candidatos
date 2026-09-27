@@ -5,39 +5,39 @@
 
 @layer base {
   :root {
-    --background: 225 33% 98%;
-    --foreground: 224 60% 10%;
+    --background: 195 42% 98%;
+    --foreground: 195 100% 9%;
     --card: 0 0% 100%;
     --card-foreground: 224 60% 10%;
     --popover: 0 0% 100%;
     --popover-foreground: 224 60% 10%;
-    --primary: 222 100% 57%;
+    --primary: 193 100% 23%;
     --primary-foreground: 0 0% 100%;
-    --secondary: 223 100% 96%;
-    --secondary-foreground: 224 46% 30%;
-    --muted: 225 30% 96%;
-    --muted-foreground: 222 22% 43%;
-    --accent: 223 100% 96%;
-    --accent-foreground: 224 77% 43%;
+    --secondary: 195 58% 96%;
+    --secondary-foreground: 195 100% 16%;
+    --muted: 195 40% 96%;
+    --muted-foreground: 198 27% 39%;
+    --accent: 195 58% 96%;
+    --accent-foreground: 195 100% 16%;
     --destructive: 0 68% 43%;
     --destructive-foreground: 0 0% 100%;
     --success: 156 70% 28%;
     --success-foreground: 0 0% 100%;
     --warning: 35 90% 32%;
     --warning-foreground: 0 0% 100%;
-    --border: 224 24% 90%;
-    --input: 224 24% 84%;
-    --ring: 222 100% 57%;
+    --border: 195 36% 86%;
+    --input: 195 32% 78%;
+    --ring: 193 65% 42%;
     --radius: 0.75rem;
     --sidebar-background: 0 0% 100%;
     --sidebar-foreground: 224 60% 10%;
     --sidebar-primary: 222 100% 57%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 223 100% 96%;
-    --sidebar-accent-foreground: 224 77% 43%;
-    --sidebar-border: 224 24% 90%;
-    --sidebar-ring: 222 100% 57%;
-    --sidebar-muted: 222 22% 43%;
+    --sidebar-accent: 195 58% 96%;
+    --sidebar-accent-foreground: 195 100% 16%;
+    --sidebar-border: 195 36% 86%;
+    --sidebar-ring: 193 65% 42%;
+    --sidebar-muted: 198 27% 39%;
     --font-heading: "Inter", sans-serif;
     --font-body: "Inter", sans-serif;
     --font-mono: "JetBrains Mono", "SFMono-Regular", Consolas, monospace;
@@ -108,17 +108,20 @@
       0 8px 24px #0a122803;
   }
   .field {
-    @apply min-h-11 w-full rounded-lg border border-input bg-card px-3 py-2.5 text-sm font-normal text-foreground transition-colors placeholder:text-muted-foreground/70 hover:border-primary/40 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/15 disabled:bg-muted;
+    @apply min-h-10 w-full rounded-lg border border-input bg-card px-3 py-2 text-xs font-normal text-foreground transition-colors placeholder:text-muted-foreground/70 hover:border-primary/40 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/15 disabled:bg-muted;
+    font-family: var(--font-mono);
   }
   .field[type="file"] {
-    @apply p-2 text-xs file:mr-3 file:rounded-md file:border-0 file:bg-accent file:px-3 file:py-2 file:text-xs file:font-medium file:text-accent-foreground;
+    @apply p-2 text-xs file:mr-3 file:rounded-full file:border-0 file:bg-[#00384a] file:px-4 file:py-2 file:text-xs file:font-semibold file:text-white file:shadow-sm file:transition-colors hover:file:bg-[#005a72];
   }
   .action {
-    @apply inline-flex min-h-11 items-center justify-center gap-2 rounded-lg bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/90 disabled:opacity-50;
-    box-shadow: 0 2px 4px #2d6bff18;
+    @apply inline-flex min-h-9 items-center justify-center gap-2 rounded-full bg-[#00384a] px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.08em] text-white transition-all hover:-translate-y-0.5 hover:bg-[#005a72] disabled:translate-y-0 disabled:opacity-50;
+    box-shadow: 0 10px 24px #0f172a24;
+    font-family: var(--font-mono);
   }
   .secondary {
-    @apply inline-flex min-h-11 items-center justify-center gap-2 rounded-lg border border-input bg-card px-3.5 py-2.5 text-sm font-medium transition-colors hover:border-primary/40 hover:bg-accent/60 disabled:opacity-50;
+    @apply inline-flex min-h-9 items-center justify-center gap-2 rounded-full border border-[#9fc6d3] bg-white px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.08em] text-[#00384a] shadow-sm transition-all hover:-translate-y-0.5 hover:border-[#5fa9c7] hover:bg-[#eaf6fa] disabled:translate-y-0 disabled:opacity-50;
+    font-family: var(--font-mono);
   }
   .font-mono {
     font-family: var(--font-mono);
@@ -136,10 +139,10 @@
     @apply w-full text-left text-sm;
   }
   .app-content table th {
-    @apply border-b bg-muted/60 px-4 py-3 text-xs font-medium text-muted-foreground;
+    @apply border-b bg-muted/60 px-3 py-2 text-xs font-medium text-muted-foreground;
   }
   .app-content table td {
-    @apply border-b border-border/70 px-4 py-4;
+    @apply border-b border-border/70 px-3 py-2;
   }
   .app-content table tbody tr {
     @apply transition-colors hover:bg-accent/30;

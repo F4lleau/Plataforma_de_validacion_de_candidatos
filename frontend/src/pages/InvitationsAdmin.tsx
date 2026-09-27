@@ -8,6 +8,7 @@ import {
   invitationState,
   mailState,
 } from "../services/invitation.service";
+import { formatDateTime } from "../utils/date";
 
 export default function InvitationsAdmin({
   revision,
@@ -54,7 +55,7 @@ export default function InvitationsAdmin({
               {invitationState[row.state]} · {row.modules.length} módulos
             </p>
             <p className="text-sm">
-              Vence: {new Date(row.expires_at + "Z").toLocaleString()}
+              Vence: {formatDateTime(row.expires_at)}
             </p>
             <p className="text-sm text-muted-foreground">
               {row.mail_state

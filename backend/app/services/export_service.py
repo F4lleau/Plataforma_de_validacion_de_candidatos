@@ -44,7 +44,7 @@ PADRON_COLUMNS = [
     ("dni", "Matrícula"),
     ("birth_date", "Fecha nacimiento"),
     ("birth_class", "Clase"),
-    ("elector_status", "Estado elector"),
+    ("elector_status", "Estado actual elector"),
     ("affiliation_status", "Estado afiliación"),
     ("affiliation_date", "Fecha afiliación"),
     ("illiterate", "Analfabeto"),

@@ -6,7 +6,17 @@ class PadronService:
     def __init__(self, db):
         self.repo = PadronRepository(db)
 
-    def query(self, search, section, circuit, state, page, page_size):
+    def query(
+        self,
+        search,
+        section,
+        circuit,
+        state,
+        page,
+        page_size,
+        section_code="",
+        circuit_code="",
+    ):
         return self.repo.query(
             AffiliateImportService.normalize_text(search),
             AffiliateImportService.normalize_text(section),
@@ -14,7 +24,12 @@ class PadronService:
             AffiliateImportService.normalize_text(state),
             page,
             page_size,
+            AffiliateImportService.normalize_text(section_code),
+            AffiliateImportService.normalize_text(circuit_code),
         )
 
     def batches(self):
         return self.repo.batches()
+
+    def catalog(self):
+        return self.repo.catalog()

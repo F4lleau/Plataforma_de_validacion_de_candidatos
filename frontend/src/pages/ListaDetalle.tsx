@@ -12,6 +12,7 @@ import {
   type Apoderado,
 } from "../services/management.service";
 import { useAuthStore } from "../stores/auth.store";
+import { formatDateTime } from "../utils/date";
 function CandidateEditor({
   list,
   candidate,
@@ -312,7 +313,7 @@ export default function ListaDetalle() {
         </Link>
       )}
       {list.submitted_at && (
-        <p>Enviada: {new Date(list.submitted_at + "Z").toLocaleString()}</p>
+        <p>Enviada: {formatDateTime(list.submitted_at)}</p>
       )}
       <Panel title="Candidatos y validaciones">
         {list.candidates.length === 0 && <p>Sin candidatos cargados.</p>}
@@ -343,7 +344,7 @@ export default function ListaDetalle() {
                   </p>
                   <p>{v.message}</p>
                   <p className="mt-1 text-xs text-muted-foreground">
-                    {new Date(v.validated_at + "Z").toLocaleString()}
+                    {formatDateTime(v.validated_at)}
                   </p>
                 </div>
               ))}
@@ -357,7 +358,7 @@ export default function ListaDetalle() {
                   <p className="py-1 text-xs" key={v.id}>
                     {v.type} · revisión {v.revision ?? "histórica"} · {v.status}
                     : {v.message} (
-                    {new Date(v.validated_at + "Z").toLocaleString()})
+                    {formatDateTime(v.validated_at)})
                   </p>
                 ))}
               </details>
