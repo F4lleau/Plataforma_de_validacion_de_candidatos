@@ -12,7 +12,7 @@ export default function LegalAccess({
   variant = "default",
 }: {
   pending?: boolean;
-  variant?: "default" | "footer";
+  variant?: "default" | "footer" | "login";
 }) {
   const [documents, setDocuments] = useState<LegalDocuments | null>(null);
   const [open, setOpen] = useState<keyof LegalDocuments | null>(null);
@@ -75,8 +75,9 @@ export default function LegalAccess({
       setBusy(false);
     }
   }
+  const compact = variant === "footer" || variant === "login";
   const legalButtonClass =
-    variant === "footer"
+    compact
       ? "inline-flex min-h-7 items-center rounded-full border border-[#9fc6d3] bg-white px-3 py-1 font-mono text-[10px] font-semibold uppercase tracking-[0.1em] text-[#00384a] shadow-sm transition-colors hover:border-[#5fa9c7] hover:bg-[#eaf6fa] disabled:opacity-50"
       : "text-primary underline disabled:opacity-50";
   return (
@@ -104,7 +105,7 @@ export default function LegalAccess({
       )}
       <div
         className={
-          variant === "footer"
+          compact
             ? "flex flex-wrap items-center justify-center gap-2"
             : "flex flex-wrap gap-x-4 gap-y-2"
         }
@@ -115,27 +116,29 @@ export default function LegalAccess({
           className={legalButtonClass}
           onClick={() => setOpen("terms")}
         >
-          {variant === "footer"
+          {compact
             ? "Términos y condiciones"
             : "Ver términos y condiciones"}
         </button>
-        <button
-          type="button"
-          disabled={!documents}
-          className={legalButtonClass}
-          onClick={() => setOpen("privacy")}
-        >
-          {variant === "footer"
-            ? "Políticas de seguridad"
-            : "Ver políticas de privacidad"}
-        </button>
+        {variant !== "login" && (
+          <button
+            type="button"
+            disabled={!documents}
+            className={legalButtonClass}
+            onClick={() => setOpen("privacy")}
+          >
+            {variant === "footer"
+              ? "Políticas de seguridad"
+              : "Ver políticas de privacidad"}
+          </button>
+        )}
       </div>
-      {!documents && !loadError && variant !== "footer" && (
+      {!documents && !loadError && !compact && (
         <p role="status" className="text-xs text-muted-foreground">
           Cargando documentos...
         </p>
       )}
-      {loadError && variant !== "footer" && (
+      {loadError && !compact && (
         <div role="alert">
           <p>{loadError}</p>
           <button

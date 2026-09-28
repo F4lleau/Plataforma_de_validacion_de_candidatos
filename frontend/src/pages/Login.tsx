@@ -2,9 +2,6 @@ import LegalAccess from "../components/legal/LegalAccess";
 import { safeLoginDestination } from "../services/legal.service";
 import Brand from "../components/layout/Brand";
 import {
-  Layers3,
-  ClipboardCheck,
-  ShieldCheck,
   Eye,
   EyeOff,
   LockKeyhole,
@@ -84,53 +81,32 @@ export default function Login() {
   };
 
   return (
-    <main className="login-background flex min-h-screen items-center justify-center px-5 py-10 md:px-10">
-      <div className="grid w-full max-w-5xl items-center gap-12 lg:grid-cols-2 lg:gap-20">
+    <main className="login-background flex min-h-screen items-center justify-center px-5 py-6 md:px-10">
+      <div className="grid w-full max-w-5xl items-center gap-10 lg:grid-cols-2 lg:gap-16">
         <div className="hidden lg:block">
           <Brand />
-          <p className="eyebrow mb-5 mt-20">Plataforma de gestión electoral</p>
-          <h2 className="text-5xl font-semibold leading-[1.12]">
-            Cada lista.
+          <p className="eyebrow mb-4 mt-16">Plataforma de gestión electoral</p>
+          <h2 className="text-5xl font-semibold leading-[1.1]">
+            Gestión electoral
             <br />
-            Cada candidato.
-            <br />
-            <span className="text-primary">Todo en su lugar.</span>
+            clara y segura.
           </h2>
           <p className="mt-6 max-w-sm text-base leading-relaxed text-muted-foreground">
-            Un espacio para organizar las listas, consultar validaciones y
-            acompañar cada etapa del proceso electoral.
+            Un acceso único para administrar listas, validar candidatos y
+            consultar el estado del proceso.
           </p>
-          <div className="mt-10 space-y-4 border-t pt-6">
-            {[
-              { icon: Layers3, text: "Listas y candidatos organizados" },
-              {
-                icon: ClipboardCheck,
-                text: "Validaciones y observaciones claras",
-              },
-              { icon: ShieldCheck, text: "Acceso según tu rol y asignaciones" },
-            ].map(({ icon: Icon, text }) => (
-              <p
-                key={text}
-                className="flex items-center gap-3 text-sm text-muted-foreground"
-              >
-                <Icon size={17} className="text-primary" aria-hidden="true" />
-                {text}
-              </p>
-            ))}
-          </div>
         </div>
-        <section className="surface mx-auto w-full max-w-md p-6 sm:p-9">
-          <div className="mb-8 lg:hidden">
+        <section className="surface mx-auto w-full max-w-md p-6 sm:p-8">
+          <div className="mb-6 lg:hidden">
             <Brand />
           </div>
-          <p className="eyebrow">Acceso a la plataforma</p>
           <h1 className="mt-3 text-2xl font-semibold">
-            Ingresar a la plataforma
+            Ingreso a la plataforma
           </h1>
           <p className="mt-2 text-sm text-muted-foreground">
-            Accedé a la gestión de listas y candidatos.
+            Accedé con tu correo y contraseña.
           </p>
-          <form onSubmit={handleSubmit} className="mt-8 space-y-4">
+          <form onSubmit={handleSubmit} className="mt-6 space-y-4">
             {!pending && (
               <>
                 <label className="block text-sm font-medium">
@@ -179,18 +155,21 @@ export default function Login() {
                     </button>
                   </span>
                 </label>
-                <div className="grid gap-3 pt-1 sm:grid-cols-2">
-                  <Link to="/recuperar-clave" className="login-pill-primary">
-                    <LifeBuoy size={17} aria-hidden="true" />
+                <div className="flex flex-wrap items-center justify-center gap-2 pt-1">
+                  <Link
+                    to="/recuperar-clave"
+                    className="inline-flex min-h-8 items-center gap-2 rounded-full bg-[#030817] px-3 py-1.5 font-mono text-[10px] font-semibold uppercase tracking-[0.08em] text-white shadow-sm transition-colors hover:bg-[#00384a]"
+                  >
+                    <LifeBuoy size={14} aria-hidden="true" />
                     Olvidé mi contraseña
                   </Link>
                   <button
                     type="button"
-                    className="login-pill-secondary"
+                    className="inline-flex min-h-8 items-center gap-2 rounded-full border border-[#9fc6d3] bg-white px-3 py-1.5 font-mono text-[10px] font-semibold uppercase tracking-[0.08em] text-[#00384a] shadow-sm transition-colors hover:border-[#5fa9c7] hover:bg-[#eaf6fa] disabled:opacity-50"
                     disabled={unlockLoading}
                     onClick={handleUnlockRequest}
                   >
-                    <LockKeyhole size={17} aria-hidden="true" />
+                    <LockKeyhole size={14} aria-hidden="true" />
                     {unlockLoading ? "Enviando..." : "Desbloquear usuario"}
                   </button>
                 </div>
@@ -224,12 +203,13 @@ export default function Login() {
                   : "Ingresar"}
             </button>
           </form>
-          <div className="mt-4">
-            <LegalAccess key={user?.id ?? "public"} pending={pending} />
+          <div className="mt-4 flex justify-center">
+            <LegalAccess
+              key={user?.id ?? "public"}
+              pending={pending}
+              variant={pending ? "default" : "login"}
+            />
           </div>
-          <p className="mt-7 border-t pt-5 text-center text-xs text-muted-foreground">
-            Partido Justicialista · Distrito Chaco
-          </p>
         </section>
       </div>
     </main>
