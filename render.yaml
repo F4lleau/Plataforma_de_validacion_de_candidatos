@@ -11,12 +11,32 @@ services:
         value: development
       - key: DEBUG
         value: "false"
+      - key: APP_NAME
+        value: junta_electoral
       - key: API_V1_PREFIX
         value: /api/v1
       - key: DATABASE_URL
         sync: false
       - key: SECRET_KEY
         sync: false
+      - key: ALGORITHM
+        value: HS256
+      - key: JWT_ISSUER
+        value: junta-electoral
+      - key: JWT_AUDIENCE
+        value: junta-electoral-web
+      - key: JWT_KEY_ID
+        value: current
+      - key: JWT_PREVIOUS_KEYS
+        value: "{}"
+      - key: ACCESS_TOKEN_EXPIRE_MINUTES
+        value: "15"
+      - key: REFRESH_TOKEN_EXPIRE_DAYS
+        value: "7"
+      - key: SESSION_IDLE_HOURS
+        value: "24"
+      - key: REAUTH_MINUTES
+        value: "5"
       - key: MAIL_OUTBOX_KEY
         sync: false
       - key: COOKIE_SECURE
@@ -29,11 +49,49 @@ services:
         sync: false
       - key: SUPPORT_CONTACT
         value: juspjchaco@gmail.com
+      - key: LOGIN_MAX_FAILURES
+        value: "3"
+      - key: LOGIN_WINDOW_MINUTES
+        value: "15"
+      - key: LOGIN_LOCK_MINUTES
+        value: "30"
+      - key: AUTH_IP_LIMIT
+        value: "100"
+      - key: AUTH_IDENTIFIER_LIMIT
+        value: "20"
+      - key: RESET_EXPIRE_MINUTES
+        value: "30"
+      - key: INVITATION_EXPIRE_HOURS
+        value: "48"
+      - key: INVITATION_HOURLY_LIMIT
+        value: "20"
+      - key: MAIL_COOLDOWN_SECONDS
+        value: "60"
       - key: SMTP_HOST
         value: 127.0.0.1
       - key: SMTP_PORT
         value: "1025"
+      - key: SMTP_USERNAME
+        sync: false
+      - key: SMTP_PASSWORD
+        sync: false
       - key: SMTP_TLS
         value: none
       - key: SMTP_FROM
         value: Junta Electoral <no-reply@junta.local>
+      - key: SMTP_TIMEOUT
+        value: "10"
+      - key: MAIL_MAX_ATTEMPTS
+        value: "5"
+      - key: MAIL_LEASE_SECONDS
+        value: "120"
+      - key: SECURITY_RETENTION_DAYS
+        value: "30"
+      - key: INITIAL_ADMIN_EMAIL
+        sync: false
+      - key: INITIAL_ADMIN_FULL_NAME
+        value: Administrador inicial
+      - key: INITIAL_ADMIN_USERNAME
+        sync: false
+      - key: INITIAL_ADMIN_PASSWORD
+        sync: false

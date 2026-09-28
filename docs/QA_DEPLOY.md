@@ -31,6 +31,17 @@ CORS_ORIGINS=["https://<frontend-qa>.netlify.app"]
 FRONTEND_URL=https://<frontend-qa>.netlify.app
 ```
 
+Si todavía no existe la URL final de Netlify, hay dos caminos:
+
+1. Crear primero el sitio en Netlify y definirle un nombre fijo, por ejemplo
+   `junta-electoral-qa`. Con eso la URL será
+   `https://junta-electoral-qa.netlify.app` y ya se puede cargar en Render.
+2. Desplegar Render primero con un valor provisorio, desplegar Netlify, copiar la
+   URL real de Netlify y luego actualizar `CORS_ORIGINS` y `FRONTEND_URL` en Render.
+
+El backend puede desplegar antes de Netlify; CORS recién impacta cuando el navegador
+intenta llamar la API desde el frontend.
+
 Variables ya declaradas en `render.yaml`:
 
 ```bash
@@ -39,6 +50,17 @@ DEBUG=false
 COOKIE_SECURE=true
 COOKIE_SAMESITE=none
 SUPPORT_CONTACT=juspjchaco@gmail.com
+```
+
+Para que lleguen mails reales de desbloqueo/recuperación, reemplazar SMTP local:
+
+```bash
+SMTP_HOST=<host smtp real>
+SMTP_PORT=587
+SMTP_USERNAME=<usuario smtp>
+SMTP_PASSWORD=<password smtp>
+SMTP_FROM="Junta Electoral <correo-verificado@dominio>"
+SMTP_TLS=starttls
 ```
 
 Cuando el backend levanta, el contenedor ejecuta:
